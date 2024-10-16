@@ -21,3 +21,11 @@
     ```bash
     docker compose -f ./docs/docker-compose.yml up -d
     ```
+
+## Accessing the containers
+
+MongoDB will now be running, and can be accessed via [localhost:27017](http://localhost:27017)
+
+You can access [localhost:8081](http://localhost:8081) with the default credentials and interact with the instance using the web-based GUI [Mongo Express](https://github.com/mongo-express/mongo-express)
+
+Alternatively, you can access the MongoDB instance using MongoDB Compass GUI with the default credentials
