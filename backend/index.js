@@ -1,4 +1,5 @@
 require('dotenv').config()
+const mongoose = require('mongoose')
 const express = require('express')
 const app = express()
 // use the port from the environment variable, if available
@@ -19,7 +20,8 @@ This means that in the router, defining a "/" route will actually be a "/wiki/" 
 */
 app.use('/wiki', wikiRoutes)
 
+mongoose.connect(process.env.MONGO_URI || 'mongodb://admin:admin@localhost:27017/laWiki?authSource=admin')
 //TODO: separate the routes for different resources into different files
-app.listen(port, () => {
+app.listen(PORT, () => {
   console.log(`Example app listening on http://localhost:${PORT}/`)
 })
