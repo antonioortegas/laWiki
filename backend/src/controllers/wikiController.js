@@ -12,7 +12,6 @@ const getWiki = async (req, res) => {
 }
 
 const createWiki = async (req, res) => {
-    console.log(req.body);
     const newWiki = new Wiki(req.body);
     try {
         const savedWiki = await newWiki.save();
