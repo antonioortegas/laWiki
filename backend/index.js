@@ -1,6 +1,16 @@
-const app = require('./src/apps/app');
-const PORT = process.env.PORT || 3000 
+require('dotenv').config()
+const mongoose = require('mongoose')
+const app = require('./src/apps/app')
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:admin@localhost:27017/laWiki?authSource=admin';
+
+mongoose.connect(MONGODB_URI)
+    .then(() => {
+        console.log('Connected to MongoDB');
+        app.listen(PORT, () => {
+            console.log('Server running at http://localhost:' + PORT);
+        });
+    }).catch((error) => {
+        console.log(error);
+    });

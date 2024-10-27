@@ -1,21 +1,30 @@
 const request = require('supertest');
 const app = require('../src/apps/app');
 const mongoose = require('mongoose');
+require('dotenv').config();
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:admin@localhost:27017/laWiki?authSource=admin';
 
-describe('POST /wiki', () => {
+describe('Basic Tests', () => {
   let server;
 
-  // Start the server before all tests
   beforeAll(() => {
-    server = app.listen(3000, () => {
-      console.log('Test server running on port 3000');
-    });
+    mongoose.connect(MONGODB_URI)
+      .then(() => {
+        server = app.listen(PORT);
+      }
+    );
   });
 
-  // Close the server and MongoDB connection after all tests
   afterAll(async () => {
     await mongoose.connection.close();
-    server.close();
+    await server.close();
+  });
+
+  it('should return Hello World!', async () => {
+    const response = await request(app).get('/');
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('Hello World!');
   });
 
   it('should create a new wiki entry', async () => {
@@ -27,7 +36,7 @@ describe('POST /wiki', () => {
       language: "en"
     };
 
-    const response = await request(server)
+    const response = await request(app)
       .post('/wiki')
       .send(newWiki)
       .expect(201);
