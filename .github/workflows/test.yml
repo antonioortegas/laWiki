@@ -8,9 +8,20 @@ jobs:
   backend-test:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:5.0       # MongoDB version
+        ports:
+          - 27017:27017        # Expose MongoDB's default port
+        options: >-
+          --health-cmd="mongosh --eval 'db.runCommand({ping: 1})'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     defaults:
       run:
-        working-directory: backend   # Set the default working directory to backend
+        working-directory: backend
 
     steps:
       - name: Checkout code
@@ -19,10 +30,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'         # Specify your Node.js version or other runtime
+          node-version: '14'
 
-      - name: Install backend dependencies
-        run: npm install             # Adjust this command if you're using a different package manager
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run backend tests
+      - name: Wait for MongoDB to be ready
+        run: |
+          until nc -z localhost 27017; do
+            echo "Waiting for MongoDB to start...";
+            sleep 2;
+          done
+
+      - name: Run tests
+        env:
+          MONGO_URL: "mongodb://localhost:27017/testdb"  # Your MongoDB URI
         run: npm test
