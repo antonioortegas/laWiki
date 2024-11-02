@@ -1,0 +1,7 @@
+post /wikis // create a new wiki
+get /wikis // get all wikis
+get /wikis/:id // get a wiki by id
+put /wikis/:id // update a wiki by id
+delete /wikis/:id // delete a wiki by id
+
+// users, wikis, entries, versions

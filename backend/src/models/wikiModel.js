@@ -13,6 +13,7 @@ const wikiSchema = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true,
     },
     language: {
         type: String,
