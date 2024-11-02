@@ -1,0 +1,43 @@
+USER
+    name
+    email
+    role
+    notifications[
+        message
+        read
+    ]
+    ratings[
+        ratedBy
+        score
+    ]
+    averageRating
+
+WIKI
+    title
+    description
+    content
+    createdBy
+    language
+    tags[]
+    entries[]
+
+ENTRY
+    wiki
+    title
+    content
+    createdBy
+    language
+    editors[]
+    attachments[]
+    versions[]
+    comments[
+        author
+        content
+        responseTo
+    ]
+    tags[]
+
+VERSION
+    entry
+    content
+    createdBy

@@ -1,5 +1,5 @@
 const Wiki = require('../models/wikiModel');
-
+/*
 const getWiki = async (req, res) => {
     res.send('Hello World from the wiki controller!');
 }
@@ -23,3 +23,4 @@ module.exports = {
     createWiki,
     getAbout,
 }
+*/

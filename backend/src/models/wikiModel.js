@@ -1,32 +1,34 @@
 const mongoose = require('mongoose');
 
 const wikiSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-  },
-  createdBy: {
-    type: String,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-  categories: {
-    type: [String],
-    default: [],  // Array of strings for categories/tags
-  },
-  language: {
-    type: String,
-    default: 'es',  // Default language is Spanish
-  },
-});
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+    },
+    content: {
+        type: String,
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+    },
+    language: {
+        type: String,
+        default: 'es',  // Default language is Spanish
+    },
+    tags: {
+        type: [String],
+        default: [],  // Array of strings for categories/tags
+    },
+    entries: {
+        type: [mongoose.Schema.Types.ObjectId],
+        default: []
+    }},
+    {
+        timestamps: true
+    }
+);
 
 module.exports = mongoose.model('Wiki', wikiSchema);
