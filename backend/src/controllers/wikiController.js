@@ -29,6 +29,11 @@ const getWiki = async (req, res) => {
 
 const createWiki = async (req, res) => {
     try {
+        const { title, createdBy } = req.body;
+        if (!title || !createdBy) {
+            return res.status(400).json('Title and createdBy are required');
+        }
+
         const newWiki = new Wiki(req.body);
         const savedWiki = await newWiki.save();
         res.status(201).json(savedWiki);

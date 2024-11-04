@@ -29,6 +29,11 @@ const getVersion = async (req, res) => {
 
 const createVersion = async (req, res) => {
     try {
+        const { entry, content, createdBy } = req.body;
+        if (!entry || !content || !createdBy) {
+            return res.status(400).json('Entry, content, and createdBy are required');
+        }
+
         const newVersion = new Version(req.body);
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);

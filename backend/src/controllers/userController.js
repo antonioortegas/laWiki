@@ -29,6 +29,11 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
+        const { name, email } = req.body;
+        if (!name || !email) {
+            return res.status(400).json('Name and email are required');
+        }
+
         const newUser = new User(req.body);
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
