@@ -20,7 +20,7 @@ const getWikiById = async (req, res) => {
         if (!wiki) {
             return res.status(404).json({ message: 'Wiki no encontrada.' });
         }
-        res.status(200).json(user);
+        res.status(200).json(wiki);
     }
     catch (error) {
         console.error('Error al obtener la wiki:', error);
