@@ -10,7 +10,6 @@ const createUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
         }
-        
 
         const user = new User({
             name,
