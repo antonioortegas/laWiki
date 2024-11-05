@@ -93,11 +93,45 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getUsersByMinRating = async (req, res) => {
+    try {
+        const minRating = parseFloat(req.params.minRating);
+
+        if (isNaN(minRating)) {
+            return res.status(400).json({ message: 'El parámetro minRating debe ser un número válido.' });
+        }
+
+        const users = await User.find({ averageRating: { $gte: minRating } });
+
+        res.status(200).json(users);
+    } 
+    catch (error) {
+        console.error('Error al obtener usuarios con calificación mínima:', error);
+        res.status(500).json({ message: 'Error al obtener usuarios con calificación mínima.' });
+    }
+}
+
+const getUsersByPartialName = async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        // Options 'i' makes the search case-insensitive 
+        const users = await User.find({ name: { $regex: name, $options: 'i' } });
+
+        res.status(200).json(users);
+    } 
+    catch (error) {
+        console.error('Error al buscar usuarios por nombre parcial:', error);
+        res.status(500).json({ message: 'Error al buscar usuarios por nombre parcial.' });
+    }
+};
 
 module.exports = {
     createUser,
     getUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUsersByMinRating,
+    getUsersByPartialName
 };
