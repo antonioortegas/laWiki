@@ -1,5 +1,17 @@
+const { create } = require('../models/userModel');
 const Wiki = require('../models/wikiModel');
 const {get} = require('mongoose');
+
+const getWikis = async (req, res) => {
+    try {
+        const wikis = await Wiki.find();
+        res.status(200).json(wikis);
+    }
+    catch (error) {
+        console.error('Error al obtener las wikis:', error);
+        res.status(500).json({ message: 'Error al obtener las wikis.' });
+    }
+}
 
 const getWikiById = async (req, res) => {
     try {
@@ -56,27 +68,6 @@ const updateWiki = async (req, res) => {
         res.status(500).json({ message: 'Error al actualizar la Wiki.' });
     }
 }
-module.exports = {
-    getWikiById,
-    updateWiki,
-    deleteWiki,
-}
-//add module exports
-/*
-const getWiki = async (req, res) => {
-    try {
-        const wiki = await Wiki.findById(req.params.id);
-        if (!wiki) {
-            return res.status(404).json('Wiki not found');
-        }
-        res.status(200).json(wiki);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving wiki",
-            error: err
-        });
-    }
-}
 
 const createWiki = async (req, res) => {
     try {
@@ -95,6 +86,31 @@ const createWiki = async (req, res) => {
         });
     }
 }
+
+module.exports = {
+    getWikiById,
+    updateWiki,
+    deleteWiki,
+    getWikis,
+    createWiki,
+}
+//add module exports
+/*
+const getWiki = async (req, res) => {
+    try {
+        const wiki = await Wiki.findById(req.params.id);
+        if (!wiki) {
+            return res.status(404).json('Wiki not found');
+        }
+        res.status(200).json(wiki);
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error retrieving wiki",
+            error: err
+        });
+    }
+}
+
 
 const updateWiki = async (req, res) => {
     try {
