@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const versionController = require('../controllers/versionController');
 
-router.get('/', versionController.getVersions);
+router.get('/', versionController.getAllVersions);
 router.post('/', versionController.createVersion);
 router.get('/:id', versionController.getVersion);
 router.put('/:id', versionController.updateVersion);
