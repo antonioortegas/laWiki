@@ -12,7 +12,7 @@ const createVersion = async (req, res) => {
 };
 
 // Get all versions
-const getAllVersions = async (req, res) => {
+const getVersions = async (req, res) => {
     try {
         const versions = await version.find();
         res.status(200).json(versions);
@@ -22,7 +22,7 @@ const getAllVersions = async (req, res) => {
 };
 
 // Get a specific version
-const getVersion = async (req, res) => {
+const getVersionById = async (req, res) => {
     try {
         const versionFound = await version.findById(req.params.id);
         res.status(200).json(versionFound);
@@ -60,8 +60,8 @@ const deleteVersion = async (req, res) => {
 
 module.exports = {
     createVersion,
-    getAllVersions,
-    getVersion,
+    getVersions,
+    getVersionById,
     updateVersion,
     deleteVersion
 };
