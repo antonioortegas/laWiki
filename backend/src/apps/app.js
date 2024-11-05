@@ -12,7 +12,6 @@ app.use('/wikis', wikiRoutes)
 app.use('/entries', entryRoutes)
 app.use('/versions', versionRoutes)
 
-
 app.get('/', (req, res) => {
   res.status(200).send('Hello World!')
 })
