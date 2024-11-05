@@ -2,8 +2,16 @@ const version = require('../models/versionModel');
 
 // Create a new version
 const createVersion = async (req, res) => {
-    const newVersion = new version(req.body);
     try {
+        const { entry, content, createdBy } = new version(req.body);
+
+        // ¿Añadir verificación de si existen entrada y usuario?
+        const newVersion = new version({
+            entry,
+            content,
+            createdBy
+        });
+
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);
     } catch (err) {
