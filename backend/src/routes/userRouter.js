@@ -8,3 +8,7 @@ router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 
 module.exports = router;
+
+// Custom operations for user
+router.get('/min-rating/:minRating', userController.getUsersByMinRating);
+router.get('/search/:name', userController.getUsersByPartialName);

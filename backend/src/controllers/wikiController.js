@@ -1,17 +1,68 @@
 const Wiki = require('../models/wikiModel');
+const {get} = require('mongoose');
 
-const getWikis = async (req, res) => {
+const getWikiById = async (req, res) => {
     try {
-        const wikis = await Wiki.find();
-        res.status(200).json(wikis);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving wikis",
-            error: err
-        });
+        const { id } = req.params;
+        const wiki = await Wiki.findById(id);
+        if (!wiki) {
+            return res.status(404).json({ message: 'Wiki no encontrada.' });
+        }
+        res.status(200).json(user);
+    }
+    catch (error) {
+        console.error('Error al obtener la wiki:', error);
+        res.status(500).json({ message: 'Error al obtener la wiki.' });
     }
 }
 
+const deleteWiki = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const wiki = await Wiki.findById(id);
+        if (!wiki) {
+            return res.status(404).json({ message: 'Wiki no encontrada.' });
+        }
+        await wiki.remove();
+        res.status(200).json({ message: 'Wiki eliminada.' });
+    }
+    catch (error) {
+        console.error('Error al eliminar la wiki:', error);
+        res.status(500).json({ message: 'Error al eliminar la wiki.' });
+    }
+}
+const updateWiki = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, description, content,language,tags,entries } = req.body;
+
+        const wiki = await Wiki.findById(id);
+        if (!wiki) {
+            return res.status(404).json({ message: 'Wiki no encontrado.' });
+        }
+
+        wiki.title=title;
+        wiki.description=description;
+        wiki.content=content;
+        wiki.language=language;
+        wiki.tags=tags;
+        wiki.entries=entries;
+
+        const savedWiki = await wiki.save();
+        res.status(200).json(savedWiki);
+    }
+    catch (error) {
+        console.error('Error al actualizar la Wiki:', error);
+        res.status(500).json({ message: 'Error al actualizar la Wiki.' });
+    }
+}
+module.exports = {
+    getWikiById,
+    updateWiki,
+    deleteWiki,
+}
+//add module exports
+/*
 const getWiki = async (req, res) => {
     try {
         const wiki = await Wiki.findById(req.params.id);
@@ -85,4 +136,6 @@ module.exports = {
     createWiki,
     updateWiki,
     deleteWiki,
+    getAbout,
 }
+*/
