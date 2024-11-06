@@ -8,12 +8,9 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:admin@localhost:
 describe('Basic Tests', () => {
   let server;
 
-  beforeAll(() => {
-    mongoose.connect(MONGODB_URI)
-      .then(() => {
-        server = app.listen(PORT);
-      }
-    );
+  beforeAll(async () => {
+    await mongoose.connect(MONGODB_URI);
+    server = app.listen(PORT);
   });
 
   afterAll(async () => {

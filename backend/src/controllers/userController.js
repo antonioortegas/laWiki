@@ -34,6 +34,11 @@ const createUser = async (req, res) => {
             return res.status(400).json('Name and email are required');
         }
 
+        const existingUser = await User.findOne({ email: email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
         const newUser = new User(req.body);
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
@@ -79,10 +84,45 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const getUsersByMinRating = async (req, res) => {
+    try {
+        const minRating = parseFloat(req.params.minRating);
+
+        if (isNaN(minRating)) {
+            return res.status(400).json({ message: 'Parameter must be a valid number' });
+        }
+
+        const users = await User.find({ averageRating: { $gte: minRating } });
+
+        res.status(200).json(users);
+    } 
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error obtaining users by minimum rating.' });
+    }
+}
+
+const getUsersByPartialName = async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        // Options 'i' makes the search case-insensitive 
+        const users = await User.find({ name: { $regex: name, $options: 'i' } });
+
+        res.status(200).json(users);
+    } 
+    catch (error) {
+        console.error('Error al buscar usuarios por nombre parcial:', error);
+        res.status(500).json({ message: 'Error al buscar usuarios por nombre parcial.' });
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
     createUser,
     updateUser,
     deleteUser,
+    getUsersByMinRating,
+    getUsersByPartialName,
 }
