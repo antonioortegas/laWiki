@@ -1,7 +1,7 @@
 {
-  "name": "lawiki-backend",
+  "name": "lawiki-user-service",
   "version": "1.0.0",
-  "description": "backend for a collaborative wiki web application similar to fandom.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
