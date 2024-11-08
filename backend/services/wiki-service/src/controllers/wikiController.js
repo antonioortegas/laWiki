@@ -79,10 +79,61 @@ const deleteWiki = async (req, res) => {
     }
 }
 
+
+const searchWikiTitle = async (req, res) => {
+    try {
+        const { title } = req.query;
+
+        // Validación básica
+        if (!title) {
+            return res.status(400).json({ error: "The parameter 'title' is needed." });
+        }
+
+        // Buscar wikis con títulos que contengan el texto ingresado (búsqueda parcial)
+        const wikis = await Wiki.find({ title: new RegExp(title, 'i') });
+
+        // Retornar resultados
+        res.json(wikis);
+
+    } catch (error) {
+        res.status(500).json({ error: "Searching error." });
+    }
+};
+
+// Endpoint para filtrar por creador y etiquetas
+const searchWikiTag = async (req, res) => {
+    try {
+        const {tags} = req.query;
+
+        // Validación básica
+        if (!tags) {
+            return res.status(400).json({ error: "at least one parameter 'tags' is needed." });
+        }
+
+        // Construir filtro dinámico
+        let filter = {};
+        if (tags) filter.tags = { $in: tags.split(',') }; // Convierte la lista de etiquetas en un array
+
+        // Buscar en la base de datos
+        const wikis = await Wiki.find(filter);
+
+        res.json(wikis);
+
+    } catch (error) {
+        res.status(500).json({ error: "Error at Filtering." });
+    }
+};
+
+
+
+
+
 module.exports = {
     getWikis,
     getWiki,
     createWiki,
     updateWiki,
     deleteWiki,
+    searchWikiTag,
+    searchWikiTitle,
 }
