@@ -1,5 +1,4 @@
 const Wiki = require('../models/wikiModel');
-const User = require('../models/userModel.js');
 
 const getWikis = async (req, res) => {
     try {
@@ -127,47 +126,6 @@ const searchWikiTag = async (req, res) => {
 
 
 
-// Endpoint para obtener wikis con información del creador
-const searchUserWiki = async (req, res) => {
-    try {
-        const wikis = await Wiki.find().populate('createdBy', 'name'); // 'username email' selecciona solo estos campos del User
-
-        res.json(wikis);
-    } catch (error) {
-        res.status(500).json({ error: "Error at obteining wikis by authors" });
-    }
-};
-
-const Entry = require('../models/entryModel');
-
-// Endpoint para obtener una página de wiki con todas sus entradas
-const searchEntryWiki = async (req, res) => {
-    try {
-        const { wikiId } = req.params;
-
-        // Buscar la página de wiki y popular todas sus entradas
-        const wiki = await Wiki.findById(wikiId).populate({
-            path: 'entries',
-            model: 'Entry',
-            select: 'title content createdBy language tags', // Selecciona solo campos específicos de Entry
-            populate: {
-                path: 'createdBy editors comments.author', // Popular campos relacionados de Entry
-                select: 'username' // Solo seleccionar el nombre de usuario para los autores y editores
-            }
-        });
-
-        // Verificar si la página de wiki existe
-        if (!wiki) {
-            return res.status(404).json({ error: "Página de wiki no encontrada." });
-        }
-
-        res.json(wiki);
-
-    } catch (error) {
-        console.error("Error al obtener la página de wiki con entradas:", error);
-        res.status(500).json({ error: "Error al obtener la página de wiki con entradas." });
-    }
-};
 
 
 module.exports = {
@@ -178,6 +136,4 @@ module.exports = {
     deleteWiki,
     searchWikiTag,
     searchWikiTitle,
-    searchUserWiki,
-    searchEntryWiki,
 }
