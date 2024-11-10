@@ -13,7 +13,7 @@ const getWikis = async (req, res) => {
         const filter ={}
         const sort = {};
         if (req.query.tags) {
-            filter.tags = { $in: req.query.tags.split(',') };
+            filter.tags = { $in: req.query.tags.split(','), $options: 'i' };
         }
         if (req.query.title) {
             filter.title = { $regex: req.query.title, $options: 'i' };

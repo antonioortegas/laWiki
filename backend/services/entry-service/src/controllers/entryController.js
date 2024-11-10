@@ -23,7 +23,7 @@ const getEntries = async (req, res) => {
             filter.content = { $regex: req.query.content, $options: 'i' };
         }
         if (req.query.tags) {
-            filter.tags = { $in: req.query.tags.split(',') };
+            filter.tags = { $in: req.query.tags.split(','), $options: 'i' };
         }
 
         const entries = await Entry.find(filter).sort(sort);
@@ -124,20 +124,22 @@ const fuzzyFindByText = async (req, res) => {
     }
 }
 
-// get all comments from a specific user, optionally filtered by a specific wiki
+// get all comments from a specific user
 const getComments = async (req, res) => {
     try {
-        const { user, wiki } = req.query;
+        const { user } = req.query;
+        if(!user) {
+            return res.status(400).json({ message: 'User is required' });
+        }
         // user is a partial match by name, query the user service to get the user id
         const users = await axios.get(`${usersAPI}?name=${user}`);
         const userIds = users.data.map(user => user._id);
-        const filter = { createdBy: { $in: userIds } };
-        if (wiki) {
-            filter.wiki = wiki;
-        }
+        console.log('userIds: ', userIds);
+        //user id in the comments array, as author
+        const filter = { 'comments.author': { $in: userIds } };
         const entries = await Entry.find(filter);
-        // get only the comments
-        const comments = entries.map(entry => entry.comments.content).flat();
+        // get only the comments, if any
+        const comments = entries.map(entry => entry.comments).flat();
         res.status(200).json(comments);
     } catch (error) {
         console.log('Error when filtering entries: ', error)
