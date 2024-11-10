@@ -2,7 +2,18 @@ const User = require('../models/userModel');
 
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const filter = {};
+        if (req.query.name) {
+            filter.name = { $regex: req.query.name, $options: 'i' };
+        }
+        if (req.query.minRating) {
+            if (isNaN(parseFloat(req.query.minRating))) {
+                return res.status(400).json({ message: 'Parameter must be a valid number' });
+            }
+            filter.averageRating = { $gte: parseFloat(req.query.minRating) };
+        }
+
+        const users = await User.find(filter);
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json({
@@ -84,45 +95,10 @@ const deleteUser = async (req, res) => {
     }
 }
 
-const getUsersByMinRating = async (req, res) => {
-    try {
-        const minRating = parseFloat(req.params.minRating);
-
-        if (isNaN(minRating)) {
-            return res.status(400).json({ message: 'Parameter must be a valid number' });
-        }
-
-        const users = await User.find({ averageRating: { $gte: minRating } });
-
-        res.status(200).json(users);
-    } 
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error obtaining users by minimum rating.' });
-    }
-}
-
-const getUsersByPartialName = async (req, res) => {
-    try {
-        const { name } = req.params;
-
-        // Options 'i' makes the search case-insensitive 
-        const users = await User.find({ name: { $regex: name, $options: 'i' } });
-
-        res.status(200).json(users);
-    } 
-    catch (error) {
-        console.error('Error al buscar usuarios por nombre parcial:', error);
-        res.status(500).json({ message: 'Error al buscar usuarios por nombre parcial.' });
-    }
-};
-
 module.exports = {
     getUsers,
     getUser,
     createUser,
     updateUser,
     deleteUser,
-    getUsersByMinRating,
-    getUsersByPartialName,
 }
