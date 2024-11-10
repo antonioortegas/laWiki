@@ -1,9 +1,8 @@
 # Backend
 
-## Initial Setup
+## Requirements
 
-1. Install [Node.js](https://nodejs.org/en)
-2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
 >[!NOTE]
 >If you are rebuilding the containers, you may need to remove the existing ones to avoid conflicts. You can do this by running the following command.
@@ -11,36 +10,45 @@
 >docker system prune -a
 >```
 
+## Deploying all microservices
 
-## Microservice development
-
-1. From the root of the project, start the local database running the docker-compose file in the docs directory. This will start a MongoDB instance and a Mongo Express instance.
-
-```bash
-docker compose -f ./docs/docker-compose.yml up -d
-```
-
-2. Install the dependencies for the microservice you want to work on.
+1. Clone the repository to your local machine and cd into it.
 
 ```bash
-cd backend/services/wiki-service
-npm install
+git clone https://github.com/antonioortegas/laWiki.git
+cd laWiki
 ```
 
-3. To start the microservice, cd into its directory, under ./backend/services/, (for example, ./backend/services/wiki-service) and run the following command.
+2. cd into the `backend` directory.
 
 ```bash
-npm run dev
+cd backend
 ```
 
-3. The microservice will start on [http://localhost:3000](http://localhost:3000) and any changes you make will be automatically updated.
-
-## Deploying all microservices locally
-
-To test the entire system locally, you can deploy all microservices at once. From the root of the project, run the following command.
+3. Copy the `.env.example` into a new file called `.env`. (Since we are not deploying to the cloud, you can leave the values as they are.)
 
 ```bash
-docker compose -f ./backend/docker-compose.yml up -d
+cp .env.example .env
 ```
 
-This will build and start all the microservices and the database. The services will be available at ports 3001 to 3004. (You can change the ports in the docker-compose file if needed.)
+4. Deploy all microservices running the following command.
+
+```bash
+docker compose up -d
+```
+
+This will build and start all the microservices and the database. The services will be available at ports 3001 to 3004. (You can change the ports in the .env file if needed.)
+
+5. Seed the database with some initial data, accessing the corresponding endpoint.
+[http://localhost:3000/seed](http://localhost:3000/seed), OR
+
+```bash
+curl http://localhost:3000/seed
+```
+
+6. By default, the services will be available at the following ports:
+- [http://localhost:3001/users](http://localhost:3001/users) - Users service
+- [http://localhost:3002/wikis](http://localhost:3002/wikis) - Wiki service
+- [http://localhost:3003/entries](http://localhost:3003/entries) - Entries service
+- [http://localhost:3004/versions](http://localhost:3003/versions) - Versions service
+- Adittionally, a mongo-express instance will be available at [http://localhost:8081](http://localhost:8081) to manage the database, with the credentials defined in the .env file, by default `admin:admin`.
