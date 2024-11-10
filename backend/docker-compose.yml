@@ -32,6 +32,7 @@ services:
     container_name: user-service
     ports:
       - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+      - "3000:3000"
     depends_on:
       - mongodb
     environment:
