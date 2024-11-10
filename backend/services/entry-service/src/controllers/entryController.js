@@ -1,7 +1,8 @@
 const axios = require('axios');
 const Entry = require('../models/entryModel');
 
-const usersAPI = process.env.USERS_API || 'http://localhost:3001/users';
+const usersAPI = process.env.USERS_API_HOST || 'http://localhost:3001/users';
+console.log('USERS_API: ', usersAPI);
 
 const getEntries = async (req, res) => {
     try {

@@ -31,11 +31,15 @@ services:
       dockerfile: Dockerfile
     container_name: user-service
     ports:
-      - "${USER_SERVICE_PORT}:3000"
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
     depends_on:
       - mongodb
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
   wiki-service:
     build:
@@ -43,11 +47,15 @@ services:
       dockerfile: Dockerfile
     container_name: wiki-service
     ports:
-      - "${WIKI_SERVICE_PORT}:3000"
+      - "${WIKI_SERVICE_PORT}:${WIKI_SERVICE_PORT}"
     depends_on:
       - mongodb
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
   entry-service:
     build:
@@ -55,11 +63,15 @@ services:
       dockerfile: Dockerfile
     container_name: entry-service
     ports:
-      - "${ENTRY_SERVICE_PORT}:3000"
+      - "${ENTRY_SERVICE_PORT}:${ENTRY_SERVICE_PORT}"
     depends_on:
       - mongodb
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
   version-service:
     build:
@@ -67,11 +79,15 @@ services:
       dockerfile: Dockerfile
     container_name: version-service
     ports:
-      - "${VERSION_SERVICE_PORT}:3000"
+      - "${VERSION_SERVICE_PORT}:${VERSION_SERVICE_PORT}"
     depends_on:
       - mongodb
     environment:
       - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
 volumes:
   mongo-data:
