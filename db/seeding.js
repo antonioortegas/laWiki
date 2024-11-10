@@ -24,7 +24,6 @@ const dummyEntries = [
         version: [],
         comments: [],
         tags: ['monster', 'kaiju', 'japan'],
-        _id:'672ffcf7a0f9e53195e5656e'
     },
     {
         wiki: '672ff23347c527e0c5efce0e', // Example ObjectId
@@ -37,7 +36,6 @@ const dummyEntries = [
         version: [],
         comments: [],
         tags: ['monster', 'kaiju', 'godzilla'],
-        _id:'672ffcf7a0f9e53195e5656f'
     },
     {
         wiki: '672ff23347c527e0c5efce10', // Example ObjectId
@@ -50,7 +48,6 @@ const dummyEntries = [
         version: [],
         comments: [{author:'672fedd5bb2f6f3e5e692496',content:'Me encanta este personaje!'}],
         tags: ['saiyan', 'hero', 'dragon ball'],
-        _id:'672ffcf7a0f9e53195e56570'
     },
     {
         wiki: '672ff23347c527e0c5efce10', // Example ObjectId
@@ -64,7 +61,6 @@ const dummyEntries = [
         comments: [{author:'672fedd5bb2f6f3e5e692496',content:'Ojalá le dieran más protagonismo en la serie.',_id: "672ffc32e9dea3e4db0413e9"},
         {author:'672fedd5bb2f6f3e5e692495',content:'Pues sí la verdad!',responseTo:"672ffc32e9dea3e4db0413e9"}],
         tags: ['saiyan', 'prince', 'dragon ball'],
-        _id:'672ffcf7a0f9e53195e56572'
     },
     {
         wiki: '672ff23347c527e0c5efce10', // Example ObjectId
@@ -77,7 +73,6 @@ const dummyEntries = [
         version: [],
         comments: [{author:'672fedd5bb2f6f3e5e692495',content:'Freezer es mi personaje favorito, la muerte de Krilin fue épica!'}],
         tags: ['villain', 'alien', 'dragon ball'],
-        _id:'672ffcf7a0f9e53195e56575'
     }
     ,
     {
@@ -91,7 +86,6 @@ const dummyEntries = [
         version: [],
         comments: [{author:'672fedd5bb2f6f3e5e692493',content:'Espero que pronto nos den un pikachu de evento...'}],
         tags: ['electric', 'pokemon', 'mascot'],
-        _id:'672ffcf7a0f9e53195e56577'
     },
     {
         wiki:'672ff23347c527e0c5efce12', // Example ObjectId
@@ -104,7 +98,6 @@ const dummyEntries = [
         version: [],
         comments: [],
         tags: ['fire', 'flying', 'pokemon'],
-        _id:'672ffcf7a0f9e53195e56579'
     }
     ,
     {
@@ -118,30 +111,29 @@ const dummyEntries = [
         version: [],
         comments: [{author:'672fedd5bb2f6f3e5e692493',content:'Espero que pronto se retome la serie...'}],
         tags: ['dark fantasy', 'manga', 'kentaro miura'],
-        _id:'672ffcf7a0f9e53195e5657a'
     }
 ];
 
 const sampleUsers = [
-    { name: 'John Doe', email: 'john57@gmail.com',role: 'admin',_id:'672fedd5bb2f6f3e5e692492' },
-    { name: 'Jane Smith', email: 'jane83@gmail.com',role: 'writer',_id:'672fedd5bb2f6f3e5e692493' },
-    { name: 'Alice Johnson', email: 'alice43@gmail.com',role: 'writer',_id:'672fedd5bb2f6f3e5e692494' },
-    { name: 'Bob Brown', email: 'bob765@gmail.com' ,role: 'writer',_id:'672fedd5bb2f6f3e5e692495' },
-    { name: 'Charlie Davis', email: 'charlie74@gmail.com',role:'reader',_id:'672fedd5bb2f6f3e5e692496' }
+    { name: 'John Doe', email: 'john57@gmail.com',role: 'admin' },
+    { name: 'Jane Smith', email: 'jane83@gmail.com',role: 'writer' },
+    { name: 'Alice Johnson', email: 'alice43@gmail.com',role: 'writer'},
+    { name: 'Bob Brown', email: 'bob765@gmail.com' ,role: 'writer' },
+    { name: 'Charlie Davis', email: 'charlie74@gmail.com',role:'reader' }
 ];
 
 const sampleWikis = [
     { title: "Godzilla", createdBy: '672fedd5bb2f6f3e5e692492', description: "A wiki made by and for the fans of this great franchise...",
-        content:"The first Godzilla movie was released...",tags:["movies","kaiju","japan"],entries:['672ffcf7a0f9e53195e5656e','672ffcf7a0f9e53195e5656f'],_id:'672ff23347c527e0c5efce0e'},
+        content:"The first Godzilla movie was released...",tags:["movies","kaiju","japan"],entries:['672ffcf7a0f9e53195e5656e','672ffcf7a0f9e53195e5656f']},
     { title: "League of Legends", createdBy: '672fedd5bb2f6f3e5e692492', description: "Comprehensive guide to League..." ,
         content:"This is a stub, you can help by contributing..."},
     { title: "Dragon Ball", createdBy: '672fedd5bb2f6f3e5e692495', description: "All info from everything related to dragon ball, from games to anime...",content:"We are deeply saddened by the lost of Akira sensei..." ,
-        tags:["anime","manga","japan"],entries:['672ffcf7a0f9e53195e56570','672ffcf7a0f9e53195e56572','672ffcf7a0f9e53195e56575'],_id:'672ff23347c527e0c5efce10'
+        tags:["anime","manga","japan"],entries:['672ffcf7a0f9e53195e56570','672ffcf7a0f9e53195e56572','672ffcf7a0f9e53195e56575']
     },
     { title: "Berserk", createdBy: '672fedd5bb2f6f3e5e692494', description: "¡READ BERSERK!" ,content:"Read berserk",tags:["manga","gore","japan"],
-    entries:['672ffcf7a0f9e53195e5657a'],_id:'672ff23347c527e0c5efce11'},
+    entries:['672ffcf7a0f9e53195e5657a']},
     { title: "Pokemon", createdBy: '672fedd5bb2f6f3e5e692494', description: "Dedicated to all things pokemon",
-        content:"Watch the world championship here...",tags:["games","anime","japan"] ,_id:'672ff23347c527e0c5efce12',entries:['672ffcf7a0f9e53195e56577','672ffcf7a0f9e53195e56579']},
+        content:"Watch the world championship here...",tags:["games","anime","japan"] ,entries:['672ffcf7a0f9e53195e56577','672ffcf7a0f9e53195e56579']},
    
 ];
 async function populateDatabase() {

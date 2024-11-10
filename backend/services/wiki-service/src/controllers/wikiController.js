@@ -11,6 +11,7 @@ const getWikis = async (req, res) => {
         });
 
         const filter ={}
+        const sort = {};
         if (req.query.tags) {
             filter.tags = { $in: req.query.tags.split(',') };
         }
@@ -25,7 +26,7 @@ const getWikis = async (req, res) => {
             }
         }
 
-        const wikis = await Wiki.find(filter);
+        const wikis = await Wiki.find(filter).sort(sort);
         res.status(200).json(wikis);
     } catch (err) {
         res.status(500).json({

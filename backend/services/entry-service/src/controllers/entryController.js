@@ -6,14 +6,15 @@ const usersAPI = process.env.USERS_API_HOST || 'http://localhost:3001/users';
 const getEntries = async (req, res) => {
     try {
         filter = {};
+        sort = {};
         if (req.query.editor) {
             filter.editors = req.query.editor;
         }
         if (req.query.order === 'asc') {
-            filter.sort = { createdAt: 1 };
+            sort = { createdAt: 1 };
         }
         if (req.query.order === 'desc') {
-            filter.sort = { createdAt: -1 };
+            sort = { createdAt: -1 };
         }
         if (req.query.title) {
             filter.title = { $regex: req.query.title, $options: 'i' };
@@ -25,7 +26,7 @@ const getEntries = async (req, res) => {
             filter.tags = { $in: req.query.tags.split(',') };
         }
 
-        const entries = await Entry.find(filter);
+        const entries = await Entry.find(filter).sort(sort);
         res.status(200).json(entries);
     } catch (err) {
         res.status(500).json({
