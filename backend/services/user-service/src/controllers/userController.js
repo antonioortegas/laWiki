@@ -1,4 +1,7 @@
+const axios = require('axios');
 const User = require('../models/userModel');
+
+const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
 const getUsers = async (req, res) => {
     try {
@@ -95,10 +98,41 @@ const deleteUser = async (req, res) => {
     }
 }
 
+// Get all entries created or edited by a user, optionally filtered by text
+const getUserEntries = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { text } = req.query;
+
+        if (text) {
+            const fuzzyResponse = await axios.get(`${entriesAPI}/search`, {
+                params: { text }
+            });
+
+            const userEntries = fuzzyResponse.data.filter(entry =>
+                entry.createdBy === userId || entry.editors.includes(userId)
+            );
+
+            return res.status(200).json(userEntries);
+        }
+
+        const response = await axios.get(`${entriesAPI}`, {
+            params: { editor: userId }
+        });
+
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        console.error('Error when retrieving entries for user:', error.message);
+        res.status(500).json({ message: 'Error retrieving entries for user', error: error.message });
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
     createUser,
     updateUser,
     deleteUser,
+    getUserEntries,
 }
