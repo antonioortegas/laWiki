@@ -50,5 +50,5 @@ curl http://localhost:3000/seed
 - [http://localhost:3001/users](http://localhost:3001/users) - Users service
 - [http://localhost:3002/wikis](http://localhost:3002/wikis) - Wiki service
 - [http://localhost:3003/entries](http://localhost:3003/entries) - Entries service
-- [http://localhost:3004/versions](http://localhost:3003/versions) - Versions service
+- [http://localhost:3004/versions](http://localhost:3004/versions) - Versions service
 - Adittionally, a mongo-express instance will be available at [http://localhost:8081](http://localhost:8081) to manage the database, with the credentials defined in the .env file, by default `admin:admin`.
