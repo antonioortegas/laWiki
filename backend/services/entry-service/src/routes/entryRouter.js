@@ -5,6 +5,7 @@ router.get('/', entryController.getEntries);
 router.post('/', entryController.createEntry);
 
 router.get('/search', entryController.fuzzyFindByText);
+router.get('/comments', entryController.getComments);
 
 router.get('/:id', entryController.getEntry);
 router.put('/:id', entryController.updateEntry);

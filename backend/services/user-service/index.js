@@ -2,7 +2,7 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const app = require('./src/apps/userApp')
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 console.log('PORT:', PORT);
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://admin:admin@localhost:27017/laWiki?authSource=admin';
 console.log('MONGODB_URI:', MONGODB_URI);

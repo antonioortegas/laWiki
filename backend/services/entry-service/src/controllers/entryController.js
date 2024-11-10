@@ -1,14 +1,10 @@
+const axios = require('axios');
 const Entry = require('../models/entryModel');
+
+const usersAPI = process.env.USERS_API || 'http://localhost:3001/users';
 
 const getEntries = async (req, res) => {
     try {
-        /*
-        router.get('/editor/:id', entryController.filterByEditor);
-        router.get('/sorted/asc', entryController.filterByAscDate);
-        router.get('/sorted/desc', entryController.filterByDescDate);
-        router.get('/search/titleOrDescription', entryController.filterByTitleOrContent)
-        router.get('/search/tags', entryController.filterByTags)
-        */
         filter = {};
         if (req.query.editor) {
             filter.editors = req.query.editor;
@@ -127,6 +123,27 @@ const fuzzyFindByText = async (req, res) => {
     }
 }
 
+// get all comments from a specific user, optionally filtered by a specific wiki
+const getComments = async (req, res) => {
+    try {
+        const { user, wiki } = req.query;
+        // user is a partial match by name, query the user service to get the user id
+        const users = await axios.get(`${usersAPI}?name=${user}`);
+        const userIds = users.data.map(user => user._id);
+        const filter = { createdBy: { $in: userIds } };
+        if (wiki) {
+            filter.wiki = wiki;
+        }
+        const entries = await Entry.find(filter);
+        // get only the comments
+        const comments = entries.map(entry => entry.comments.content).flat();
+        res.status(200).json(comments);
+    } catch (error) {
+        console.log('Error when filtering entries: ', error)
+        res.status(500).json({ message: 'Error when filtering entries' })
+    }
+}
+
 module.exports = {
     getEntries,
     getEntry,
@@ -134,4 +151,5 @@ module.exports = {
     updateEntry,
     deleteEntry,
     fuzzyFindByText,
+    getComments,
 }
