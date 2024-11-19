@@ -1,8 +1,22 @@
+const axios = require('axios');
 const User = require('../models/userModel');
+
+const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const filter = {};
+        if (req.query.name) {
+            filter.name = { $regex: req.query.name, $options: 'i' };
+        }
+        if (req.query.minRating) {
+            if (isNaN(parseFloat(req.query.minRating))) {
+                return res.status(400).json({ message: 'Parameter must be a valid number' });
+            }
+            filter.averageRating = { $gte: parseFloat(req.query.minRating) };
+        }
+
+        const users = await User.find(filter);
         res.status(200).json(users);
     } catch (err) {
         res.status(500).json({
@@ -84,36 +98,33 @@ const deleteUser = async (req, res) => {
     }
 }
 
-const getUsersByMinRating = async (req, res) => {
+// Get all entries created or edited by a user, optionally filtered by text
+const getUserEntries = async (req, res) => {
     try {
-        const minRating = parseFloat(req.params.minRating);
+        const { userId } = req.params;
+        const { text } = req.query;
 
-        if (isNaN(minRating)) {
-            return res.status(400).json({ message: 'Parameter must be a valid number' });
+        if (text) {
+            const fuzzyResponse = await axios.get(`${entriesAPI}/search`, {
+                params: { text }
+            });
+
+            const userEntries = fuzzyResponse.data.filter(entry =>
+                entry.createdBy === userId || entry.editors.includes(userId)
+            );
+
+            return res.status(200).json(userEntries);
         }
 
-        const users = await User.find({ averageRating: { $gte: minRating } });
+        const response = await axios.get(`${entriesAPI}`, {
+            params: { editor: userId }
+        });
 
-        res.status(200).json(users);
-    } 
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error obtaining users by minimum rating.' });
-    }
-}
+        res.status(200).json(response.data);
 
-const getUsersByPartialName = async (req, res) => {
-    try {
-        const { name } = req.params;
-
-        // Options 'i' makes the search case-insensitive 
-        const users = await User.find({ name: { $regex: name, $options: 'i' } });
-
-        res.status(200).json(users);
-    } 
-    catch (error) {
-        console.error('Error al buscar usuarios por nombre parcial:', error);
-        res.status(500).json({ message: 'Error al buscar usuarios por nombre parcial.' });
+    } catch (error) {
+        console.error('Error when retrieving entries for user:', error.message);
+        res.status(500).json({ message: 'Error retrieving entries for user', error: error.message });
     }
 };
 
@@ -123,6 +134,5 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    getUsersByMinRating,
-    getUsersByPartialName,
+    getUserEntries,
 }

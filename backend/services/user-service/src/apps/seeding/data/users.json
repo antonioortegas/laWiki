@@ -1,0 +1,128 @@
+[
+    {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "role": "reader",
+        "averageRating": 3.5,
+        "ratings": [
+            { "ratedBy": "alice@example.com", "score": 4 },
+            { "ratedBy": "bob@example.com", "score": 3 }
+        ],
+        "notifications": [
+            { "message": "Welcome to the platform!", "read": true }
+        ]
+    },
+    {
+        "name": "Alice Smith",
+        "email": "alice@example.com",
+        "role": "writer",
+        "averageRating": 4.5,
+        "ratings": [
+            { "ratedBy": "john@example.com", "score": 5 },
+            { "ratedBy": "jane@example.com", "score": 4 }
+        ],
+        "notifications": [
+            { "message": "New comment on your post.", "read": false },
+            { "message": "Weekly digest available.", "read": true }
+        ]
+    },
+    {
+        "name": "Bob Johnson",
+        "email": "bob@example.com",
+        "role": "admin",
+        "averageRating": 2.5,
+        "ratings": [
+            { "ratedBy": "charlie@example.com", "score": 3 },
+            { "ratedBy": "dan@example.com", "score": 2 }
+        ],
+        "notifications": [
+            { "message": "System update scheduled.", "read": false }
+        ]
+    },
+    {
+        "name": "John Smith",
+        "email": "john.smith@example.com",
+        "role": "writer",
+        "averageRating": 4.0,
+        "ratings": [
+            { "ratedBy": "emma@example.com", "score": 4 },
+            { "ratedBy": "john@example.com", "score": 4 }
+        ],
+        "notifications": []
+    },
+    {
+        "name": "Jane Doe",
+        "email": "jane@example.com",
+        "role": "reader",
+        "averageRating": 5.0,
+        "ratings": [
+            { "ratedBy": "bob@example.com", "score": 5 }
+        ],
+        "notifications": [
+            { "message": "Profile update successful.", "read": true }
+        ]
+    },
+    {
+        "name": "Chris Evans",
+        "email": "chris@example.com",
+        "role": "reader",
+        "averageRating": 0,
+        "ratings": [],
+        "notifications": [
+            { "message": "Welcome to our community!", "read": true }
+        ]
+    },
+    {
+        "name": "Emma Brown",
+        "email": "emma@example.com",
+        "role": "writer",
+        "averageRating": 3.8,
+        "ratings": [
+            { "ratedBy": "jane@example.com", "score": 4 },
+            { "ratedBy": "alice@example.com", "score": 3.5 }
+        ],
+        "notifications": [
+            { "message": "New follower on your profile.", "read": false },
+            { "message": "You received a badge!", "read": true }
+        ]
+    },
+    {
+        "name": "Alex Johnson",
+        "email": "alex.johnson@example.com",
+        "role": "admin",
+        "averageRating": 2.0,
+        "ratings": [
+            { "ratedBy": "emma@example.com", "score": 2 }
+        ],
+        "notifications": [
+            { "message": "Your password was changed.", "read": true }
+        ]
+    },
+    {
+        "name": "Mary Williams",
+        "email": "mary@example.com",
+        "role": "reader",
+        "averageRating": 4.2,
+        "ratings": [
+            { "ratedBy": "john@example.com", "score": 5 },
+            { "ratedBy": "jane@example.com", "score": 3.5 }
+        ],
+        "notifications": [
+            { "message": "Your subscription is expiring soon.", "read": false }
+        ]
+    },
+    {
+        "name": "Charlie Brown",
+        "email": "charlie@example.com",
+        "role": "reader",
+        "averageRating": 4.7,
+        "ratings": [
+            { "ratedBy": "mary@example.com", "score": 5 },
+            { "ratedBy": "chris@example.com", "score": 4.5 }
+        ],
+        "notifications": [
+            { "message": "You have a new message!", "read": false },
+            { "message": "Monthly report available.", "read": true }
+        ]
+    }
+]

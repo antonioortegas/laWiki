@@ -3,8 +3,8 @@ services:
     image: mongo:latest
     container_name: mongo-dev-microservices
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
@@ -15,27 +15,15 @@ services:
     image: mongo-express:latest
     container_name: mongo-express-microservices
     environment:
-      - ME_CONFIG_BASICAUTH_USERNAME=admin
-      - ME_CONFIG_BASICAUTH_PASSWORD=admin
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=${ME_CONFIG_BASICAUTH_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ME_CONFIG_BASICAUTH_PASSWORD}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_CONFIG_MONGODB_ADMINPASSWORD}
       - ME_CONFIG_MONGODB_SERVER=mongodb
     ports:
       - "8081:8081"
     depends_on:
       - mongodb
-
-  entry-service:
-    build:
-      context: ./services/entry-service
-      dockerfile: Dockerfile
-    container_name: entry-service
-    ports:
-      - "3001:3000"
-    depends_on:
-      - mongodb
-    environment:
-      - MONGODB_URI=mongodb://admin:admin@mongodb:27017/laWiki?authSource=admin
 
   user-service:
     build:
@@ -43,23 +31,16 @@ services:
       dockerfile: Dockerfile
     container_name: user-service
     ports:
-      - "3002:3000"
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+      - "3000:3000"
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URI=mongodb://admin:admin@mongodb:27017/laWiki?authSource=admin
-
-  version-service:
-    build:
-      context: ./services/version-service
-      dockerfile: Dockerfile
-    container_name: version-service
-    ports:
-      - "3003:3000"
-    depends_on:
-      - mongodb
-    environment:
-      - MONGODB_URI=mongodb://admin:admin@mongodb:27017/laWiki?authSource=admin
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
   wiki-service:
     build:
@@ -67,11 +48,47 @@ services:
       dockerfile: Dockerfile
     container_name: wiki-service
     ports:
-      - "3004:3000"
+      - "${WIKI_SERVICE_PORT}:${WIKI_SERVICE_PORT}"
     depends_on:
       - mongodb
     environment:
-      - MONGODB_URI=mongodb://admin:admin@mongodb:27017/laWiki?authSource=admin
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+
+  entry-service:
+    build:
+      context: ./services/entry-service
+      dockerfile: Dockerfile
+    container_name: entry-service
+    ports:
+      - "${ENTRY_SERVICE_PORT}:${ENTRY_SERVICE_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+
+  version-service:
+    build:
+      context: ./services/version-service
+      dockerfile: Dockerfile
+    container_name: version-service
+    ports:
+      - "${VERSION_SERVICE_PORT}:${VERSION_SERVICE_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
 
 volumes:
   mongo-data:

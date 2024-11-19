@@ -1,0 +1,67 @@
+[
+    {
+        "title": "Cosmere: Mistborn",
+        "description": "A wiki dedicated to the Mistborn series within Brandon Sanderson's Cosmere universe.",
+        "content": "This wiki explores the characters, magic systems, and major events in the Mistborn series.",
+        "createdBy": "63e8e9d8f86d4e25c9a1b111",  
+        "language": "en",
+        "tags": ["Cosmere", "Fantasy", "Brandon Sanderson"],
+        "entries": [
+            "63e8e9d8f86d4e25c9a1b222",
+            "63e8e9d8f86d4e25c9a1b223",
+            "63e8e9d8f86d4e25c9a1b224"
+        ]
+    },
+    {
+        "title": "Cosmere: Stormlight Archive",
+        "description": "A wiki focused on the Stormlight Archive series by Brandon Sanderson, another major part of the Cosmere universe.",
+        "content": "This wiki covers characters, artifacts, and locations central to the Stormlight Archive series.",
+        "createdBy": "63e8e9d8f86d4e25c9a1b112",  
+        "language": "en",
+        "tags": ["Cosmere", "Fantasy", "Stormlight Archive"],
+        "entries": [
+            "63e8e9d8f86d4e25c9a1b225",
+            "63e8e9d8f86d4e25c9a1b226",
+            "63e8e9d8f86d4e25c9a1b227"
+        ]
+    },
+    {
+        "title": "Marvel Cinematic Universe: Avengers",
+        "description": "This wiki explores the Avengers within the MCU, including character profiles and major events.",
+        "content": "This wiki includes information about key Avengers characters, their origins, and major story arcs in the MCU.",
+        "createdBy": "63e8e9d8f86d4e25c9a1b113",  
+        "language": "en",
+        "tags": ["Marvel", "MCU", "Avengers"],
+        "entries": [
+            "63e8e9d8f86d4e25c9a1b228",
+            "63e8e9d8f86d4e25c9a1b229",
+            "63e8e9d8f86d4e25c9a1b230"
+        ]
+    },
+    {
+        "title": "Marvel Cinematic Universe: Guardians of the Galaxy",
+        "description": "A wiki covering the Guardians of the Galaxy, their adventures, and allies within the Marvel Cinematic Universe.",
+        "content": "This wiki includes profiles of the Guardians and their adventures across the universe.",
+        "createdBy": "63e8e9d8f86d4e25c9a1b114",  
+        "language": "en",
+        "tags": ["Marvel", "MCU", "Guardians of the Galaxy"],
+        "entries": [
+            "63e8e9d8f86d4e25c9a1b231",
+            "63e8e9d8f86d4e25c9a1b232",
+            "63e8e9d8f86d4e25c9a1b233"
+        ]
+    },
+    {
+        "title": "Pokémon Universe",
+        "description": "This wiki contains information about Pokémon species, characters, and lore within the Pokémon universe.",
+        "content": "A comprehensive guide to Pokémon, including trainers, species, and iconic items.",
+        "createdBy": "63e8e9d8f86d4e25c9a1b115",  
+        "language": "en",
+        "tags": ["Pokémon", "Gaming", "Anime"],
+        "entries": [
+            "63e8e9d8f86d4e25c9a1b234",
+            "63e8e9d8f86d4e25c9a1b235",
+            "63e8e9d8f86d4e25c9a1b236"
+        ]
+    }
+]

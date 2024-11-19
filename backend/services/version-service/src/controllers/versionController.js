@@ -2,6 +2,24 @@ const Version = require('../models/versionModel');
 
 const getVersions = async (req, res) => {
     try {
+        filter = {};
+
+        if (req.query.entry) {
+            filter.entry = req.query.entry;
+        }
+
+        // Date format: YYYY-MM-DDTHH:MM:SSZ
+        const startDate = new Date(req.query.from);
+        const endDate = new Date(req.query.to);
+
+        if (startDate && endDate) {
+            filter.createdAt = { $gte: startDate, $lte: endDate };
+        } else if (startDate) {
+            filter.createdAt = { $gte: startDate };
+        } else if (endDate) {
+            filter.createdAt = { $lte: endDate };
+        }
+
         const versions = await Version.find();
         res.status(200).json(versions);
     } catch (err) {

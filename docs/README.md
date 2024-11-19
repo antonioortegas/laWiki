@@ -1,31 +1,46 @@
-# Setup guide for local development
+# Backend
 
-## Used software and tools
+## Initial Setup
 
-- [MongoDB](https://www.mongodb.com/try/download/community), a NoSQL database
-- [MongoDB Compass](https://www.mongodb.com/try/download/compass), a GUI for MongoDB
-- [Docker Desktop](https://www.docker.com/products/docker-desktop), a containerization platform
+1. Install [Node.js](https://nodejs.org/en)
+2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
-## Setting up the project locally
+>[!NOTE]
+>If you are rebuilding the containers, you may need to remove the existing ones to avoid conflicts. You can do this by running the following command.
+>```bash
+>docker system prune -a
+>```
 
-1. Install Docker Desktop (a reboot may be required)
-2. Clone the repository
-3. cd into the project directory
 
-    ```bash
-    cd laWiki/
-    ```
+## Microservice development
 
-4. Run the following command to start the containers
+1. From the root of the project, start the local database running the docker-compose file in the docs directory. This will start a MongoDB instance and a Mongo Express instance.
 
-    ```bash
-    docker compose -f ./docs/docker-compose.yml up -d
-    ```
+```bash
+docker compose -f ./docs/docker-compose.yml up -d
+```
 
-## Accessing the containers
+2. Install the dependencies for the microservice you want to work on.
 
-MongoDB will now be running, and can be accessed via [localhost:27017](http://localhost:27017)
+```bash
+cd backend/services/wiki-service
+npm install
+```
 
-You can access [localhost:8081](http://localhost:8081) with the default credentials and interact with the instance using the web-based GUI [Mongo Express](https://github.com/mongo-express/mongo-express)
+3. To start the microservice, cd into its directory, under ./backend/services/, (for example, ./backend/services/wiki-service) and run the following command.
 
-Alternatively, you can access the MongoDB instance using MongoDB Compass GUI with the default credentials
+```bash
+npm run dev
+```
+
+3. The microservice will start on [http://localhost:3000](http://localhost:3000) and any changes you make will be automatically updated.
+
+## Deploying all microservices locally
+
+To test the entire system locally, you can deploy all microservices at once. From the root of the project, run the following command.
+
+```bash
+docker compose -f ./backend/docker-compose.yml up -d
+```
+
+This will build and start all the microservices and the database. The services will be available at ports 3001 to 3004. (You can change the ports in the docker-compose file if needed.)
