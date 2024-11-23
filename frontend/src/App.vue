@@ -1,47 +1,71 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, onMounted } from 'vue';
+import EasyMDE from 'easymde';
+import 'easymde/dist/easymde.min.css';
+
+const markdownContent = ref(''); // Contenido inicial del editor
+let easyMDEInstance = null; // Referencia al editor
+
+onMounted(() => {
+  // Inicializar EasyMDE
+  easyMDEInstance = new EasyMDE({
+    element: document.getElementById('markdown-editor'),
+    initialValue: markdownContent.value,
+    placeholder: 'Escribe aquí tu contenido en Markdown...',
+    spellChecker: false,
+  });
+
+  // Sincronizar el contenido con Vue
+  easyMDEInstance.codemirror.on('change', () => {
+    markdownContent.value = easyMDEInstance.value();
+  });
+});
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div>
+    <header>
+      <img
+        alt="Vue logo"
+        class="logo"
+        src="./assets/logo.svg"
+        width="125"
+        height="125"
+      />
+      <h1>Editor Markdown con EasyMDE</h1>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main>
+      <textarea id="markdown-editor"></textarea>
+      <div>
+        <h2>Vista previa:</h2>
+        <div v-html="markdownContent"></div>
+      </div>
+    </main>
+  </div>
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 800px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+textarea {
+  width: 100%;
+  height: 300px;
+  margin: 1rem 0;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+h2 {
+  margin-top: 2rem;
 }
 </style>
