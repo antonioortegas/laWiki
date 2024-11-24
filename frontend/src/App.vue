@@ -46,6 +46,11 @@
               width="500px"
               height="500px"
               markerText="Módulo de prisión de Alcalá meco" 
+              position="absolute"
+              top="0"
+              right="0"
+              bottom="0"
+              left="0"
             />
           </div>
         </div>

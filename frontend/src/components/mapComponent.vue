@@ -1,5 +1,5 @@
 <template>
-    <div  :style="{ width: mapWidth, height: mapHeight }" id="map" ></div>
+    <div  :style="mapStyle"id="map" ></div>
 </template>
 
 <script>
@@ -46,14 +46,44 @@ export default {
             type: Number,
             required: false,
             default: 13
+        },
+        position: {
+            type: String,
+            required: false,
+            default: 'relative'
+        },
+        top: {
+            type: String,
+            required: false,
+            default: 'auto'
+        },
+        right: {
+            type: String,
+            required: false,
+            default: 'auto'
+        },
+        bottom: {
+            type: String,
+            required: false,
+            default: 'auto'
+        },
+        left: {
+            type: String,
+            required: false,
+            default: 'auto'
         }
     },
     computed: {
-        mapWidth() {
-            return this.width;
-        },
-        mapHeight() {
-            return this.height;
+        mapStyle() {
+            return {
+                width: this.width,
+                height: this.height,
+                position: this.position,
+                top: this.top,
+                right: this.right,
+                bottom: this.bottom,
+                left: this.left
+            };
         }
     },
     mounted() {
