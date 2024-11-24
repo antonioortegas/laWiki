@@ -1,5 +1,5 @@
 <template>
-    <div id="map" style="height: 500px;"></div>
+    <div  :style="{ width: mapWidth, height: mapHeight }" id="map" ></div>
 </template>
 
 <script>
@@ -31,6 +31,29 @@ export default {
             type: String,
             required: false,
             default: 'Another marker'
+        },
+        width: {
+            type: String,
+            required: false,
+            default: '100%'
+        },
+        height: {
+            type: String,
+            required: false,
+            default: '100%'
+        },
+        zoom: {
+            type: Number,
+            required: false,
+            default: 13
+        }
+    },
+    computed: {
+        mapWidth() {
+            return this.width;
+        },
+        mapHeight() {
+            return this.height;
         }
     },
     mounted() {
@@ -38,7 +61,7 @@ export default {
     },
     methods: {
         initMap() {
-            const map = L.map('map').setView([this.latitude, this.longitude], 13);
+            const map = L.map('map').setView([this.latitude, this.longitude], this.zoom);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
