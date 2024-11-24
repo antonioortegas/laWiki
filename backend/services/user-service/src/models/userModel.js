@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    getNotificationsByEmail: {
+        type: Boolean,
+        default: false
+    },
     role: {
         type: String,
         required: true,
