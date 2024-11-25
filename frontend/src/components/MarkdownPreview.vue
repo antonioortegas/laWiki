@@ -25,7 +25,7 @@ const renderMarkdown = (content) => {
 </script>
 
 <template>
-  <div class="markdown-preview" v-html="renderMarkdown(content)"></div>
+  <div class="markdown-preview prose" v-html="renderMarkdown(content)"></div>
 </template>
 
 <style scoped>
