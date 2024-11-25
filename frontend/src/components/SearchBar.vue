@@ -18,7 +18,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'text', // 'text', 'tags', 'content'
+      default: 'text', // Puede ser 'text', 'tags', o 'content'
     },
   },
   data() {
@@ -28,9 +28,7 @@ export default {
   },
   methods: {
     onSearch() {
-      const filter = {};
-      filter[this.type] = this.searchQuery; // Dinámicamente envía el filtro adecuado
-      this.$emit('search', filter);
+      this.$emit('search', { [this.type]: this.searchQuery }); // Envía el filtro correcto
     },
   },
 };
