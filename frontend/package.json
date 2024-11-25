@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@fontsource/space-grotesk": "^5.1.0",
+    "easymde": "^2.18.0",
     "leaflet": "^1.9.4",
+    "marked": "^15.0.2",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"
   },
