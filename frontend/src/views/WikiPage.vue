@@ -54,9 +54,6 @@ const image = "https://pokemonletsgo.pokemon.com/assets/img/how-to-play/hero-img
 <template>
     <!-- "You are entering this wiki" Section (common to all wikis) -->
     <div class="bg-background text-center  flex flex-col">
-        <p class="text-lg font-medium text-gray-800 py-4">
-            You are now entering:
-        </p>
         <!-- Wiki Header -->
         <div class="text-center mx-auto px-8 sm:px-16 w-full bg-gray-100 py-4">
             <h1 class="text-3xl font-heading text-text font-bold">{{ wikiInfo.title }}</h1>
@@ -67,6 +64,14 @@ const image = "https://pokemonletsgo.pokemon.com/assets/img/how-to-play/hero-img
                 Containing <span class="font-semibold text-primary">{{ wikiInfo.entriesCount }}</span> entries and
                 growing!
             </p>
+            <router-link :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
+            <button
+            type="submit"
+            class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105"
+            >
+            Edit Wiki
+          </button>
+        </router-link>
         </div>
     </div>
     <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="image" />
