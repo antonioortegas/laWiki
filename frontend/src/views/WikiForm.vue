@@ -88,50 +88,32 @@ function submitForm() {
         <!-- Title -->
         <div>
           <label for="title" class="block text-sm font-semibold text-gray-700">Title</label>
-          <input
-            id="title"
-            v-model="formData.title"
-            type="text"
-            placeholder="Wiki title"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm"
-            required
+          <input id="title" v-model="formData.title" type="text" placeholder="Wiki title"
+            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm" :disabled="isEditing"
+          required
           />
         </div>
+
 
         <!-- Description -->
         <div>
           <label for="description" class="block text-sm font-semibold text-gray-700">Description</label>
-          <textarea
-            id="description"
-            v-model="formData.description"
-            placeholder="A brief description of the wiki"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none"
-            rows="3"
-          ></textarea>
+          <textarea id="description" v-model="formData.description" placeholder="A brief description of the wiki"
+            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none" rows="3"></textarea>
         </div>
 
         <!-- Image URL -->
         <div>
           <label for="src" class="block text-sm font-semibold text-gray-700">Image URL</label>
-          <input
-            id="src"
-            v-model="formData.src"
-            type="url"
-            placeholder="Paste an image URL"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm"
-          />
+          <input id="src" v-model="formData.src" type="url" placeholder="Paste an image URL"
+            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm" />
         </div>
 
         <!-- Tags -->
         <div>
           <label for="tags" class="block text-sm font-semibold text-gray-700">Tags</label>
-          <input
-            id="tags"
-            v-model="formData.tags"
-            type="text"
-            placeholder="Comma-separated tags"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm"
-          />
+          <input id="tags" v-model="formData.tags" type="text" placeholder="Comma-separated tags"
+            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm" />
         </div>
 
         <!-- Content 
@@ -150,11 +132,8 @@ function submitForm() {
         <!-- Language -->
         <div>
           <label for="language" class="block text-sm font-semibold text-gray-700">Language</label>
-          <select
-            id="language"
-            v-model="formData.language"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm"
-          >
+          <select id="language" v-model="formData.language"
+            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm">
             <option value="en">English</option>
             <option value="es">Spanish</option>
             <option value="fr">French</option>
@@ -166,16 +145,13 @@ function submitForm() {
         <!-- Submit Button -->
         <div class="text-center">
           <router-link to="/"> <!-- TODO: Replace with actual route -->
-            <button
-            type="submit"
-            class="px-6 py-3 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105"
-            >
-            {{ isEditing ? "Update Wiki" : "Create Wiki" }}
-          </button>
-        </router-link>
+            <button type="submit"
+              class="px-6 py-3 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105">
+              {{ isEditing ? "Update Wiki" : "Create Wiki" }}
+            </button>
+          </router-link>
         </div>
       </form>
     </div>
   </div>
 </template>
-
