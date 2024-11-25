@@ -64,12 +64,23 @@ const image = "https://pokemonletsgo.pokemon.com/assets/img/how-to-play/hero-img
                 {{ wikiInfo.description }}
             </p>
             <p class="text-gray-600 text-sm sm:text-base mt-1">
-                Containing <span class="font-semibold text-primary">{{ wikiInfo.entriesCount }}</span> entries and growing!
+                Containing <span class="font-semibold text-primary">{{ wikiInfo.entriesCount }}</span> entries and
+                growing!
             </p>
         </div>
     </div>
-
-
     <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="image" />
+    <!-- Call-to-Action Section -->
+    <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
+        <div class="text-center">
+            <p class="text-white text-lg font-heading mb-4">
+                Don't see what you're looking for? Add it!
+            </p>
+            <button
+                class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
+                + Create an Entry
+            </button>
+        </div>
+    </div>
     <CardGrid :data="entryData" />
 </template>

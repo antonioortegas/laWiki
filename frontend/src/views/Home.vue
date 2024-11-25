@@ -6,6 +6,18 @@ import CardGrid from '@/components/CardGrid.vue';
 
 <template>
     <SearchBar placeholderText="Search for a wiki..." />
+    <!-- Call-to-Action Section -->
+    <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
+        <div class="text-center">
+            <p class="text-white text-lg font-heading mb-4">
+                Want to share something? Build your own!
+            </p>
+            <button
+                class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
+                + Create a Wiki
+            </button>
+        </div>
+    </div>
     <CardGrid :data="wikiData" />
 </template>
 

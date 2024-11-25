@@ -18,7 +18,6 @@ const exampleUser = {
                 <div class="absolute inset-0 flex justify-center items-end -bottom-10">
                     <img class="object-cover h-20 w-20 rounded-full border-4 border-background" :src="exampleUser.userPfp" alt="" />
                 </div>
-                <p class="text-white text-center text-2xl pt-8 font-heading">Profile</p>
             </div>
             <div class="h-5/6 bg-background rounded-3xl p-8 font-body">
                 <!-- User Info -->
