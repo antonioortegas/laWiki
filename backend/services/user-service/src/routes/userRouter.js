@@ -17,4 +17,8 @@ router.post('/:idUser/newNotification', userController.addNotification);
 router.post('/:idUser/read/', userController.markAsRead);
 router.post('/:idUser/addRating', userController.addRating);
 
+// Custom operations for user
+router.get('/min-rating/:minRating', userController.getUsersByMinRating);
+router.get('/search/:name', userController.getUsersByPartialName);
+
 module.exports = router;
