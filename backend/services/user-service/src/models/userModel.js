@@ -56,4 +56,12 @@ const userSchema = new mongoose.Schema({
     }
 );
 
+userSchema.pre('save', function (next) {
+    if (this.isModified('ratings')) {
+        const sum = this.ratings.reduce((acc, rating) => acc + rating.score, 0);
+        this.averageRating = this.ratings.length ? sum / this.ratings.length : 0;
+    }
+    next();
+});
+
 module.exports = mongoose.model('User', userSchema);

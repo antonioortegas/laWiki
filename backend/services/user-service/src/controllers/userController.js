@@ -1,5 +1,6 @@
 const axios = require('axios');
 const User = require('../models/userModel');
+const { get } = require('mongoose');
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -128,6 +129,114 @@ const getUserEntries = async (req, res) => {
     }
 };
 
+const getAverageRating = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        const ratings = user.ratings; 
+        const average = calcAverageRating(ratings);
+        
+        res.status(200).json({average});
+    } catch (error) {
+        console.error('Error when retrieving average rating for user:', error.message);
+        res.status(500).json({ message: 'Error when retrieving average rating for user:', error: error.message });
+    }
+};
+
+const calcAverageRating = (ratings) => {
+    if (ratings.length === 0) {
+        return 0;
+    }
+
+    const sum = ratings.reduce((acc, rating) => acc + rating.score, 0);
+    return sum / ratings.length;
+};
+
+// Add a new notification for user by id
+const addNotification = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { message } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.notifications.push({ message });
+        await user.save();
+        if(user.getNotificationsByEmail)
+            sendEmail(user.email, message);
+
+        res.status(201).json({ message: 'Notification sent successfully' });
+    } catch (error) {
+        console.error('Error when adding notification for user:', error.message);
+        res.status(500).json({ message: 'Error when adding notification for user:', error: error.message });
+    }
+};
+
+// TODO: Implement email sending
+const sendEmail = async (email, message) => {
+    // Send email
+};
+
+// Mark a notification as read. Send notification id in request body as idNotification
+const markasRead = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { idNotification } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const notification = user.notifications.id(idNotification);
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found', idNotification });
+        }
+
+        notification.read = true;
+        await user.save();
+
+        res.status(200).json({ message: 'Notification marked as read' });
+    } catch (error) {
+        console.error('Error when marking notification as read:', error.message);
+        res.status(500).json({ message: 'Error when marking notification as read:', error: error.message });
+    }
+};
+
+const addRating = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { ratedBy, score } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const existingRating = user.ratings.find(rating => rating.ratedBy === ratedBy);
+        if (existingRating) {
+            return res.status(400).json({ message: 'Already rated by this user' });
+        }
+
+        user.ratings.push({ ratedBy, score });
+        user.averageRating = calcAverageRating(user.ratings);
+        await user.save();
+
+        res.status(201).json({ message: 'Rating added successfully' });
+    }
+    catch (error) {
+        console.error('Error when adding rating for user:', error.message);
+        res.status(500).json({ message: 'Error when adding rating for user:', error: error.message });
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
@@ -135,4 +244,8 @@ module.exports = {
     updateUser,
     deleteUser,
     getUserEntries,
+    getAverageRating,
+    addNotification,
+    markasRead,
+    addRating
 }
