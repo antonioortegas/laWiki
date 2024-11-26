@@ -18,6 +18,7 @@ onMounted(() => {
     initialValue: markdownContent.value,
     placeholder: 'Escribe aquí tu contenido en Markdown...',
     autofocus: true,
+    spellChecker: false,
     toolbar: [
       'bold', 'italic', 'heading', '|',
       'quote', 'unordered-list', 'ordered-list', '|',

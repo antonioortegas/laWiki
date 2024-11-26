@@ -1,26 +1,76 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router'; // Para acceder a los parámetros de la ruta
 import MarkdownEditor from '../components/MarkdownEditor.vue';
-import MarkdownPreview from '../components/MarkdownPreview.vue'; // Importamos el componente de vista previa
-import { marked } from 'marked'; // Importar la librería para procesar Markdown
+import MarkdownPreview from '../components/MarkdownPreview.vue';
 
+// Simula las entradas en un arreglo local
+const entrySampleData = [
+  {
+    id: "63e8e9d8f86d4e25c9a1b222",
+    content: "Detailed content about Allomancy in the Mistborn universe.",
+  },
+  {
+    id: "63e8e9d8f86d4e25c9a1b223",
+    content: "A deep dive into Feruchemy and its applications.",
+  },
+  {
+    id: "63e8e9d8f86d4e25c9a1b224",
+    content: "The science of Hemalurgy and its ethical implications.",
+  },
+  {
+    id: "63e8e9d8f86d4e25c9a1b225",
+    content: "The heralds of the Stormlight Archive and their powers.",
+  },
+];
+
+const route = useRoute(); // Accede a la información de la ruta
+const entryId = ref(route.params.entryId); // ID de la entrada desde la ruta
 const isEditing = ref(false); // Controla si estamos en modo edición
-const markdownContent = ref('1. una cosa\n2. dos cosas\n3. tres cosas'); // Contenido inicial del Markdown
+const markdownContent = ref(''); // Contenido inicial del Markdown
 
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {
+  if (isEditing.value) {
+    saveEntry(); // Al salir del modo edición, guarda los cambios
+  }
   isEditing.value = !isEditing.value;
 };
+
+// Cargar el contenido de la entrada desde los datos locales
+const loadEntry = () => {
+  const entry = entrySampleData.find((e) => e.id === entryId.value);
+  if (entry) {
+    markdownContent.value = entry.content; // Asignar el contenido de la entrada
+  } else {
+    console.error('Entrada no encontrada');
+  }
+};
+
+// Guardar los cambios en los datos locales
+const saveEntry = () => {
+  const entryIndex = entrySampleData.findIndex((e) => e.id === entryId.value);
+  if (entryIndex > -1) {
+    entrySampleData[entryIndex].content = markdownContent.value;
+    console.log('Entrada actualizada exitosamente');
+  } else {
+    console.error('Error al guardar los cambios: entrada no encontrada.');
+  }
+};
+
+// Cargar el contenido al montar el componente
+onMounted(() => {
+  loadEntry();
+});
 </script>
 
 <template>
   <div class="entry-page">
-    <h1>ENTRY: {{ $route.params.entryId }}</h1>
+    <h1>ENTRY: {{ entryId }}</h1>
 
     <!-- Vista de solo lectura -->
     <div v-if="!isEditing">
-      <!-- Renderizamos la vista previa con un key dinámico -->
-      <MarkdownPreview :content="markdownContent" :key="markdownContent" />
+      <MarkdownPreview :content="markdownContent" />
       <button @click="toggleEditMode">Editar entrada</button>
     </div>
 
@@ -31,19 +81,10 @@ const toggleEditMode = () => {
       </div>
       <div class="preview-container">
         <h2>Vista previa</h2>
-        <!-- Renderizamos la vista previa con un key dinámico -->
-        <MarkdownPreview :content="markdownContent" :key="markdownContent" />
+        <MarkdownPreview :content="markdownContent" />
       </div>
       <button @click="toggleEditMode">Terminar edición</button>
     </div>
-
-    <!-- Enlace para ver versiones -->
-    <router-link
-      :to="{ name: 'EntryVersions', params: { entryId: $route.params.entryId } }"
-      class="view-versions-link"
-    >
-      Ver versiones
-    </router-link>
   </div>
 </template>
 
@@ -85,15 +126,5 @@ button {
 
 button:hover {
   background-color: #45a049;
-}
-
-.view-versions-link {
-  margin-top: 1rem;
-  color: #007bff;
-  text-decoration: none;
-}
-
-.view-versions-link:hover {
-  text-decoration: underline;
 }
 </style>

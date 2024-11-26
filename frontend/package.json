@@ -11,6 +11,7 @@
   "dependencies": {
     "@fontsource/space-grotesk": "^5.1.0",
     "@tailwindcss/typography": "^0.5.15",
+    "axios": "^1.7.8",
     "easymde": "^2.18.0",
     "leaflet": "^1.9.4",
     "marked": "^15.0.2",
