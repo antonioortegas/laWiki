@@ -42,9 +42,10 @@ const getUser = async (req, res) => {
     }
 }
 
+// Revisar si ratings funciona correctamente
 const createUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, ratings } = req.body;
         if (!name || !email) {
             return res.status(400).json('Name and email are required');
         }
@@ -55,6 +56,13 @@ const createUser = async (req, res) => {
         }
 
         const newUser = new User(req.body);
+
+        if(!ratings || ratings.length === 0) {
+            newUser.averageRating = 0;
+        } else {
+            newUser.averageRating = calcAverageRating(ratings);
+        }
+
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
     } catch (err) {
@@ -203,7 +211,7 @@ const sendEmail = async (email, message) => {
 };
 
 // Mark a notification as read. Send notification id in request body as idNotification
-const markasRead = async (req, res) => {
+const markAsRead = async (req, res) => {
     try {
         const { idUser } = req.params;
         const { idNotification } = req.body;
@@ -228,6 +236,7 @@ const markasRead = async (req, res) => {
     }
 };
 
+// Adds a rating and updates the average rating of the user
 const addRating = async (req, res) => {
     try {
         const { idUser } = req.params;
@@ -265,6 +274,6 @@ module.exports = {
     getAverageRating,
     getNotifications,
     addNotification,
-    markasRead,
+    markAsRead,
     addRating
 }

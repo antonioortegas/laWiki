@@ -14,7 +14,7 @@
     data() {
       return {
         notifications: [], // Lista inicial
-        userId: '673ce5d3fab87753faa8455c' // Cambia esto al ID dinámico del usuario
+        userId: '673ce5d3fab87753faa8455c' // TODO: Cambia esto al ID dinámico del usuario
       };
     },
     async mounted() {
