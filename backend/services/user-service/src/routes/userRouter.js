@@ -12,6 +12,7 @@ router.delete('/:id', userController.deleteUser);
 
 /* ================= Frontend functions =================  */
 router.get('/:idUser/averageRating', userController.getAverageRating);
+router.get('/:idUser/notifications', userController.getNotifications);
 router.post('/:idUser/newNotification', userController.addNotification);
 router.post('/:idUser/read/', userController.markasRead);
 router.post('/:idUser/addRating', userController.addRating);

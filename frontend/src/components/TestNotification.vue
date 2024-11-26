@@ -4,36 +4,32 @@
       <NotificationBell :notifications="notifications" />
     </div>
   </template>
-  
+
   <script>
   import NotificationBell from "./Notification.vue";
-  
+  import axios from 'axios';
+
   export default {
-    name: "TestNotificationBell",
-    components: {
-      NotificationBell,
-    },
+    components: { NotificationBell },
     data() {
       return {
-        notifications: this.generateRandomNotifications(),
+        notifications: [], // Lista inicial
+        userId: '673ce5d3fab87753faa8455c' // Cambia esto al ID dinámico del usuario
       };
     },
-    methods: {
-      generateRandomNotifications() {
-        const notifications = [];
-        for (let i = 1; i <= 10; i++) {
-          notifications.push({
-            id: i,
-            message: `Notificación ${i}`,
-            read: Math.random() > 0.5, // Aleatorio: leído o no leído
-          });
-        }
-        return notifications;
-      },
-    },
+    async mounted() {
+      try {
+        const response = await axios.get(`http://localhost:3001/users/${this.userId}/notifications`);
+
+        console.log("Respuesta del backend:", response.data); // Depuración
+        this.notifications = response.data || [];
+      } catch (error) {
+        console.error('Error al obtener lista de notificaciones:', error);
+      }
+    }
   };
   </script>
-  
+
   <style scoped>
   h1 {
     font-family: Arial, sans-serif;
@@ -41,4 +37,3 @@
     margin-bottom: 20px;
   }
   </style>
-  

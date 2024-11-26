@@ -131,15 +131,16 @@ const getUserEntries = async (req, res) => {
 
 const getAverageRating = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.idUser);
+        console.log(req.params.idUser);
 
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        const ratings = user.ratings; 
+        const ratings = user.ratings;
         const average = calcAverageRating(ratings);
-        
+
         res.status(200).json({average});
     } catch (error) {
         console.error('Error when retrieving average rating for user:', error.message);
@@ -156,13 +157,30 @@ const calcAverageRating = (ratings) => {
     return sum / ratings.length;
 };
 
+// Get all notifications for user by id
+const getNotifications = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user.notifications);
+    } catch (error) {
+        console.error('Error when retrieving notifications for user:', error.message);
+        res.status(500).json({ message: 'Error when retrieving notifications for user:', error: error.message });
+    }
+};
+
 // Add a new notification for user by id
 const addNotification = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idUser } = req.params;
         const { message } = req.body;
 
-        const user = await User.findById(id);
+        const user = await User.findById(idUser);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -245,6 +263,7 @@ module.exports = {
     deleteUser,
     getUserEntries,
     getAverageRating,
+    getNotifications,
     addNotification,
     markasRead,
     addRating
