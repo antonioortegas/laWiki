@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios'; // Para realizar solicitudes HTTP
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
 
 const isEditing = ref(false); // Controla si estamos en modo edición
 const markdownContent = ref(''); // Contenido inicial del Markdown
 const entryId = ref($route.params.entryId); // ID de la entrada desde las rutas
+
+// URL base para la API
+const apiBaseUrl = import.meta.env.ENTRIES_API_HOST; 
 
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {
@@ -19,8 +21,12 @@ const toggleEditMode = () => {
 // Cargar el contenido de la entrada desde el microservicio
 const loadEntry = async () => {
   try {
-    const response = await axios.get(`http://localhost:3003/${entryId.value}`);
-    markdownContent.value = response.data.content; // Asignar el contenido de la respuesta
+    const response = await fetch(`${apiBaseUrl}/${entryId.value}`);
+    if (!response.ok) {
+      throw new Error('Error al cargar la entrada');
+    }
+    const data = await response.json();
+    markdownContent.value = data.content; // Asignar el contenido de la respuesta
   } catch (error) {
     console.error('Error al cargar la entrada:', error);
   }
@@ -29,9 +35,18 @@ const loadEntry = async () => {
 // Guardar los cambios en el microservicio
 const saveEntry = async () => {
   try {
-    await axios.put(`http://localhost:3003/${entryId.value}`, {
-      content: markdownContent.value,
+    const response = await fetch(`${apiBaseUrl}/${entryId.value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content: markdownContent.value }),
     });
+
+    if (!response.ok) {
+      throw new Error('Error al actualizar la entrada');
+    }
+
     console.log('Entrada actualizada exitosamente');
   } catch (error) {
     console.error('Error al actualizar la entrada:', error);
@@ -126,25 +141,3 @@ button:hover {
   text-decoration: underline;
 }
 </style>
-<script>
-// Añade datos de las entradas
-const entrySampleData = [
-    {
-        id: "63e8e9d8f86d4e25c9a1b222",
-        content: "Detailed content about Allomancy in the Mistborn universe."
-    },
-    {
-        id: "63e8e9d8f86d4e25c9a1b223",
-        content: "A deep dive into Feruchemy and its applications."
-    },
-    {
-        id: "63e8e9d8f86d4e25c9a1b224",
-        content: "The science of Hemalurgy and its ethical implications."
-    },
-    // Más datos de entrada como ejemplo
-    {
-        id: "63e8e9d8f86d4e25c9a1b225",
-        content: "The heralds of the Stormlight Archive and their powers."
-    }
-];
-</script>
