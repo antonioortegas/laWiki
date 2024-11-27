@@ -4,7 +4,8 @@
       type="text"
       v-model="searchQuery"
       :placeholder="placeholder"
-      @input="onSearch"
+      @keydown="onKeydown"
+      @input="onInput"
     />
   </div>
 </template>
@@ -27,8 +28,13 @@ export default {
     };
   },
   methods: {
-    onSearch() {
-      this.$emit('search', { [this.type]: this.searchQuery }); // Envía el filtro correcto
+    onInput() {
+      // Sin emitir búsqueda aquí; solo para actualizar el modelo si es necesario.
+    },
+    onKeydown(event) {
+      if (event.key === 'Enter') {
+        this.$emit('enter', { [this.type]: this.searchQuery }); // Envía el filtro al presionar Enter
+      }
     },
   },
 };

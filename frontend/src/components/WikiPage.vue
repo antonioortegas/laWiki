@@ -2,45 +2,67 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import SearchBar from './SearchBar.vue';
+//dotenv
 
+
+// Estado reactivo
 const entries = ref([]);
 const loading = ref(false);
-const showAdvancedSearch = ref(false); // Mostrar u ocultar búsqueda avanzada
+const showAdvancedSearch = ref(false);
 
-const searchEntries = async (filters) => {
+// Filtros iniciales vacíos
+const filters = ref({
+  text: '',
+  tags: '',
+  content: '',
+  createdBy: '',
+  editors: '',
+});
+
+
+
+// Función para ejecutar la búsqueda
+const searchEntries = async () => {
   loading.value = true;
 
   try {
-    const url = `http://localhost:7002/entries`; // Endpoint general para obtener todas las entradas
-    const response = await axios.get('/entries');
+    // Obtener datos de la API
+    const response = await axios.get(`/entries`);
+    const allEntries = response.data;
 
-    // Filtrado local para todos los criterios
-    entries.value = response.data.filter((entry) => {
-      const matchesTitle = filters.text
-        ? entry.title.toLowerCase().includes(filters.text.toLowerCase())
+    // Convertir los tags del filtro en una lista
+    const filterTags = filters.value.tags
+      ? filters.value.tags.split(',').map((tag) => tag.trim().toLowerCase())
+      : [];
+
+    // Filtrado local
+    entries.value = allEntries.filter((entry) => {
+      const matchesTitle = filters.value.text
+        ? entry.title.toLowerCase().includes(filters.value.text.toLowerCase())
         : true;
 
-      const matchesTags = filters.tags
-        ? entry.tags.some((tag) =>
-            tag.toLowerCase().includes(filters.tags.toLowerCase())
+      const matchesTags = filterTags.length
+        ? filterTags.every((tag) =>
+            entry.tags.some((entryTag) =>
+              entryTag.toLowerCase().includes(tag)
+            )
           )
         : true;
 
-      const matchesContent = filters.content
-        ? entry.content.toLowerCase().includes(filters.content.toLowerCase())
+      const matchesContent = filters.value.content
+        ? entry.content.toLowerCase().includes(filters.value.content.toLowerCase())
         : true;
 
-      const matchesCreatedBy = filters.createdBy
-        ? entry.createdBy.toLowerCase().includes(filters.createdBy.toLowerCase())
+      const matchesCreatedBy = filters.value.createdBy
+        ? entry.createdBy.toLowerCase().includes(filters.value.createdBy.toLowerCase())
         : true;
 
-      const matchesEditors = filters.editors
+      const matchesEditors = filters.value.editors
         ? entry.editors.some((editor) =>
-            editor.toLowerCase().includes(filters.editors.toLowerCase())
+            editor.toLowerCase().includes(filters.value.editors.toLowerCase())
           )
         : true;
 
-      // Incluir solo las entradas que coincidan con todos los criterios activos
       return (
         matchesTitle &&
         matchesTags &&
@@ -57,6 +79,14 @@ const searchEntries = async (filters) => {
   }
 };
 
+// Actualizar filtro al presionar Enter
+const handleEnter = (field, value) => {
+  filters.value[field] = value;
+  searchEntries(); // Realiza la búsqueda al actualizar el filtro
+};
+
+
+// Alternar la búsqueda avanzada
 const toggleAdvancedSearch = () => {
   showAdvancedSearch.value = !showAdvancedSearch.value;
 };
@@ -67,21 +97,44 @@ const toggleAdvancedSearch = () => {
     <h2>Buscar en la Wiki</h2>
 
     <!-- Barra de búsqueda básica -->
-    <SearchBar @search="searchEntries" placeholder="Buscar por título..." />
+    <SearchBar
+  :placeholder="'Buscar por título...'"
+  type="text"
+  @enter="(value) => handleEnter('text', value.text)"
+/>
 
+    
     <!-- Botón para mostrar/ocultar búsqueda avanzada -->
     <button @click="toggleAdvancedSearch">
       {{ showAdvancedSearch ? 'Ocultar búsqueda avanzada' : 'Mostrar búsqueda avanzada' }}
     </button>
-
+    
     <!-- Barras de búsqueda avanzada -->
     <div v-if="showAdvancedSearch" class="advanced-search">
-      <SearchBar @search="searchEntries" type="tags" placeholder="Buscar por tags..." />
-      <SearchBar @search="searchEntries" type="content" placeholder="Buscar por contenido..." />
-      <SearchBar @search="searchEntries" type="createdBy" placeholder="Buscar por creador..." />
-      <SearchBar @search="searchEntries" type="editors" placeholder="Buscar por editores..." />
+      <SearchBar
+  :placeholder="'Buscar por tags (separados por comas)...'"
+  type="tags"
+  @enter="(value) => handleEnter('tags', value.tags)"
+/>
+<SearchBar
+  :placeholder="'Buscar por contenido...'"
+  type="content"
+  @enter="(value) => handleEnter('content', value.content)"
+/>
+      <SearchBar
+        :value="filters.createdBy"
+        @update:value="(value) => (filters.createdBy = value)"
+        @enter="(value) => handleEnter('createdBy', value)"
+        placeholder="Buscar por creador..."
+      />
+      <SearchBar
+        :value="filters.editors"
+        @update:value="(value) => (filters.editors = value)"
+        @enter="(value) => handleEnter('editors', value)"
+        placeholder="Buscar por editores..."
+      />
     </div>
-
+    
     <!-- Resultados -->
     <div v-if="loading" class="loading">Cargando...</div>
     <ul v-if="entries.length" class="results">
@@ -100,30 +153,15 @@ const toggleAdvancedSearch = () => {
 </template>
 
 <style scoped>
-.results {
-  list-style: none;
-  padding: 0;
-}
-.results li {
-  margin-bottom: 1rem;
-}
-.loading {
-  font-weight: bold;
-  color: gray;
-}
-button {
-  margin: 10px 0;
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-button:hover {
-  background-color: #0056b3;
-}
 .advanced-search {
   margin-top: 20px;
+}
+.results {
+  display: grid;
+  gap: 1rem;
+}
+.loading {
+  font-size: 1.25rem;
+  color: #6b7280;
 }
 </style>
