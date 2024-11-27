@@ -27,6 +27,16 @@ const routes = [
     component: () => import('../views/ProfilePage.vue')
   },
   {
+    path: '/wiki/new',
+    name: 'CreateWiki',
+    component: () => import('../views/WikiForm.vue')
+  },
+  {
+    path: '/wiki/:wikiId/edit',
+    name: 'EditWiki',
+    component: () => import('../views/WikiForm.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFound.vue')

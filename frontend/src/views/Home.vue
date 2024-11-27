@@ -12,10 +12,13 @@ import CardGrid from '@/components/CardGrid.vue';
             <p class="text-white text-lg font-heading mb-4">
                 Want to share something? Build your own!
             </p>
-            <button
+            <router-link :to="{ name: 'CreateWiki' }">
+
+                <button
                 class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
                 + Create a Wiki
             </button>
+        </router-link>
         </div>
     </div>
     <CardGrid :data="wikiData" />
