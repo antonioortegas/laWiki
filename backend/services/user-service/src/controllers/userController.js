@@ -18,26 +18,24 @@ const getUsers = async (req, res) => {
 
         const users = await User.find(filter);
         res.status(200).json(users);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving users",
-            error: err
-        });
+    } catch (error) {
+        console.error('Error al obtener los usuarios:', error);
+        res.status(500).json({ message: 'Error al obtener los usuarios.' });
     }
 }
 
-const getUser = async (req, res) => {
+const getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const { id } = req.params;
+        const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json('User not found');
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
         res.status(200).json(user);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving user",
-            error: err
-        });
+    }
+    catch (error) {
+        console.error('Error al obtener el usuario:', error);
+        res.status(500).json({ message: 'Error al obtener el usuario.' });
     }
 }
 
@@ -66,35 +64,73 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true });
-        if (!updatedUser) {
-            return res.status(404).json('User not found');
+        const { id } = req.params;
+        const { name, email, role } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-        res.status(200).json(updatedUser);
+
+        user.name = name;
+        user.email = email;
+        user.role = role;
+
+        const savedUser = await user.save();
+        res.status(200).json(savedUser);
     }
-    catch (err) {
-        res.status(500).json({
-            message: "Server error updating user",
-            error: err
-        });
+    catch (error) {
+        console.error('Error al actualizar el usuario:', error);
+        res.status(500).json({ message: 'Error al actualizar el usuario.' });
     }
 }
 
 const deleteUser = async (req, res) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(req.params.id);
-        if (!deletedUser) {
-            return res.status(404).json('User not found');
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-        res.status(200).json('User deleted');
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error deleting user",
-            error: err
-        });
+        await user.remove();
+        res.status(200).json({ message: 'Usuario eliminado.' });
+    }
+    catch (error) {
+        console.error('Error al eliminar el usuario:', error);
+        res.status(500).json({ message: 'Error al eliminar el usuario.' });
+    }
+}
+
+const getUsersByMinRating = async (req, res) => {
+    try {
+        const minRating = parseFloat(req.params.minRating);
+
+        if (isNaN(minRating)) {
+            return res.status(400).json({ message: 'El parámetro minRating debe ser un número válido.' });
+        }
+
+        const users = await User.find({ averageRating: { $gte: minRating } });
+
+        res.status(200).json(users);
+    }
+    catch (error) {
+        console.error('Error al obtener usuarios con calificación mínima:', error);
+        res.status(500).json({ message: 'Error al obtener usuarios con calificación mínima.' });
+    }
+}
+
+const getUsersByPartialName = async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        // Options 'i' makes the search case-insensitive
+        const users = await User.find({ name: { $regex: name, $options: 'i' } });
+
+        res.status(200).json(users);
+    }
+    catch (error) {
+        console.error('Error al buscar usuarios por nombre parcial:', error);
+        res.status(500).json({ message: 'Error al buscar usuarios por nombre parcial.' });
     }
 }
 
@@ -129,10 +165,13 @@ const getUserEntries = async (req, res) => {
 };
 
 module.exports = {
-    getUsers,
-    getUser,
     createUser,
+    getUsers,
+    getUserById,
     updateUser,
     deleteUser,
-    getUserEntries,
-}
+    getUsersByMinRating,
+    getUsersByPartialName,
+    getUserEntries
+};
+
