@@ -56,11 +56,22 @@ const exampleUserId = "SprenBonded";
 import NotificationBell from "./Notification.vue";
 import axios from "axios";
 
+const exampleNotification = 
+  {
+    _id: "1",
+    message: "Welcome to laWiki!",
+    read: false,
+    isPlaceholder: false,
+  };
+
+
 export default {
   components: { NotificationBell },
   data() {
     return {
-      notifications: [], // Inital empty list
+      notifications: [
+        exampleNotification,
+      ], // Inital empty list
       userId: "67436f7619b522e08f511bff", // TODO: Cambiar esto al ID dinámico del usuario
     };
   },
