@@ -12,7 +12,11 @@
         ★
       </div>
     </div>
-    <div class="rating-number">{{ value === 0 ? "Sin valoraciones" : value.toFixed(1) }}</div>
+    <div 
+      class="rating-number" 
+      :class="{'is-text': isText, 'is-number': !isText}">
+      {{ displayValue }}
+    </div>
   </div>
 </template>
 
@@ -36,6 +40,14 @@ export default {
     },
     stars() {
       return [1, 2, 3, 4, 5]; // Generar 5 estrellas
+    },
+    isText() {
+      // Verifica si el valor es texto ("Sin valoraciones")
+      return this.value === 0;
+    },
+    displayValue() {
+      // Devuelve el texto o el número dependiendo del valor
+      return this.isText ? "Sin valoraciones" : this.value.toFixed(1);
     }
   },
   methods: {
@@ -49,7 +61,8 @@ export default {
 <style scoped>
 .rating-container {
   display: flex;
-  align-items: center; /* Alinea las estrellas y el número horizontalmente */
+  flex-direction: column; /* Organiza los elementos en columna */
+  align-items: center; /* Centra las estrellas y el número horizontalmente */
 }
 
 .stars {
@@ -57,7 +70,7 @@ export default {
 }
 
 .star {
-  font-size: 2rem;
+  font-size: 1.4rem;
   color: gray;
   cursor: pointer;
   margin-right: 5px; /* Espaciado entre las estrellas */
@@ -67,12 +80,12 @@ export default {
 .star.filled {
   color: gold;
 }
-
+/*  TODO: PENDIENTE DE REVISAR REQUISITOS
 .star:hover,
 .star.filled:hover {
   color: gold;
 }
-
+*/
 .partial {
   position: absolute;
   top: 0;
@@ -82,8 +95,11 @@ export default {
   overflow: hidden;
 }
 
-.rating-number {
-  margin-left: 10px; /* Espacio entre las estrellas y el número */
-  font-size: 1.5rem;
+.rating-number.is-text {
+  font-size: 0.9rem;
+}
+
+.rating-number.is-number {
+  font-size: 1.2rem;
 }
 </style>

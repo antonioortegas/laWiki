@@ -6,7 +6,7 @@ router.post('/', userController.createUser);
 
 router.get('/:userId/entries', userController.getUserEntries);
 
-router.get('/:id', userController.getUser);
+router.get('/:id', userController.getUserById);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 
@@ -14,7 +14,8 @@ router.delete('/:id', userController.deleteUser);
 router.get('/:idUser/averageRating', userController.getAverageRating);
 router.get('/:idUser/notifications', userController.getNotifications);
 router.post('/:idUser/newNotification', userController.addNotification);
-router.post('/:idUser/read/', userController.markAsRead);
+router.delete('/:idUser/deleteNotification/:idNotification', userController.deleteNotification);
+router.put('/:idUser/read/', userController.markAsRead);
 router.post('/:idUser/addRating', userController.addRating);
 
 // Custom operations for user

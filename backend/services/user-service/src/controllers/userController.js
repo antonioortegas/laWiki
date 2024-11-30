@@ -246,12 +246,39 @@ const sendEmail = async (email, message) => {
     // Send email
 };
 
+// Delete a notification for user by id
+const deleteNotification = async (req, res) => {
+    try {
+        const { idUser, idNotification } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const notification = user.notifications.id(idNotification);
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found', idNotification });
+        }
+
+        user.notifications.pull(idNotification);
+        await user.save();
+
+        res.status(200).json({ message: 'Notification deleted' });
+    } catch (error) {
+        console.error('Error when deleting notification for user:', error.message);
+        res.status(500).json({ message: 'Error when deleting notification for user:', error: error.message });
+    }
+};
+
 // Mark a notification as read. Send notification id in request body as idNotification
 const markAsRead = async (req, res) => {
     try {
         const { idUser } = req.params;
         const { idNotification } = req.body;
 
+        console.log("idNotification received: ",idNotification);
+        console.log("for idUser: ",idUser);
         const user = await User.findById(idUser);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -312,6 +339,7 @@ module.exports = {
     getAverageRating,
     getNotifications,
     addNotification,
+    deleteNotification,
     markAsRead,
     addRating,
 };

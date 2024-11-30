@@ -1,4 +1,3 @@
-const { create } = require('../models/userModel');
 const Wiki = require('../models/wikiModel');
 const {get} = require('mongoose');
 

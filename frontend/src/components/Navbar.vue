@@ -1,4 +1,5 @@
 <script setup>
+
 defineProps({
   username: {
     type: String,
@@ -32,15 +33,11 @@ const exampleUserId = "SprenBonded";
       <!-- Right Section (Avatar) -->
       <div class="flex items-center space-x-1 font-body">
         <div class="relative mr-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-700 m-1 rounded-md" fill="none"
-            viewBox="0 0 24 24" stroke="white">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <div
-            class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -end-1 dark:border-gray-900">
-            11
-          </div>
+          <NotificationBell
+            :notifications="notifications"
+            :user-id="userId"
+            @notificationDeleted="removeNotification"
+             />
         </div>
         <router-link :to="{ name: 'ProfilePage', params: { userId: exampleUserId } }">
         <div class="flex items-center hover:scale-105">
@@ -53,3 +50,52 @@ const exampleUserId = "SprenBonded";
     </div>
   </nav>
 </template>
+
+<!-- Notification script -->
+<script>
+import NotificationBell from "./Notification.vue";
+import axios from "axios";
+
+export default {
+  components: { NotificationBell },
+  data() {
+    return {
+      notifications: [], // Inital empty list
+      userId: "67436f7619b522e08f511bff", // TODO: Cambiar esto al ID dinámico del usuario
+    };
+  },
+  methods: {
+    // Update the notifications list after deleting a notification
+    removeNotification(notificationId) {
+      this.notifications = this.notifications.filter((n) => n._id !== notificationId);
+      
+      if (this.notifications.length === 0) {
+        this.notifications.push({
+          _id: "placeholder",
+          message: "Nothing to see here...",
+          read: true,
+          isPlaceholder: true,
+      });
+    }
+    },
+  },
+  async mounted() {
+    try {
+      const response = await axios.get(`http://localhost:3001/users/${this.userId}/notifications`);
+
+      this.notifications = response.data || [];
+
+      if (this.notifications.length === 0) {
+        this.notifications.push({
+          id: "placeholder", // Unique ID for the placeholder
+          message: "Nothing to see here...",
+          read: true,
+          isPlaceholder: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error retrieving notifications:", error);
+    }
+  },
+};
+</script>
