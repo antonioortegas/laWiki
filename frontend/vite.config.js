@@ -15,4 +15,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/entries': {
+        target: 'http://localhost:7002', // URL del backend
+        changeOrigin: true,
+      },
+    },
+  },
 })
