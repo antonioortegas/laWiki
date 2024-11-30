@@ -3,6 +3,9 @@ import { ref } from 'vue';
 import axios from 'axios';
 import SearchBar from './SearchBar.vue';
 
+// Leer URL de la API desde .env
+const API_URL = import.meta.env.VITE_ENTRIES_API_HOST;
+
 // Estado reactivo
 const entries = ref([]);
 const loading = ref(false);
@@ -47,7 +50,8 @@ const searchEntries = async () => {
 
   try {
     // Obtener datos de la API
-    const response = await axios.get(`/entries`);
+    //const response = await axios.get(API_URL);
+    const response = await axios.get('/entries');
     const normalizedEntries = normalizeEntries(response.data);
     const normalizedFilters = normalizeFilters();
 
