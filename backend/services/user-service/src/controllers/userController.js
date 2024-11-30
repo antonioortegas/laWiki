@@ -1,5 +1,6 @@
 const axios = require('axios');
 const User = require('../models/userModel');
+const { get } = require('mongoose');
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -39,9 +40,10 @@ const getUserById = async (req, res) => {
     }
 }
 
+// Revisar si ratings funciona correctamente
 const createUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, ratings } = req.body;
         if (!name || !email) {
             return res.status(400).json('Name and email are required');
         }
@@ -52,6 +54,13 @@ const createUser = async (req, res) => {
         }
 
         const newUser = new User(req.body);
+
+        if(!ratings || ratings.length === 0) {
+            newUser.averageRating = 0;
+        } else {
+            newUser.averageRating = calcAverageRating(ratings);
+        }
+
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
     } catch (err) {
@@ -164,6 +173,160 @@ const getUserEntries = async (req, res) => {
     }
 };
 
+const getAverageRating = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.idUser);
+        console.log(req.params.idUser);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        const ratings = user.ratings;
+        const average = calcAverageRating(ratings);
+
+        res.status(200).json({average});
+    } catch (error) {
+        console.error('Error when retrieving average rating for user:', error.message);
+        res.status(500).json({ message: 'Error when retrieving average rating for user:', error: error.message });
+    }
+};
+
+const calcAverageRating = (ratings) => {
+    if (ratings.length === 0) {
+        return 0;
+    }
+
+    const sum = ratings.reduce((acc, rating) => acc + rating.score, 0);
+    return sum / ratings.length;
+};
+
+// Get all notifications for user by id
+const getNotifications = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user.notifications);
+    } catch (error) {
+        console.error('Error when retrieving notifications for user:', error.message);
+        res.status(500).json({ message: 'Error when retrieving notifications for user:', error: error.message });
+    }
+};
+
+// Add a new notification for user by id
+const addNotification = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { message } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.notifications.push({ message });
+        await user.save();
+        if(user.getNotificationsByEmail)
+            sendEmail(user.email, message);
+
+        res.status(201).json({ message: 'Notification sent successfully' });
+    } catch (error) {
+        console.error('Error when adding notification for user:', error.message);
+        res.status(500).json({ message: 'Error when adding notification for user:', error: error.message });
+    }
+};
+
+// TODO: Implement email sending
+const sendEmail = async (email, message) => {
+    // Send email
+};
+
+// Delete a notification for user by id
+const deleteNotification = async (req, res) => {
+    try {
+        const { idUser, idNotification } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const notification = user.notifications.id(idNotification);
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found', idNotification });
+        }
+
+        user.notifications.pull(idNotification);
+        await user.save();
+
+        res.status(200).json({ message: 'Notification deleted' });
+    } catch (error) {
+        console.error('Error when deleting notification for user:', error.message);
+        res.status(500).json({ message: 'Error when deleting notification for user:', error: error.message });
+    }
+};
+
+// Mark a notification as read. Send notification id in request body as idNotification
+const markAsRead = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { idNotification } = req.body;
+
+        console.log("idNotification received: ",idNotification);
+        console.log("for idUser: ",idUser);
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const notification = user.notifications.id(idNotification);
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found', idNotification });
+        }
+
+        notification.read = true;
+        await user.save();
+
+        res.status(200).json({ message: 'Notification marked as read' });
+    } catch (error) {
+        console.error('Error when marking notification as read:', error.message);
+        res.status(500).json({ message: 'Error when marking notification as read:', error: error.message });
+    }
+};
+
+// Adds a rating and updates the average rating of the user
+const addRating = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { ratedBy, score } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const existingRating = user.ratings.find(rating => rating.ratedBy === ratedBy);
+        if (existingRating) {
+            return res.status(400).json({ message: 'Already rated by this user' });
+        }
+
+        user.ratings.push({ ratedBy, score });
+        user.averageRating = calcAverageRating(user.ratings);
+        await user.save();
+
+        res.status(201).json({ message: 'Rating added successfully' });
+    }
+    catch (error) {
+        console.error('Error when adding rating for user:', error.message);
+        res.status(500).json({ message: 'Error when adding rating for user:', error: error.message });
+    }
+};
+
 module.exports = {
     createUser,
     getUsers,
@@ -172,6 +335,12 @@ module.exports = {
     deleteUser,
     getUsersByMinRating,
     getUsersByPartialName,
-    getUserEntries
+    getUserEntries,
+    getAverageRating,
+    getNotifications,
+    addNotification,
+    deleteNotification,
+    markAsRead,
+    addRating,
 };
 

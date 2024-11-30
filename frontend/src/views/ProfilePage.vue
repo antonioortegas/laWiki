@@ -42,15 +42,8 @@ const exampleUser = {
                     <div>
                         <h3 class="text-lg font-semibold">Average Rating</h3>
                         <div class="flex justify-center items-center mt-2">
-                            <span class="text-yellow-400">
-                                <!-- Stars -->
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                <i class="far fa-star"></i>
-                            </span>
-                            <span class="ml-2 text-sm text-gray-600">{{ exampleUser.averageRating }}</span>
+                            <!-- Component StarRating -->
+                            <StarRating :value="averageRating" />
                         </div>
                     </div>
                     <!-- Additional Info -->
@@ -73,5 +66,26 @@ const exampleUser = {
 </template>
 
 <script>
+import StarRating from '../components/StarRating.vue';
+import axios from 'axios';
+
+export default {
+  components: { StarRating },
+  data() {
+    return {
+      averageRating: 0, // Initial value
+      userId: '67436f7619b522e08f511bff' // TODO: Cambia esto al ID dinámico del usuario
+    };
+  },
+  async mounted() {
+    try {
+      const response = await axios.get(`http://localhost:3001/users/${this.userId}/averageRating`);
+
+      this.averageRating = response.data.average || 0;
+    } catch (error) {
+      console.error('Error getting user rating: ', error);
+    }
+  }
+};
 
 </script>
