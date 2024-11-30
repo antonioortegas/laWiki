@@ -68,9 +68,9 @@ export default {
 
       try {
         await axios.delete(
-          `http://localhost:3001/users/${this.userId}/deleteNotification/${notification._id}`
+          `api/users/${this.userId}/deleteNotification/${notification._id}`
         );
-
+        console.log("Notificación eliminada:", notification._id);
         this.$emit("notificationDeleted", notification._id);
       } catch (error) {
         console.error("Error al eliminar la notificación:", error);
@@ -84,7 +84,7 @@ export default {
       // Send read call to the server
       try {
         const response = await axios.put(
-          `http://localhost:3001/users/${this.userId}/read/`,
+          `api/users/${this.userId}/read/`,
         { idNotification: notification._id }
         );
         } catch (error) {

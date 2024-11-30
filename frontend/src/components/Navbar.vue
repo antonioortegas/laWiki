@@ -1,5 +1,5 @@
 <script setup>
-
+import axios from "axios";
 defineProps({
   username: {
     type: String,
@@ -54,7 +54,7 @@ const exampleUserId = "SprenBonded";
 <!-- Notification script -->
 <script>
 import NotificationBell from "./Notification.vue";
-import axios from "axios";
+
 
 const exampleNotification = 
   {
@@ -70,9 +70,14 @@ export default {
   data() {
     return {
       notifications: [
-        exampleNotification,
+        {
+          _id: "1",
+          message: "Welcome to laWiki!",
+          read: false,
+          isPlaceholder: false,
+        },
       ], // Inital empty list
-      userId: "67436f7619b522e08f511bff", // TODO: Cambiar esto al ID dinámico del usuario
+      userId: "674b726542438ec86551c611", // TODO: Cambiar esto al ID dinámico del usuario
     };
   },
   methods: {
@@ -92,11 +97,21 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get(`http://localhost:3001/users/${this.userId}/notifications`);
+      const path = `api/users/${this.userId}/notifications`;
+      const response = await axios.get(`/api/users/${this.userId}/notifications`);
+      console.log("Path:", path);
+      console.log("Response:", response);
+      if(Array.isArray(response.data)) {
+        this.notifications = response.data;
+        console.log("Notifications:", this.notifications);
+      } else {
+        this.notifications = [];
+        console.error("Invalid response data:", response.data);
+      }
 
       this.notifications = response.data || [];
 
-      if (this.notifications.length === 0) {
+      if (this.notifications.length === 0) { //use a placeholder if there are no notifications
         this.notifications.push({
           id: "placeholder", // Unique ID for the placeholder
           message: "Nothing to see here...",
