@@ -2,8 +2,7 @@
 import colors from 'tailwindcss/colors';
 
 export default {
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
-  content: [],
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -12,6 +11,11 @@ export default {
         primary: '#18c95a',
         secondary: '#a9a7a9',
         accent: '#00bfae',
+        lightBlue: undefined,
+        warmGray: undefined,
+        trueGray: undefined,
+        coolGray: undefined,
+        blueGray: undefined,
         ...colors, // Include Tailwind's default colors
       },
       fontFamily: {
