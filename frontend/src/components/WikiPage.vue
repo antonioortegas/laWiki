@@ -2,15 +2,13 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import SearchBar from './SearchBar.vue';
-//dotenv
-
 
 // Estado reactivo
 const entries = ref([]);
 const loading = ref(false);
 const showAdvancedSearch = ref(false);
 
-// Filtros iniciales vacíos
+// Filtros iniciales
 const filters = ref({
   text: '',
   tags: '',
@@ -19,47 +17,63 @@ const filters = ref({
   editors: '',
 });
 
+// Normalizar filtros
+const normalizeFilters = () => ({
+  text: filters.value.text?.toLowerCase() || '',
+  tags: filters.value.tags
+    ? filters.value.tags.split(',').map((tag) => tag.trim().toLowerCase())
+    : [],
+  content: filters.value.content?.toLowerCase() || '',
+  createdBy: filters.value.createdBy?.toLowerCase() || '',
+  editors: filters.value.editors
+    ? filters.value.editors.split(',').map((editor) => editor.trim().toLowerCase())
+    : [],
+});
 
+// Normalizar entradas
+const normalizeEntries = (entries) =>
+  entries.map((entry) => ({
+    ...entry,
+    title: entry.title?.toLowerCase() || '',
+    content: entry.content?.toLowerCase() || '',
+    createdBy: entry.createdBy?.toLowerCase() || '',
+    tags: entry.tags?.map((tag) => tag.toLowerCase()) || [],
+    editors: entry.editors?.map((editor) => editor.toLowerCase()) || [],
+  }));
 
-// Función para ejecutar la búsqueda
+// Buscar entradas
 const searchEntries = async () => {
   loading.value = true;
 
   try {
     // Obtener datos de la API
     const response = await axios.get(`/entries`);
-    const allEntries = response.data;
+    const normalizedEntries = normalizeEntries(response.data);
+    const normalizedFilters = normalizeFilters();
 
-    // Convertir los tags del filtro en una lista
-    const filterTags = filters.value.tags
-      ? filters.value.tags.split(',').map((tag) => tag.trim().toLowerCase())
-      : [];
-
-    // Filtrado local
-    entries.value = allEntries.filter((entry) => {
-      const matchesTitle = filters.value.text
-        ? entry.title.toLowerCase().includes(filters.value.text.toLowerCase())
+    // Filtrar entradas
+    entries.value = normalizedEntries.filter((entry) => {
+      const matchesTitle = normalizedFilters.text
+        ? entry.title.includes(normalizedFilters.text)
         : true;
 
-      const matchesTags = filterTags.length
-        ? filterTags.every((tag) =>
-            entry.tags.some((entryTag) =>
-              entryTag.toLowerCase().includes(tag)
-            )
+      const matchesTags = normalizedFilters.tags.length
+        ? normalizedFilters.tags.every((tag) =>
+            entry.tags.some((entryTag) => entryTag.includes(tag))
           )
         : true;
 
-      const matchesContent = filters.value.content
-        ? entry.content.toLowerCase().includes(filters.value.content.toLowerCase())
+      const matchesContent = normalizedFilters.content
+        ? entry.content.includes(normalizedFilters.content)
         : true;
 
-      const matchesCreatedBy = filters.value.createdBy
-        ? entry.createdBy.toLowerCase().includes(filters.value.createdBy.toLowerCase())
+      const matchesCreatedBy = normalizedFilters.createdBy
+        ? entry.createdBy.includes(normalizedFilters.createdBy)
         : true;
 
-      const matchesEditors = filters.value.editors
-        ? entry.editors.some((editor) =>
-            editor.toLowerCase().includes(filters.value.editors.toLowerCase())
+      const matchesEditors = normalizedFilters.editors.length
+        ? normalizedFilters.editors.every((editor) =>
+            entry.editors.some((entryEditor) => entryEditor.includes(editor))
           )
         : true;
 
@@ -79,14 +93,13 @@ const searchEntries = async () => {
   }
 };
 
-// Actualizar filtro al presionar Enter
-const handleEnter = (field, value) => {
-  filters.value[field] = value;
-  searchEntries(); // Realiza la búsqueda al actualizar el filtro
+// Actualizar filtro y ejecutar búsqueda
+const updateFilter = (field, value) => {
+  filters.value[field] = value || '';
+  searchEntries(); // Ejecuta la búsqueda con los filtros actualizados
 };
 
-
-// Alternar la búsqueda avanzada
+// Alternar búsqueda avanzada
 const toggleAdvancedSearch = () => {
   showAdvancedSearch.value = !showAdvancedSearch.value;
 };
@@ -98,43 +111,40 @@ const toggleAdvancedSearch = () => {
 
     <!-- Barra de búsqueda básica -->
     <SearchBar
-  :placeholder="'Buscar por título...'"
-  type="text"
-  @enter="(value) => handleEnter('text', value.text)"
-/>
+      placeholder="Buscar por título..."
+      type="text"
+      @enter="(value) => updateFilter('text', value.text)"
+    />
 
-    
     <!-- Botón para mostrar/ocultar búsqueda avanzada -->
     <button @click="toggleAdvancedSearch">
       {{ showAdvancedSearch ? 'Ocultar búsqueda avanzada' : 'Mostrar búsqueda avanzada' }}
     </button>
-    
+
     <!-- Barras de búsqueda avanzada -->
     <div v-if="showAdvancedSearch" class="advanced-search">
       <SearchBar
-  :placeholder="'Buscar por tags (separados por comas)...'"
-  type="tags"
-  @enter="(value) => handleEnter('tags', value.tags)"
-/>
-<SearchBar
-  :placeholder="'Buscar por contenido...'"
-  type="content"
-  @enter="(value) => handleEnter('content', value.content)"
-/>
-      <SearchBar
-        :value="filters.createdBy"
-        @update:value="(value) => (filters.createdBy = value)"
-        @enter="(value) => handleEnter('createdBy', value)"
-        placeholder="Buscar por creador..."
+        placeholder="Buscar por tags (separados por comas)..."
+        type="tags"
+        @enter="(value) => updateFilter('tags', value.tags)"
       />
       <SearchBar
-        :value="filters.editors"
-        @update:value="(value) => (filters.editors = value)"
-        @enter="(value) => handleEnter('editors', value)"
-        placeholder="Buscar por editores..."
+        placeholder="Buscar por contenido..."
+        type="content"
+        @enter="(value) => updateFilter('content', value.content)"
+      />
+      <SearchBar
+        placeholder="Buscar por creador..."
+        type="createdBy"
+        @enter="(value) => updateFilter('createdBy', value.createdBy)"
+      />
+      <SearchBar
+        placeholder="Buscar por editores (separados por comas)..."
+        type="editors"
+        @enter="(value) => updateFilter('editors', value.editors)"
       />
     </div>
-    
+
     <!-- Resultados -->
     <div v-if="loading" class="loading">Cargando...</div>
     <ul v-if="entries.length" class="results">
@@ -163,5 +173,17 @@ const toggleAdvancedSearch = () => {
 .loading {
   font-size: 1.25rem;
   color: #6b7280;
+}
+button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #00ff26a5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #00b339;
 }
 </style>
