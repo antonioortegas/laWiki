@@ -1,14 +1,21 @@
 <template>
   <div class="rating-container">
-    <div class="stars">
+    <div class="stars" @mousemove="updateHover" @mouseleave="clearHover">
       <div
         v-for="star in stars"
         :key="star"
         class="star"
-        :class="{ filled: star <= fullStars }"
+        :class="{ filled: star <= hoverStars || star <= fullStars }"
+        @mousemove="updatePartialHover($event, star)"
         @click="setRating(star)"
       >
-        <div v-if="star === fullStars + 1" class="partial" :style="{ width: partialWidth + '%' }">★</div>
+        <div 
+          v-if="star === Math.ceil(hoverStars) || star === fullStars + 1" 
+          class="partial" 
+          :style="{ width: partialHoverWidth(star) + '%' }"
+        >
+          ★
+        </div>
         ★
       </div>
     </div>
@@ -20,6 +27,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   props: {
@@ -29,30 +37,77 @@ export default {
       validator(value) {
         return value == 0 || (value >= 1 && value <= 5);
       }
+    },
+    userId: {
+      type: String, // User ID passed as a prop
+      required: true
     }
   },
+  data() {
+    return {
+      hoverStars: 0, // Tracks stars filled on hover
+      hoverPartial: 0 // Tracks fractional fill on hover
+    };
+  },
   computed: {
+    // Full stars
     fullStars() {
-      return Math.floor(this.value); // Número entero de estrellas llenas
+      return Math.floor(this.value); 
     },
+    // % of the last star filled
     partialWidth() {
-      return (this.value - this.fullStars) * 100; // Porcentaje de la última estrella llena
+      return (this.value - this.fullStars) * 100;
     },
     stars() {
-      return [1, 2, 3, 4, 5]; // Generar 5 estrellas
+      return [1, 2, 3, 4, 5];
     },
+    // To check if the user has no ratings yet
     isText() {
-      // Verifica si el valor es texto ("Sin valoraciones")
       return this.value === 0;
     },
+    // Returns the value, or a message if the user has no ratings yet
     displayValue() {
-      // Devuelve el texto o el número dependiendo del valor
-      return this.isText ? "Sin valoraciones" : this.value.toFixed(1);
+      return this.isText ? "No ratings yet" : this.value.toFixed(1);
     }
   },
   methods: {
-    setRating(star) {
-      this.$emit("update:value", star); // Emitir el nuevo valor del rating
+    // Updates hover state when the mouse moves
+    updateHover(event) {
+      const starWidth = event.target.offsetWidth;
+      const rect = event.target.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+
+      this.hoverPartial = mouseX / starWidth;
+    },
+    // Calculates fractional hover width for stars
+    partialHoverWidth(star) {
+      if (this.hoverStars < star) return 0;
+      if (this.hoverStars === star) return this.hoverPartial * 100;
+      return 100;
+    },
+    // Updates hover state for stars
+    updatePartialHover(event, star) {
+      this.updateHover(event);
+      this.hoverStars = star - 1 + this.hoverPartial;
+    },
+    // Clears hover state when the mouse leaves
+    clearHover() {
+      this.hoverStars = 0;
+      this.hoverPartial = 0;
+    },
+    // Sends the rating to the server
+    async setRating(star) {
+      const rating = this.hoverStars || star;
+      try {
+        await axios.post(`http://localhost:3001/ratings`, {
+          rating,
+          userId: this.userId
+        });
+        console.log("Rating submitted:", rating);
+        this.$emit("update:value", rating); // Update the rating value locally
+      } catch (error) {
+        console.error("Error submitting rating:", error);
+      }
     }
   }
 };
@@ -61,31 +116,26 @@ export default {
 <style scoped>
 .rating-container {
   display: flex;
-  flex-direction: column; /* Organiza los elementos en columna */
-  align-items: center; /* Centra las estrellas y el número horizontalmente */
+  flex-direction: column;
+  align-items: center;
 }
 
 .stars {
-  display: flex; /* Asegura que las estrellas se muestren en una fila horizontal */
+  display: flex;
+  cursor: pointer; /* Indicate interactivity */
 }
 
 .star {
-  font-size: 1.4rem;
+  font-size: 2rem;
   color: gray;
-  cursor: pointer;
-  margin-right: 5px; /* Espaciado entre las estrellas */
+  margin-right: 5px;
   position: relative;
 }
 
 .star.filled {
   color: gold;
 }
-/*  TODO: PENDIENTE DE REVISAR REQUISITOS
-.star:hover,
-.star.filled:hover {
-  color: gold;
-}
-*/
+
 .partial {
   position: absolute;
   top: 0;
@@ -102,4 +152,5 @@ export default {
 .rating-number.is-number {
   font-size: 1.2rem;
 }
+
 </style>
