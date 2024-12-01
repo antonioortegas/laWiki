@@ -28,7 +28,8 @@ const loadEntry = async () => {
 
     // Ensure the response data is assigned correctly
     markdownContent.value = response.data[0].content; // Assign content from the response
-    console.log('Entrada cargada exitosamente', response.data.content);
+    console.log('Entrada con id: ', entryId.value);
+    console.log('cargada exitosamente', response.data.content);
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -104,5 +105,19 @@ onMounted(() => {
       </button>
     </div>
 
+    <!-- Comments Section -->
+    <Comments :entryId="entryId" />
+
   </div>
 </template>
+
+<script>
+import Comments from '../components/Comments.vue';
+import axios from 'axios';
+
+export default {
+  components: {
+    Comments // Register Comments component
+  }
+};
+</script>
