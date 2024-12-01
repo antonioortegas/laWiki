@@ -52,7 +52,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
       // pictures
-      '/api/pictures': {
+      '/api/cloudinary': {
         target: picturesApiHost,
         changeOrigin: false,
         rewrite: (path) => path.replace(/^\/api/, ''),

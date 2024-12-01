@@ -9,19 +9,13 @@
     <!-- Notification list -->
     <div v-if="isDropdownOpen" class="notification-list">
       <ul>
-        <li
-          v-for="notification in notifications"
-          :key="notification.id"
+        <li v-for="notification in notifications" :key="notification.id"
           :class="{ unread: !notification.read, placeholder: notification.isPlaceholder }"
-          @click="markAsRead(notification)"
-        >
+          @click="markAsRead(notification)">
           <div class="notification-content">
             <span>{{ notification.message }}</span>
-            <button
-              v-if="!notification.isPlaceholder"
-              class="delete-btn"
-              @click.stop="deleteNotification(notification)"
-            >
+            <button v-if="!notification.isPlaceholder" class="delete-btn"
+              @click.stop="deleteNotification(notification)">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -68,7 +62,7 @@ export default {
 
       try {
         await axios.delete(
-          `api/users/${this.userId}/deleteNotification/${notification._id}`
+          `/api/users/${this.userId}/deleteNotification/${notification._id}`
         );
         console.log("Notificación eliminada:", notification._id);
         this.$emit("notificationDeleted", notification._id);
@@ -78,18 +72,18 @@ export default {
     },
     async markAsRead(notification) {
       if (notification.read) return;
-      
+
       notification.read = true;
 
       // Send read call to the server
       try {
         const response = await axios.put(
-          `api/users/${this.userId}/read/`,
-        { idNotification: notification._id }
+          `/api/users/${this.userId}/read/`,
+          { idNotification: notification._id }
         );
-        } catch (error) {
-          console.error('Error al actualizar la notificación:', error);
-          console.error('Detalle del error:', error.response?.data || error.message);
+      } catch (error) {
+        console.error('Error al actualizar la notificación:', error);
+        console.error('Detalle del error:', error.response?.data || error.message);
         }
     },
   },

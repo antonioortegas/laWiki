@@ -32,6 +32,7 @@ export const upload = async (req, res) => {
 
         let result = await streamUpload(req);
         res.status(200).json({ message: 'Imagen subida correctamente', imageUrl: result.url});
+        console.log('Imagen subida correctamente: ', result.url);
        
     } catch (error) {
         console.log('Error al subir la imagen: ', error)
