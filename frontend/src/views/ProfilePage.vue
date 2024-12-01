@@ -43,7 +43,11 @@ const exampleUser = {
                         <h3 class="text-lg font-semibold">Average Rating</h3>
                         <div class="flex justify-center items-center mt-2">
                             <!-- Component StarRating -->
-                            <StarRating :value="averageRating" />
+                            <StarRating
+                                :value="averageRating"
+                                :profileUserId="profileUserId"
+                                :loggedUserEmail="loggedUserEmail"
+                             />
                         </div>
                     </div>
                     <!-- Additional Info -->
@@ -74,12 +78,13 @@ export default {
   data() {
     return {
       averageRating: 0, // Initial value
-      userId: '67436f7619b522e08f511bff' // TODO: Cambia esto al ID dinámico del usuario
+      profileUserId: '6744ce2eb67a4a58bf6954c0', // TODO: Cambia esto al ID dinámico del usuario
+      loggedUserEmail: 'john.smith@example.com' // 
     };
   },
   async mounted() {
     try {
-      const response = await axios.get(`http://localhost:3001/users/${this.userId}/averageRating`);
+      const response = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
 
       this.averageRating = response.data.average || 0;
     } catch (error) {
