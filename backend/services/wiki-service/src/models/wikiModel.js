@@ -6,6 +6,10 @@ const wikiSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    entryUUIDs: {
+        type: [String],
+        default: [],
+    },
     description: {
         type: String,
     },
