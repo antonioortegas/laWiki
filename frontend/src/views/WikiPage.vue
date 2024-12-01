@@ -4,7 +4,7 @@ import CardGrid from '@/components/CardGrid.vue';
 
 const entrySampleData = [
     {
-        "entryId": "63e8e9d8f86d4e25c9a1b222",
+        "entryId": "674ba62aac31b52fcd5ffb1a",
         "title": "Cosmere: Mistborn",
         "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
     },

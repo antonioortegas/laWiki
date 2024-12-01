@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; // To access route params
 import axios from 'axios'; // For API calls
 import router from '../router';
+import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
 
 // Form data
 const formData = ref({
@@ -43,21 +44,15 @@ onMounted(() => {
 async function handleFileUpload(event) {
   const file = event.target.files[0];
   if (file) {
-    const formDataForUpload = new FormData();
-    formDataForUpload.append('foto', file);
-    console.log('Uploading file:', file);
     try {
-      // Send file to microservice
-      const response = await axios.post('/api/cloudinary/subirFoto', formDataForUpload, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      console.log('Uploading file:', file);
 
-      // If successful, update the src with the returned image URL
-      formData.value.src = response.data.imageUrl; // Assuming the response contains the image URL in `data.src`
-      console.log(response)
-      console.log('File uploaded successfully, image URL:', response.data.imageUrl);
+      // Use the utility function to upload and get the URL
+      const imageUrl = await uploadFileToCloudinary(file);
+
+      // Update the src with the returned image URL
+      formData.value.src = imageUrl;
+      console.log('File uploaded successfully, image URL:', imageUrl);
     } catch (error) {
       console.error('Error uploading image:', error);
     }
