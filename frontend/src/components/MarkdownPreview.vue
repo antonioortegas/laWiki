@@ -28,12 +28,3 @@ const renderMarkdown = (content) => {
   <div class="markdown-preview prose" v-html="renderMarkdown(content)"></div>
 </template>
 
-<style scoped>
-.markdown-preview {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  color: #333;
-}
-</style>

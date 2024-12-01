@@ -1,6 +1,4 @@
-const { create } = require('../models/userModel');
 const Wiki = require('../models/wikiModel');
-const {get} = require('mongoose');
 
 const getWikis = async (req, res) => {
     try {
@@ -40,7 +38,9 @@ const getWikis = async (req, res) => {
 const getWikiById = async (req, res) => {
     try {
         const { id } = req.params;
-        const wiki = await Wiki.findById(id);
+        //id is the title of the wiki
+        const wiki = await Wiki.find({title:id});
+        
         if (!wiki) {
             return res.status(404).json({ message: 'Wiki no encontrada.' });
         }
@@ -55,11 +55,10 @@ const getWikiById = async (req, res) => {
 const deleteWiki = async (req, res) => {
     try {
         const { id } = req.params;
-        const wiki = await Wiki.findById(id);
+        const wiki = await Wiki.deleteOne({title:id});
         if (!wiki) {
             return res.status(404).json({ message: 'Wiki no encontrada.' });
         }
-        await wiki.remove();
         res.status(200).json({ message: 'Wiki eliminada.' });
     }
     catch (error) {
@@ -70,22 +69,12 @@ const deleteWiki = async (req, res) => {
 const updateWiki = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description, content,language,tags,entries } = req.body;
 
-        const wiki = await Wiki.findById(id);
+        const wiki = await Wiki.updateOne({title: id}, req.body);
         if (!wiki) {
             return res.status(404).json({ message: 'Wiki no encontrado.' });
         }
-
-        wiki.title=title;
-        wiki.description=description;
-        wiki.content=content;
-        wiki.language=language;
-        wiki.tags=tags;
-        wiki.entries=entries;
-
-        const savedWiki = await wiki.save();
-        res.status(200).json(savedWiki);
+        res.status(200).json(wiki);
     }
     catch (error) {
         console.error('Error al actualizar la Wiki:', error);

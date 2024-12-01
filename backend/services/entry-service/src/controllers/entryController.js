@@ -38,7 +38,7 @@ const getEntries = async (req, res) => {
 
 const getEntry = async (req, res) => {
     try {
-        const entry = await Entry.findById(req.params.id);
+        const entry = await Entry.find({entryId: req.params.id});
         if (!entry) {
             return res.status(404).json('Entry not found');
         }
@@ -53,9 +53,9 @@ const getEntry = async (req, res) => {
 
 const createEntry = async (req, res) => {
     try {
-        const { wiki, title, createdBy } = req.body;
-        if (!wiki || !title || !createdBy) {
-            return res.status(400).json('Wiki, title, and createdBy are required');
+        const { wiki, title, createdBy, entryId } = req.body;
+        if (!wiki || !title || !createdBy || !entryId) {
+            return res.status(400).json('UUID, wiki, title, and createdBy are required');
         }
 
         const newEntry = new Entry(req.body);
@@ -71,13 +71,11 @@ const createEntry = async (req, res) => {
 
 const updateEntry = async (req, res) => {
     try {
-        const updatedEntry = await Entry.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true });
+        const updatedEntry = await Entry.updateOne({entryId: req.params.id}, req.body);
         if (!updatedEntry) {
             return res.status(404).json('Entry not found');
         }
+        // update the entry with the body of the request
         res.status(200).json(updatedEntry);
     }
     catch (err) {
@@ -90,7 +88,7 @@ const updateEntry = async (req, res) => {
 
 const deleteEntry = async (req, res) => {
     try {
-        const deletedEntry = await Entry.findByIdAndDelete(req.params.id);
+        const deletedEntry = await Entry.findOneAndDelete({entryId: req.params.id});
         if (!deletedEntry) {
             return res.status(404).json('Entry not found');
         }

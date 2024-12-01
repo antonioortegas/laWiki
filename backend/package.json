@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "easymde": "^2.18.0"
+    "cors": "^2.8.5"
   }
 }
