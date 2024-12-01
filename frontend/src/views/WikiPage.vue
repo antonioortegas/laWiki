@@ -1,7 +1,16 @@
 <script setup>
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 import SearchBar from '@/components/SearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
+// Reactive data
+const wikiInfo = ref({});
+const entryData = ref([]);
+const $route = useRoute();
+
+// Sample data for entries
 const entrySampleData = [
     {
         "entryId": "674ba62aac31b52fcd5ffb1a",
@@ -34,47 +43,70 @@ const entrySampleData = [
         "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
     },
 ];
-const entryData = entrySampleData.map((entry) => {
-    const { entryId } = entry;
-    entry.path = `/entry/${entryId}`;
-    return entry;
-});
 
-const wikiInfo = {
-    wikiId: "Cosmere:_Mistborn",
-    title: "Cosmere: Mistborn",
-    description: "A wiki dedicated to the Mistborn series within Brandon Sanderson's Cosmere universe.",
-    entriesCount: 120, // Example number of entries
+
+
+// Fetch entry data from the backend
+const fetchEntryData = async (entryId) => {
+    try {
+        const response = await axios.get(`/api/entries/${entryId}`);
+        const entry = response.data[0];
+        // add a path to entry, that will be /entry/:entryId for frontend routing
+        entry.path = `/entry/${entry.entryId}`;
+        entryData.value.push(entry);  // Push fetched entry into entryData
+    } catch (error) {
+        console.error('Error fetching entry:', error);
+    }
 };
 
-import backgroundImageUrl from '@/assets/search-bg.png'; // Import the default image, remove this line
-const image = "https://pokemonletsgo.pokemon.com/assets/img/how-to-play/hero-img.png";
+// Fetch the wiki info from the backend
+const fetchWikiInfo = async () => {
+    try {
+        const response = await axios.get(`/api/wikis/${$route.params.wikiId}`);
+        wikiInfo.value = response.data[0];  // Assign the fetched data to the reactive object
+        console.log('Fetched wiki info:', wikiInfo.value);
+
+        // Ensure entry data is populated after fetching wiki info
+        const promises = wikiInfo.value.entryUUIDs.map(async (entryId) => {
+            await fetchEntryData(entryId);  // Fetch each entry asynchronously
+        });
+
+        // Wait for all entries to be fetched
+        await Promise.all(promises);
+
+        console.log('Fetched entry data:', entryData.value);  // Ensure entryData is populated properly
+    } catch (error) {
+        console.error('Error fetching wiki info:', error);
+    }
+};
+
+// Call the function to fetch wiki info when the component is mounted
+fetchWikiInfo();
 </script>
 
 <template>
-    <!-- "You are entering this wiki" Section (common to all wikis) -->
-    <div class="bg-background text-center  flex flex-col">
+    <!-- "You are entering this wiki" Section -->
+    <div class="bg-background text-center flex flex-col">
         <!-- Wiki Header -->
         <div class="text-center mx-auto px-8 sm:px-16 w-full bg-gray-100 py-4">
-            <h1 class="text-3xl font-heading text-text font-bold">{{ wikiInfo.title }}</h1>
-            <p class="text-gray-700 mt-2 text-sm sm:text-base">
+            <h1 v-if="wikiInfo.title" class="text-3xl font-heading text-text font-bold">{{ wikiInfo.title }}</h1>
+            <p v-if="wikiInfo.description" class="text-gray-700 mt-2 text-sm sm:text-base">
                 {{ wikiInfo.description }}
             </p>
-            <p class="text-gray-600 text-sm sm:text-base mt-1">
-                Containing <span class="font-semibold text-primary">{{ wikiInfo.entriesCount }}</span> entries and
-                growing!
+            <p v-if="wikiInfo.numberOfEntries" class="text-gray-600 text-sm sm:text-base mt-1">
+                Containing <span class="font-semibold text-primary">{{ wikiInfo.numberOfEntries }}</span> entries and growing!
             </p>
             <router-link :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
-            <button
-            type="submit"
-            class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105"
-            >
-            Edit Wiki
-          </button>
-        </router-link>
+                <button type="submit"
+                    class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105">
+                    Edit Wiki
+                </button>
+            </router-link>
         </div>
     </div>
-    <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="image" />
+
+    <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
+
     <!-- Call-to-Action Section -->
     <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
         <div class="text-center">
@@ -87,5 +119,7 @@ const image = "https://pokemonletsgo.pokemon.com/assets/img/how-to-play/hero-img
             </button>
         </div>
     </div>
+
+    <!-- Pass entry data to CardGrid -->
     <CardGrid :data="entryData" />
 </template>

@@ -3,9 +3,6 @@ import { ref } from 'vue';
 import axios from 'axios';
 import SearchBar from './SearchBar.vue';
 
-// Leer URL de la API desde .env
-const API_URL = import.meta.env.VITE_ENTRIES_API_HOST;
-
 // Estado reactivo
 const entries = ref([]);
 const loading = ref(false);
@@ -51,7 +48,7 @@ const searchEntries = async () => {
   try {
     // Obtener datos de la API
     //const response = await axios.get(API_URL);
-    const response = await axios.get('/entries');
+    const response = await axios.get('/api/entries');
     const normalizedEntries = normalizeEntries(response.data);
     const normalizedFilters = normalizeFilters();
 
@@ -165,29 +162,3 @@ const toggleAdvancedSearch = () => {
     <p v-else>No se encontraron entradas.</p>
   </section>
 </template>
-
-<style scoped>
-.advanced-search {
-  margin-top: 20px;
-}
-.results {
-  display: grid;
-  gap: 1rem;
-}
-.loading {
-  font-size: 1.25rem;
-  color: #6b7280;
-}
-button {
-  margin-top: 10px;
-  padding: 10px 15px;
-  background-color: #00ff26a5;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-button:hover {
-  background-color: #00b339;
-}
-</style>

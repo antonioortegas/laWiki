@@ -34,10 +34,22 @@ const wikiSchema = new mongoose.Schema({
     entries: {
         type: [mongoose.Schema.Types.ObjectId],
         default: []
-    }},
-    {
-        timestamps: true
+    },
+    numberOfEntries: {
+        type: Number,
+        default: 0, // Initialize to 0 by default
     }
-);
+}, 
+{
+    timestamps: true
+});
+
+// Pre-save hook to update `numberOfEntries`
+wikiSchema.pre('save', function (next) {
+    if (this.isModified('entryUUIDs')) {
+        this.numberOfEntries = this.entryUUIDs.length;
+    }
+    next();
+});
 
 module.exports = mongoose.model('Wiki', wikiSchema);

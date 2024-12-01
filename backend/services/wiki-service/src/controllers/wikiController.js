@@ -69,20 +69,12 @@ const deleteWiki = async (req, res) => {
 const updateWiki = async (req, res) => {
     try {
         const { id } = req.params;
-        const { description, content,language,tags } = req.body;
 
-        const wiki = await Wiki.findOne({title:id});
+        const wiki = await Wiki.updateOne({title: id}, req.body);
         if (!wiki) {
             return res.status(404).json({ message: 'Wiki no encontrado.' });
         }
-
-        wiki.description=description;
-        wiki.content=content;
-        wiki.language=language;
-        wiki.tags=tags;
-
-        const savedWiki = await wiki.save();
-        res.status(200).json(savedWiki);
+        res.status(200).json(wiki);
     }
     catch (error) {
         console.error('Error al actualizar la Wiki:', error);

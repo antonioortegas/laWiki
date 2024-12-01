@@ -11,9 +11,6 @@ const isEditing = ref(false); // Controla si estamos en modo edición
 const markdownContent = ref(''); // Contenido inicial del Markdown
 const entryId = ref(route.params.entryId); // ID de la entrada
 
-// URL base para la API
-const apiBaseUrl = import.meta.env.VITE_API_URL;
-console.log('API base URL:', apiBaseUrl);
 
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {
@@ -30,7 +27,8 @@ const loadEntry = async () => {
     const response = await axios.get(`/api/entries/${entryId.value}`);
 
     // Ensure the response data is assigned correctly
-    markdownContent.value = response.data.content; // Assign content from the response
+    markdownContent.value = response.data[0].content; // Assign content from the response
+    console.log('Entrada cargada exitosamente', response.data.content);
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
