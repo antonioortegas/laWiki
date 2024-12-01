@@ -96,7 +96,6 @@ export default {
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-            console.log(this.latitude, this.longitude)
 
              // Add another marker if coordinates are provided
              if (this.markerLatitude !== null && this.markerLongitude !== null) {
@@ -111,9 +110,7 @@ export default {
 
 <style>
 #map {
-    width: 400px !important;
-    height: 400px !important;
-    inset: 0px !important;
-    z-index: 0 !important;
+    width: 100%;
+    height: 100%;
 }
 </style>
