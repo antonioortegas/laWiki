@@ -53,6 +53,7 @@ const fetchEntryData = async (entryId) => {
         const entry = response.data[0];
         // add a path to entry, that will be /entry/:entryId for frontend routing
         entry.path = `/entry/${entry.entryId}`;
+        entry.src = entry.imageSrc;
         entryData.value.push(entry);  // Push fetched entry into entryData
     } catch (error) {
         console.error('Error fetching entry:', error);

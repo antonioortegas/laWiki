@@ -13,6 +13,16 @@ const EntrySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imageSrc: {
+        type: String,
+        default: '',
+        required: false
+    },
+    map: {
+        type: String,
+        default: '',
+        required: false
+    },
     content: {
         type: String,
     },
