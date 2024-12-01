@@ -90,6 +90,7 @@ const handleFileUpload = async (event) => {
 // Cargar datos al montar el componente
 onMounted(() => {
   loadEntry();
+  isEditing.value = route.query.edit === 'true';
 });
 </script>
 

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const EntrySchema = new mongoose.Schema({
     wiki: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     entryId: {
