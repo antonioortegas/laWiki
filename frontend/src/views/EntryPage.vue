@@ -7,6 +7,7 @@ import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
 
+
 // Obtener parámetros de la ruta
 const route = useRoute();
 const entryId = ref(route.params.entryId);
@@ -89,6 +90,7 @@ const handleFileUpload = async (event) => {
 // Cargar datos al montar el componente
 onMounted(() => {
   loadEntry();
+  isEditing.value = route.query.edit === 'true';
 });
 </script>
 

@@ -38,7 +38,7 @@ onMounted(() => {
 console.log("Creating empty entry with ID:");
     axios.post('/api/entries', {
         wiki: w,
-        title: "prueba",
+        title: "Entrada de "+w,
         createdBy: "63e8e9d8f86d4e25c9a1b112",
         entryId: entryUUID.value
         
@@ -59,7 +59,7 @@ console.log("Creating empty entry with ID:");
     .catch(error => {
         console.error("Error updating wiki:", error);
     });
-    router.push({ name: 'EntryPage', params: { entryId: entryUUID.value } });
+    router.push({ name: 'EntryPage', params: { entryId: entryUUID.value},query: {edit: true } });
 
 });
 
