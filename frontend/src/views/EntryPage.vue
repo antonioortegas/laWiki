@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
+import MapComponent from '../components/MapComponent.vue';
+import 'leaflet/dist/leaflet.css';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
@@ -110,6 +112,7 @@ onMounted(() => {
     <div v-if="!isEditing" class="flex flex-col items-center space-y-4">
       <h1 class="text-2xl font-bold">{{ title }}</h1>
       <img :src="imageSrc" alt="Entry image" class="max-w-full rounded-lg shadow-md" />
+      <MapComponent :latitude="55.49855" :longitude="9.73912" :zoom="14" class="w-full max-w-4xl" />
       <MarkdownPreview :content="markdownContent" class="w-full max-w-4xl mt-4" />
     </div>
 
@@ -160,3 +163,8 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+
+<style>
+
+</style>
