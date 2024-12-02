@@ -41,9 +41,19 @@ const loadEntry = async () => {
     title.value = data.title || '';
     imageSrc.value = data.imageSrc || '';
     markdownContent.value = data.content || '';
-    latitude.value = data.latitude || '';
-    longitude.value = data.longitude || '';
-    zoom.value = data.zoom || '';
+
+
+    // Dividir el campo map en latitud, longitud y zoom
+    if (data.map) {
+      const [lat, lng, zm] = data.map.split(';');
+      latitude.value = lat || '';
+      longitude.value = lng || '';
+      zoom.value = zm || '';
+    } else {
+      latitude.value = '';
+      longitude.value = '';
+      zoom.value = '';
+    }
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -56,9 +66,7 @@ const saveEntry = async () => {
       title: title.value,
       imageSrc: imageSrc.value,
       content: markdownContent.value,
-      latitude: latitude.value,
-      longitude: longitude.value,
-      zoom: zoom.value,
+      map: `${latitude.value};${longitude.value};${zoom.value}`, // Combinar los valores en un string
     };
 
     await axios.put(`/api/entries/${entryId.value}`, updatedData);
@@ -110,12 +118,36 @@ onMounted(() => {
     </div>
 
     <!-- Vista de solo lectura -->
-    <div v-if="!isEditing" class="flex flex-col items-center space-y-4">
-      <h1 class="text-2xl font-bold">{{ title }}</h1>
-      <img :src="imageSrc" alt="Entry image" class="max-w-full rounded-lg shadow-md" />
-      <MapComponent :latitude="55.49855" :longitude="9.73912" :zoom="14" class="w-full max-w-4xl" />
-      <MarkdownPreview :content="markdownContent" class="w-full max-w-4xl mt-4" />
+  <div v-if="!isEditing" class="entry-page flex flex-col space-y-8 p-6">
+    <!-- Título -->
+    <div 
+      class="title-container relative flex items-center justify-center bg-cover bg-center h-64 text-center"
+      :style="{ backgroundImage: `url(${imageSrc})` }"
+    >
+      <h1 class="text-4xl font-bold text-white bg-black bg-opacity-50 px-6 py-3 rounded-lg shadow-lg">
+        {{ title }}
+      </h1>
     </div>
+    
+    <!-- Contenido Markdown -->
+    <div class="markdown-content w-full max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-md">
+      <MarkdownPreview :content="markdownContent" />
+    </div>
+
+    <!-- Contenedor para mapa -->
+    <div v-if="latitude && longitude && zoom" class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+
+      <!-- Mapa -->
+      <div class="w-full md:w-1/2 max-w-lg">
+        <MapComponent 
+          :latitude="latitude" 
+          :longitude="longitude" 
+          :zoom="zoom" 
+          class="w-full h-[300px] rounded-lg shadow-md"
+        />
+      </div>
+    </div>
+  </div>
 
     <!-- Modo edición -->
     <div v-else class="edit-mode flex flex-col items-center space-y-6">
@@ -167,5 +199,15 @@ onMounted(() => {
 
 
 <style>
+/* Ajuste responsivo */
+@media (min-width: 768px) {
+  .entry-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}
 
+.markdown-content {
+  line-height: 1.6;
+}
 </style>
