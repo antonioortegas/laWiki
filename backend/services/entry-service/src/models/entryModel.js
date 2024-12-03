@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const EntrySchema = new mongoose.Schema({
     wiki: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     entryId: {
@@ -12,6 +12,16 @@ const EntrySchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
+    },
+    imageSrc: {
+        type: String,
+        default: '',
+        required: false
+    },
+    map: {
+        type: String,
+        default: '',
+        required: false
     },
     content: {
         type: String,

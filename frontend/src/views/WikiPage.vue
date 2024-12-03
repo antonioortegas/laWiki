@@ -53,6 +53,7 @@ const fetchEntryData = async (entryId) => {
         const entry = response.data[0];
         // add a path to entry, that will be /entry/:entryId for frontend routing
         entry.path = `/entry/${entry.entryId}`;
+        entry.src = entry.imageSrc;
         entryData.value.push(entry);  // Push fetched entry into entryData
     } catch (error) {
         console.error('Error fetching entry:', error);
@@ -113,10 +114,12 @@ fetchWikiInfo();
             <p class="text-white text-lg font-heading mb-4">
                 Don't see what you're looking for? Add it!
             </p>
+            <router-link :to="{ name: 'CreateEntry' }">
             <button
                 class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
                 + Create an Entry
             </button>
+            </router-link>
         </div>
     </div>
 
