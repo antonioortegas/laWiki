@@ -195,8 +195,23 @@ onMounted(() => {
         Save Changes
       </button>
     </div>
+
+    <!-- Comments Section -->
+    <Comments :entryId="entryId" />
+
   </div>
 </template>
+
+<script>
+import Comments from '../components/Comments.vue';
+import axios from 'axios';
+
+export default {
+  components: {
+    Comments // Register Comments component
+  }
+};
+</script>
 
 
 <style>

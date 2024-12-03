@@ -145,6 +145,73 @@ const getComments = async (req, res) => {
     }
 }
 
+const getEntryComments = async (req, res) => {
+    try {
+        const entry = await Entry.findOne({entryId: req.params.id});
+        if (!entry) {
+            return res.status(404).json('Entry not found');
+        }
+        res.status(200).json(entry.comments);
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error retrieving entry comments",
+            error: err
+        });
+    }
+}
+
+const addComment = async (req, res) => {
+    try {
+        const { author, content } = req.body;
+        if (!author || !content) {
+            return res.status(400).json('Author and content are required');
+        }
+        const newComment = { author, content };
+        const entry = await Entry.findOne({entryId: req.params.id});
+        if (!entry) {
+            return res.status(404).json('Entry not found');
+        }
+        entry.comments.push(newComment);
+        const updatedEntry = await entry.save();
+        res.status(200).json(newComment);
+    }
+    catch (err) {
+        res.status(500).json({
+            message: "Server error adding comment",
+            error: err
+        });
+    }
+}
+
+const deleteComment = async (req, res) => {
+    try {
+        const entry = await Entry.findOne({ entryId: req.params.id });
+        if (!entry) {
+            return res.status(404).json('Entry not found');
+        }
+
+        const commentId = req.params.idComment;
+
+        // Usamos $pull para eliminar el comentario del array
+        const result = await Entry.updateOne(
+            { entryId: req.params.id },
+            { $pull: { comments: { _id: commentId } } }
+        );
+
+        if (result.nModified === 0) {
+            return res.status(404).json('Comment not found');
+        }
+
+        res.status(200).json('Comment deleted');
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error deleting comment",
+            error: err
+        });
+    }
+}
+
+
 module.exports = {
     getEntries,
     getEntry,
@@ -153,4 +220,7 @@ module.exports = {
     deleteEntry,
     fuzzyFindByText,
     getComments,
+    getEntryComments,
+    addComment,
+    deleteComment
 }
