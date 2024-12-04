@@ -5,6 +5,7 @@ import MarkdownPreview from '../components/MarkdownPreview.vue';
 import MapComponent from '../components/MapComponent.vue';
 import 'leaflet/dist/leaflet.css';
 import { useRoute } from 'vue-router';
+import router from '../router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
 
@@ -75,6 +76,29 @@ const saveEntry = async () => {
     console.error('Error al actualizar la entrada:', error.response || error.message);
   }
 };
+
+// Eliminar la entrada
+async function deleteEntry() {
+  if (confirm('Are you sure you want to delete this entry?')) {
+    try {
+      // Obtener los datos de la entrada
+      const response = await axios.get(`/api/entries/${route.params.entryId}`);
+      const entry = response.data[0]; // Asumiendo que `entry` está en el primer índice del array
+      const wikiUrl = entry.wiki || '/'; // Redirigir a '/' si no existe el atributo 'wiki'
+
+      // Proceder a eliminar la entrada
+      await axios.delete(`/api/entries/${route.params.entryId}`);
+      console.log('Entry deleted successfully');
+      
+      // Redirigir a la URL de la wiki
+      router.push("/wiki/" + wikiUrl);
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+      // Manejar el error (por ejemplo, mostrar un mensaje de error)
+    }
+  }
+}
+
 
 // Manejar la subida de imagen
 const handleFileUpload = async (event) => {
@@ -190,14 +214,20 @@ onMounted(() => {
         </div>
       </div>
 
-      <button @click="toggleEditMode"
-        class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
-        Save Changes
-      </button>
+      <div class="flex justify-center gap-8">
+        <button @click="toggleEditMode"
+          class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
+          Save Changes
+        </button>
+        <button type="button" @click="deleteEntry"
+          class="px-6 py-3 bg-red-500 text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transform transition-transform hover:scale-105">
+          Delete Entry
+        </button>
+      </div>
     </div>
 
     <!-- Comments Section -->
-    <Comments :entryId="entryId" />
+    <Comments :entryId="entryId" v-if="!isEditing"/>
 
   </div>
 </template>
