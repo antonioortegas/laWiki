@@ -45,62 +45,58 @@ const getVersion = async (req, res) => {
     }
 }
 
+// Create a new version
 const createVersion = async (req, res) => {
     try {
-        const { entry, content, createdBy } = req.body;
-        if (!entry || !content || !createdBy) {
-            return res.status(400).json('Entry, content, and createdBy are required');
-        }
-
-        const newVersion = new Version(req.body);
+        const newVersion = new version(req.body);
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);
     } catch (err) {
-        res.status(500).json({
-            message: "Server error creating version",
-            error: err
-        });
+        res.status(400).json({ message: 'Error al crear la versión', err});
     }
-}
+};
 
+// Get a specific version
+const getVersionById = async (req, res) => {
+    try {
+        const versionFound = await version.findById(req.params.id);
+        res.status(200).json(versionFound);
+    } catch (err) {
+        res.status(500).json({ message: 'No se encontró la versión', err });
+    }
+};
+
+// Update a specific version
 const updateVersion = async (req, res) => {
     try {
-        const updatedVersion = await Version.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true });
+        const updatedVersion = await version.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedVersion) {
-            return res.status(404).json('Version not found');
+            return res.status(404).json({ message: 'Versión no encontrada' });
         }
         res.status(200).json(updatedVersion);
     }
     catch (err) {
-        res.status(500).json({
-            message: "Server error updating version",
-            error: err
-        });
+        res.status(500).json({ message: 'Error al actualizar la versión', err });
     }
-}
+};
 
+// Delete a specific version
 const deleteVersion = async (req, res) => {
     try {
-        const deletedVersion = await Version.findByIdAndDelete(req.params.id);
+        const deletedVersion = await version.findByIdAndDelete(req.params.id);
         if (!deletedVersion) {
-            return res.status(404).json('Version not found');
+            return res.status(404).json({ message: 'Versión no encontrada' });
         }
-        res.status(200).json('Version deleted');
+        res.status(200).json({ message: 'Versión eliminada' });
     } catch (err) {
-        res.status(500).json({
-            message: "Server error deleting version",
-            error: err
-        });
+        res.status(500).json({ message: 'Error al eliminar la versión', err });
     }
-}
+};
 
 module.exports = {
-    getVersions,
-    getVersion,
     createVersion,
+    getVersions,
+    getVersionById,
     updateVersion,
-    deleteVersion,
-}
+    deleteVersion
+};

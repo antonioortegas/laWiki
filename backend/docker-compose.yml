@@ -89,6 +89,18 @@ services:
       - WIKIS_API_HOST=${WIKIS_API_HOST}
       - ENTRIES_API_HOST=${ENTRIES_API_HOST}
       - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+  
+  picture-service:
+    build:
+      context: ./services/picture-service
+      dockerfile: Dockerfile
+    container_name: picture-service
+    ports:
+      - "${PICTURE_SERVICE_PORT}:${PICTURE_SERVICE_PORT}"
+    environment:
+      - CLOUD_NAME=${CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
 
 volumes:
   mongo-data:
