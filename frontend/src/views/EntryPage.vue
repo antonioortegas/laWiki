@@ -18,6 +18,7 @@ const isEditing = ref(false); // Controla si estamos en modo edición
 const title = ref(''); // Título de la entrada
 const imageSrc = ref(''); // URL de la imagen
 const markdownContent = ref(''); // Contenido Markdown
+const tags = ref(''); // Etiquetas de la entrada
 
 // Estados para los campos del mapa
 const latitude = ref('');
@@ -42,6 +43,7 @@ const loadEntry = async () => {
     title.value = data.title || '';
     imageSrc.value = data.imageSrc || '';
     markdownContent.value = data.content || '';
+    tags.value = data.tags ? data.tags.join(', ') : '';
 
 
     // Dividir el campo map en latitud, longitud y zoom
@@ -68,6 +70,7 @@ const saveEntry = async () => {
       imageSrc: imageSrc.value,
       content: markdownContent.value,
       map: `${latitude.value};${longitude.value};${zoom.value}`, // Combinar los valores en un string
+      tags: tags.value.split(',').map(tag => tag.trim()),
     };
 
     await axios.put(`/api/entries/${entryId.value}`, updatedData);
@@ -171,6 +174,21 @@ onMounted(() => {
       />
     </div>
   </div>
+
+  <!-- Etiquetas -->
+<div class="w-full max-w-4xl">
+  <!-- Título -->
+  <p class="text-lg font-semibold text-gray-700 mb-2">Tags</p>
+  
+  <!-- Lista de etiquetas -->
+  <div class="flex flex-wrap gap-2">
+    <span v-for="tag in tags.split(',')" :key="tag" class="px-2 py-1 bg-gray-200 text-sm rounded-full">
+      {{ tag.trim() }}
+    </span>
+  </div>
+</div>
+
+
 </div>
 
 
@@ -196,6 +214,12 @@ onMounted(() => {
       <!-- Editor de Markdown -->
       <div class="w-full max-w-4xl">
         <MarkdownEditor v-model="markdownContent" />
+      </div>
+
+      <!-- Campo de tags, separados por comas -->
+      <div class="w-full max-w-4xl">
+        <label class="block text-sm font-medium text-gray-700">Tags</label>
+        <input type="text" v-model="tags" class="w-full border-2 border-gray-300 rounded-lg p-3" placeholder="Comma-sepparated tags"/>
       </div>
 
       <!-- Campos de mapa -->
