@@ -75,6 +75,7 @@ const saveEntry = async () => {
 
     await axios.put(`/api/entries/${entryId.value}`, updatedData);
     console.log('Entrada actualizada exitosamente');
+    router.push("/entry/" + entryId.value);
   } catch (error) {
     console.error('Error al actualizar la entrada:', error.response || error.message);
   }
