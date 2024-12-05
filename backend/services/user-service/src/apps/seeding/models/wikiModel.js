@@ -11,6 +11,9 @@ const wikiSchema = new mongoose.Schema({
     content: {
         type: String,
     },
+    src: {
+        type: String,
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,

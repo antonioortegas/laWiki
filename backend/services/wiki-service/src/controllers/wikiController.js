@@ -28,26 +28,57 @@ const getWikis = async (req, res) => {
 
         const wikis = await Wiki.find(filter).sort(sort);
         res.status(200).json(wikis);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving wikis",
-            error: err
-        });
+    }
+    catch (error) {
+        console.error('Error al obtener las wikis:', error);
+        res.status(500).json({ message: 'Error al obtener las wikis.' });
     }
 }
 
-const getWiki = async (req, res) => {
+const getWikiById = async (req, res) => {
     try {
-        const wiki = await Wiki.findById(req.params.id);
+        const { id } = req.params;
+        //id is the title of the wiki
+        const wiki = await Wiki.find({title:id});
+        
         if (!wiki) {
-            return res.status(404).json('Wiki not found');
+            return res.status(404).json({ message: 'Wiki no encontrada.' });
         }
         res.status(200).json(wiki);
-    } catch (err) {
-        res.status(500).json({
-            message: "Server error retrieving wiki",
-            error: err
-        });
+    }
+    catch (error) {
+        console.error('Error al obtener la wiki:', error);
+        res.status(500).json({ message: 'Error al obtener la wiki.' });
+    }
+}
+
+const deleteWiki = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const wiki = await Wiki.deleteOne({title:id});
+        if (!wiki) {
+            return res.status(404).json({ message: 'Wiki no encontrada.' });
+        }
+        res.status(200).json({ message: 'Wiki eliminada.' });
+    }
+    catch (error) {
+        console.error('Error al eliminar la wiki:', error);
+        res.status(500).json({ message: 'Error al eliminar la wiki.' });
+    }
+}
+const updateWiki = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const wiki = await Wiki.updateOne({title: id}, req.body);
+        if (!wiki) {
+            return res.status(404).json({ message: 'Wiki no encontrado.' });
+        }
+        res.status(200).json(wiki);
+    }
+    catch (error) {
+        console.error('Error al actualizar la Wiki:', error);
+        res.status(500).json({ message: 'Error al actualizar la Wiki.' });
     }
 }
 
@@ -68,6 +99,31 @@ const createWiki = async (req, res) => {
         });
     }
 }
+
+module.exports = {
+    getWikiById,
+    updateWiki,
+    deleteWiki,
+    getWikis,
+    createWiki,
+}
+//add module exports
+/*
+const getWiki = async (req, res) => {
+    try {
+        const wiki = await Wiki.findById(req.params.id);
+        if (!wiki) {
+            return res.status(404).json('Wiki not found');
+        }
+        res.status(200).json(wiki);
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error retrieving wiki",
+            error: err
+        });
+    }
+}
+
 
 const updateWiki = async (req, res) => {
     try {
@@ -109,4 +165,6 @@ module.exports = {
     createWiki,
     updateWiki,
     deleteWiki,
+    getAbout,
 }
+*/
