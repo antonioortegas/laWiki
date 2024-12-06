@@ -59,7 +59,7 @@ const getVersion = async (req, res) => {
 // Create a new version
 const createVersion = async (req, res) => {
     try {
-        const newVersion = new version(req.body);
+        const newVersion = new Version(req.body);
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);
     } catch (err) {

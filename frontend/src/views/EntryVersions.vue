@@ -34,7 +34,11 @@ function restoreVersion(entryId,content) {
     })
     .then((response) => {
         console.log("Version restored successfully:", response.data);
-        router.push({ name: 'EntryPage', params: { entryId: entryId } });
+        router.push({ name: 'EntryPage', params: { entryId: entryId } }).catch(err => {
+            if (err.name !== 'NavigationDuplicated') {
+                throw err;
+            }
+        });
         // Optionally, you can refresh the data or navigate to another page
     })
     .catch((error) => {

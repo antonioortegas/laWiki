@@ -51,17 +51,28 @@ const loadEntry = async () => {
 
 // Guardar los cambios en el microservicio
 const saveEntry = async () => {
+  const text = (markdownContent.value==undefined) ? "a" : markdownContent.value;
   try {
     const updatedData = {
       title: title.value,
       imageSrc: imageSrc.value,
-      content: markdownContent.value,
+      content: text,
       latitude: latitude.value,
       longitude: longitude.value,
       zoom: zoom.value,
     };
 
-    await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    
+
+    const versionData = 
+    {
+    entry: entryId.value,
+    content: " ",
+    "createdBy": "60d0fe4f5311236168a109ca"
+    };   
+    console.log(entry);
+    await axios.post(`/api/versions/`, versionData);
     console.log('Entrada actualizada exitosamente');
   } catch (error) {
     console.error('Error al actualizar la entrada:', error.response || error.message);
