@@ -51,7 +51,7 @@ const loadEntry = async () => {
 
 // Guardar los cambios en el microservicio
 const saveEntry = async () => {
-  const text = (markdownContent.value==undefined) ? "a" : markdownContent.value;
+  const text = (markdownContent.value==undefined) ? " " : markdownContent.value;
   try {
     const updatedData = {
       title: title.value,
@@ -68,7 +68,7 @@ const saveEntry = async () => {
     const versionData = 
     {
     entry: entryId.value,
-    content: " ",
+    content: text,
     "createdBy": "60d0fe4f5311236168a109ca"
     };   
     console.log(entry);
