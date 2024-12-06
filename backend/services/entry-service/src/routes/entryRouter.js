@@ -10,5 +10,5 @@ router.get('/comments', entryController.getComments);
 router.get('/:id', entryController.getEntry);
 router.put('/:id', entryController.updateEntry);
 router.delete('/:id', entryController.deleteEntry);
-
+router.put('/restore/:id', entryController.restoreEntry);
 module.exports = router;

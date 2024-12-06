@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
-import MapComponent from '../components/MapComponent.vue';
+import MapComponent from '../components/mapComponent.vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
