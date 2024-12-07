@@ -25,12 +25,17 @@ onMounted(() => {
 });
 /*Hay que crear el endpoint en entry-service se le pasa el contenido de la versión 
 por body y el id de la entrada para que lo busque y lo modifica desde ahí*/
-function restoreVersion(entryId,content) {
+function restoreVersion(entryId,version) {
   if (confirm("Are you sure you want to restore to an earlier version?")) {
     console.log("Restoring to an earlier version...");
     
     axios.put(`/api/entries/restore/${entryId}`, {
-        content:content
+        content: version.content,
+        imageSrc: version.imageSrc,
+        latitude: version.latitude,
+        longitude: version.longitude,
+        map: version.map,
+        zoom: version.zoom
     })
     .then((response) => {
         console.log("Version restored successfully:", response.data);
@@ -77,7 +82,7 @@ function restoreVersion(entryId,content) {
             <div class="col-span-1 text-text">{{ item.createdAt }}</div>
             <div class="col-span-1 text-text">{{ item.createdBy }}</div>
             <div class="col-span-1 text-center">
-                <button type="button" @click="() => restoreVersion(item.entry, item.content)" 
+                <button type="button" @click="() => restoreVersion(item.entry, item)" 
                     class="px-4 py-2 text-sm font-semibold text-white bg-gray-500 rounded-md hover:bg-red-700 hover:scale-110">
                     
                         Revert
