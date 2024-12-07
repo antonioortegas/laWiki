@@ -43,20 +43,9 @@ const loadEntry = async () => {
     title.value = data.title || '';
     imageSrc.value = data.imageSrc || '';
     markdownContent.value = data.content || '';
-    tags.value = data.tags ? data.tags.join(', ') : '';
-
-
-    // Dividir el campo map en latitud, longitud y zoom
-    if (data.map) {
-      const [lat, lng, zm] = data.map.split(';');
-      latitude.value = lat || '';
-      longitude.value = lng || '';
-      zoom.value = zm || '';
-    } else {
-      latitude.value = '';
-      longitude.value = '';
-      zoom.value = '';
-    }
+    latitude.value = data.latitude || '';
+    longitude.value = data.longitude || '';
+    zoom.value = data.zoom || '';
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -64,18 +53,29 @@ const loadEntry = async () => {
 
 // Guardar los cambios en el microservicio
 const saveEntry = async () => {
+  const text = (markdownContent.value==undefined) ? " " : markdownContent.value;
   try {
     const updatedData = {
       title: title.value,
       imageSrc: imageSrc.value,
-      content: markdownContent.value,
-      map: `${latitude.value};${longitude.value};${zoom.value}`, // Combinar los valores en un string
-      tags: tags.value.split(',').map(tag => tag.trim()),
+      content: text,
+      latitude: latitude.value,
+      longitude: longitude.value,
+      zoom: zoom.value,
     };
 
-    await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    
+
+    const versionData = 
+    {
+    entry: entryId.value,
+    content: text,
+    "createdBy": "60d0fe4f5311236168a109ca"
+    };   
+    console.log(entry);
+    await axios.post(`/api/versions/`, versionData);
     console.log('Entrada actualizada exitosamente');
-    router.push("/entry/" + entryId.value);
   } catch (error) {
     console.error('Error al actualizar la entrada:', error.response || error.message);
   }
@@ -238,7 +238,7 @@ onMounted(() => {
           <input v-model="zoom" type="number" class="w-full border-2 border-gray-300 rounded-lg p-3" />
         </div>
       </div>
-
+      
       <div class="flex justify-center gap-8">
         <button @click="toggleEditMode"
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">

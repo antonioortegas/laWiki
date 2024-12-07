@@ -192,6 +192,23 @@ fetchWikiInfo();
     </div>
   </div>
 
+    <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
+
+    <!-- Call-to-Action Section -->
+    <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
+        <div class="text-center">
+            <p class="text-white text-lg font-heading mb-4">
+                Don't see what you're looking for? Add it!
+            </p>
+            <router-link :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
+            <button
+                class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
+                + Create an Entry
+            </button>
+            </router-link>
+        </div>
+    </div>
+
   <!-- Search Bar -->
   <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" />
 
@@ -224,6 +241,7 @@ fetchWikiInfo();
   <div v-if="loading" class="loading">Loading...</div>
   <CardGrid v-else :data="entries" />
 </template>
+
 
 <style scoped>
 .advanced-search {

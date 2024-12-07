@@ -144,6 +144,18 @@ const getComments = async (req, res) => {
         res.status(500).json({ message: 'Error when filtering entries' })
     }
 }
+const restoreEntry = async (req, res) => {
+    try {
+        const entry = await Entry.findOneAndUpdate({ entryId: req.params.id }, req.body);
+        if (!entry) {
+            return res.status(404).json('Entry not found');
+        }
+        res.status(200).json(entry);
+    }catch(error){
+        console.log('Error when filtering entries: ', error)
+        res.status(500).json({ message: 'Error when filtering entries' })
+    }
+};
 
 const getEntryComments = async (req, res) => {
     try {
@@ -210,8 +222,6 @@ const deleteComment = async (req, res) => {
         });
     }
 }
-
-
 module.exports = {
     getEntries,
     getEntry,
@@ -220,7 +230,8 @@ module.exports = {
     deleteEntry,
     fuzzyFindByText,
     getComments,
+    restoreEntry,
     getEntryComments,
     addComment,
-    deleteComment
+    deleteComment,
 }

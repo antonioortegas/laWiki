@@ -6,5 +6,6 @@ router.post('/', versionController.createVersion);
 router.get('/:id', versionController.getVersionById);
 router.put('/:id', versionController.updateVersion);
 router.delete('/:id', versionController.deleteVersion);
+router.get('/entry/:entryId', versionController.getVersionsByEntry);
 
 module.exports = router;

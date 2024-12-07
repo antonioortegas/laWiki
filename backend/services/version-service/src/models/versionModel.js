@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const versionSchema = new mongoose.Schema({
     entry: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     content: {
