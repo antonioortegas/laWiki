@@ -77,7 +77,7 @@ export default {
           isPlaceholder: false,
         },
       ], // Inital empty list
-      userId: "674ba62aac31b52fcd5ffaed", // TODO: Cambiar esto al ID dinámico del usuario
+      userId: "674c94e9410e88c6b15e2b96", // TODO: Cambiar esto al ID dinámico del usuario
     };
   },
   methods: {

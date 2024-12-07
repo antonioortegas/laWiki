@@ -45,8 +45,7 @@ const routes = [
     path: '/entry/:wikiId',
     name: 'CreateEntry',
     component: () => import('../views/EntryForm.vue')
-  },
-  
+  }
 ];
 
 const router = createRouter({

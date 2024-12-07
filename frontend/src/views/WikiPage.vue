@@ -8,7 +8,10 @@ import CardGrid from '@/components/CardGrid.vue';
 // Reactive data
 const wikiInfo = ref({});
 const entryData = ref([]);
-const $route = useRoute();
+const entries = ref([]); // Entries filtered by search
+const loading = ref(false); // Loading state for search
+const showAdvancedSearch = ref(false); // Toggle for advanced search view
+
 
 // Sample data for entries
 const entrySampleData = [
@@ -46,64 +49,148 @@ const entrySampleData = [
 
 
 
+const filters = ref({
+  text: '',
+  tags: '',
+  content: '',
+  createdBy: '',
+  editors: '',
+});
+
+const $route = useRoute();
+
+// Normalize filters
+const normalizeFilters = () => ({
+  text: filters.value.text?.toLowerCase() || '',
+  tags: filters.value.tags
+    ? filters.value.tags.split(',').map((tag) => tag.trim().toLowerCase())
+    : [],
+  content: filters.value.content?.toLowerCase() || '',
+  createdBy: filters.value.createdBy?.toLowerCase() || '',
+  editors: filters.value.editors
+    ? filters.value.editors.split(',').map((editor) => editor.trim().toLowerCase())
+    : [],
+});
+
+// Normalize entries
+const normalizeEntries = (entries) =>
+  entries.map((entry) => ({
+    ...entry,
+    title: entry.title?.toLowerCase() || '',
+    content: entry.content?.toLowerCase() || '',
+    createdBy: entry.createdBy?.toLowerCase() || '',
+    tags: entry.tags?.map((tag) => tag.toLowerCase()) || [],
+    editors: entry.editors?.map((editor) => editor.toLowerCase()) || [],
+  }));
+
+// Search entries
+const searchEntries = async () => {
+  loading.value = true;
+
+  try {
+    // Fetch entries from the API (mocking with local entry data for now)
+    const normalizedEntries = normalizeEntries(entryData.value);
+    const normalizedFilters = normalizeFilters();
+
+    // Filter entries
+    entries.value = normalizedEntries.filter((entry) => {
+      const matchesTitle = normalizedFilters.text
+        ? entry.title.includes(normalizedFilters.text)
+        : true;
+
+      const matchesTags = normalizedFilters.tags.length
+        ? normalizedFilters.tags.every((tag) =>
+            entry.tags.some((entryTag) => entryTag.includes(tag))
+          )
+        : true;
+
+      const matchesContent = normalizedFilters.content
+        ? entry.content.includes(normalizedFilters.content)
+        : true;
+
+      const matchesCreatedBy = normalizedFilters.createdBy
+        ? entry.createdBy.includes(normalizedFilters.createdBy)
+        : true;
+
+      const matchesEditors = normalizedFilters.editors.length
+        ? normalizedFilters.editors.every((editor) =>
+            entry.editors.some((entryEditor) => entryEditor.includes(editor))
+          )
+        : true;
+
+      return (
+        matchesTitle &&
+        matchesTags &&
+        matchesContent &&
+        matchesCreatedBy &&
+        matchesEditors
+      );
+    });
+  } catch (error) {
+    console.error('Error searching entries:', error);
+    entries.value = [];
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Update filter and trigger search
+const updateFilter = (field, value) => {
+  filters.value[field] = value || '';
+  searchEntries(); // Perform search with updated filters
+};
+
+// Toggle advanced search
+const toggleAdvancedSearch = () => {
+  showAdvancedSearch.value = !showAdvancedSearch.value;
+};
+
 // Fetch entry data from the backend
 const fetchEntryData = async (entryId) => {
-    try {
-        const response = await axios.get(`/api/entries/${entryId}`);
-        const entry = response.data[0];
-        // add a path to entry, that will be /entry/:entryId for frontend routing
-        entry.path = `/entry/${entry.entryId}`;
-        entryData.value.push(entry);  // Push fetched entry into entryData
-    } catch (error) {
-        console.error('Error fetching entry:', error);
-    }
+  try {
+    const response = await axios.get(`/api/entries/${entryId}`);
+    const entry = response.data[0];
+    entry.path = `/entry/${entry.entryId}`;
+    entry.src = entry.imageSrc;
+    entryData.value.push(entry);
+  } catch (error) {
+    console.error('Error fetching entry:', error);
+  }
 };
 
 // Fetch the wiki info from the backend
 const fetchWikiInfo = async () => {
-    try {
-        const response = await axios.get(`/api/wikis/${$route.params.wikiId}`);
-        wikiInfo.value = response.data[0];  // Assign the fetched data to the reactive object
-        console.log('Fetched wiki info:', wikiInfo.value);
+  try {
+    const response = await axios.get(`/api/wikis/${$route.params.wikiId}`);
+    wikiInfo.value = response.data[0];
 
-        // Ensure entry data is populated after fetching wiki info
-        const promises = wikiInfo.value.entryUUIDs.map(async (entryId) => {
-            await fetchEntryData(entryId);  // Fetch each entry asynchronously
-        });
+    const promises = wikiInfo.value.entryUUIDs.map(async (entryId) => {
+      await fetchEntryData(entryId);
+    });
 
-        // Wait for all entries to be fetched
-        await Promise.all(promises);
-
-        console.log('Fetched entry data:', entryData.value);  // Ensure entryData is populated properly
-    } catch (error) {
-        console.error('Error fetching wiki info:', error);
-    }
+    await Promise.all(promises);
+    entries.value = entryData.value; // Initial entries
+  } catch (error) {
+    console.error('Error fetching wiki info:', error);
+  }
 };
 
-// Call the function to fetch wiki info when the component is mounted
 fetchWikiInfo();
 </script>
 
 <template>
-    <!-- "You are entering this wiki" Section -->
-    <div class="bg-background text-center flex flex-col">
-        <!-- Wiki Header -->
-        <div class="text-center mx-auto px-8 sm:px-16 w-full bg-gray-100 py-4">
-            <h1 v-if="wikiInfo.title" class="text-3xl font-heading text-text font-bold">{{ wikiInfo.title }}</h1>
-            <p v-if="wikiInfo.description" class="text-gray-700 mt-2 text-sm sm:text-base">
-                {{ wikiInfo.description }}
-            </p>
-            <p v-if="wikiInfo.numberOfEntries" class="text-gray-600 text-sm sm:text-base mt-1">
-                Containing <span class="font-semibold text-primary">{{ wikiInfo.numberOfEntries }}</span> entries and growing!
-            </p>
-            <router-link :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
-                <button type="submit"
-                    class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105">
-                    Edit Wiki
-                </button>
-            </router-link>
-        </div>
+  <div class="bg-background text-center flex flex-col">
+    <!-- Wiki Header -->
+    <div class="text-center mx-auto px-8 sm:px-16 w-full bg-gray-100 py-4">
+      <h1 v-if="wikiInfo.title" class="text-3xl font-heading text-text font-bold">{{ wikiInfo.title }}</h1>
+      <p v-if="wikiInfo.description" class="text-gray-700 mt-2 text-sm sm:text-base">
+        {{ wikiInfo.description }}
+      </p>
+      <p v-if="wikiInfo.numberOfEntries" class="text-gray-600 text-sm sm:text-base mt-1">
+        Containing <span class="font-semibold text-primary">{{ wikiInfo.numberOfEntries }}</span> entries and growing!
+      </p>
     </div>
+  </div>
 
     <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
 
@@ -122,6 +209,58 @@ fetchWikiInfo();
         </div>
     </div>
 
-    <!-- Pass entry data to CardGrid -->
-    <CardGrid :data="entryData" />
+  <!-- Search Bar -->
+  <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" />
+
+  <!-- Toggle Advanced Search -->
+  <button @click="toggleAdvancedSearch">
+    {{ showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search' }}
+  </button>
+
+  <!-- Advanced Search Options -->
+  <div v-if="showAdvancedSearch" class="advanced-search">
+    <SearchBar
+      placeholder="Search by tags (comma-separated)..."
+      @enter="(value) => updateFilter('tags', value.tags)"
+    />
+    <SearchBar
+      placeholder="Search by content..."
+      @enter="(value) => updateFilter('content', value.content)"
+    />
+    <SearchBar
+      placeholder="Search by creator..."
+      @enter="(value) => updateFilter('createdBy', value.createdBy)"
+    />
+    <SearchBar
+      placeholder="Search by editors (comma-separated)..."
+      @enter="(value) => updateFilter('editors', value.editors)"
+    />
+  </div>
+
+  <!-- Results Section -->
+  <div v-if="loading" class="loading">Loading...</div>
+  <CardGrid v-else :data="entries" />
 </template>
+
+
+<style scoped>
+.advanced-search {
+  margin-top: 20px;
+}
+.loading {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+button {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: #00ff26a5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #00b339;
+}
+</style>
