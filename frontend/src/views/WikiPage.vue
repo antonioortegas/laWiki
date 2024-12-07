@@ -15,36 +15,36 @@ const showAdvancedSearch = ref(false); // Toggle for advanced search view
 
 // Sample data for entries
 const entrySampleData = [
-    {
-        "entryId": "674ba62aac31b52fcd5ffb1a",
-        "title": "Cosmere: Mistborn",
-        "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-    },
-    {
-        "entryId": "63e8e9d8f86d4e25c9a1b223",
-        "title": "Cosmere: Mistborn",
-        "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-    },
-    {
-        "entryId": "63e8e9d8f86d4e25c9a1b224",
-        "title": "Cosmere: Mistborn",
-        "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-    },
-    {
-        "entryId": "63e8e9d8f86d4e25c9a1b225",
-        "title": "Cosmere: Stormlight Archive",
-        "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-    },
-    {
-        "entryId": "63e8e9d8f86d4e25c9a1b226",
-        "title": "Cosmere: Stormlight Archive",
-        "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-    },
-    {
-        "entryId": "63e8e9d8f86d4e25c9a1b227",
-        "title": "Cosmere: Stormlight Archive",
-        "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-    },
+  {
+    "entryId": "674ba62aac31b52fcd5ffb1a",
+    "title": "Cosmere: Mistborn",
+    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
+  },
+  {
+    "entryId": "63e8e9d8f86d4e25c9a1b223",
+    "title": "Cosmere: Mistborn",
+    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
+  },
+  {
+    "entryId": "63e8e9d8f86d4e25c9a1b224",
+    "title": "Cosmere: Mistborn",
+    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
+  },
+  {
+    "entryId": "63e8e9d8f86d4e25c9a1b225",
+    "title": "Cosmere: Stormlight Archive",
+    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
+  },
+  {
+    "entryId": "63e8e9d8f86d4e25c9a1b226",
+    "title": "Cosmere: Stormlight Archive",
+    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
+  },
+  {
+    "entryId": "63e8e9d8f86d4e25c9a1b227",
+    "title": "Cosmere: Stormlight Archive",
+    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
+  },
 ];
 
 
@@ -100,8 +100,8 @@ const searchEntries = async () => {
 
       const matchesTags = normalizedFilters.tags.length
         ? normalizedFilters.tags.every((tag) =>
-            entry.tags.some((entryTag) => entryTag.includes(tag))
-          )
+          entry.tags.some((entryTag) => entryTag.includes(tag))
+        )
         : true;
 
       const matchesContent = normalizedFilters.content
@@ -114,8 +114,8 @@ const searchEntries = async () => {
 
       const matchesEditors = normalizedFilters.editors.length
         ? normalizedFilters.editors.every((editor) =>
-            entry.editors.some((entryEditor) => entryEditor.includes(editor))
-          )
+          entry.editors.some((entryEditor) => entryEditor.includes(editor))
+        )
         : true;
 
       return (
@@ -189,25 +189,31 @@ fetchWikiInfo();
       <p v-if="wikiInfo.numberOfEntries" class="text-gray-600 text-sm sm:text-base mt-1">
         Containing <span class="font-semibold text-primary">{{ wikiInfo.numberOfEntries }}</span> entries and growing!
       </p>
+      <router-link :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
+        <button type="submit"
+          class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105">
+          Edit Wiki
+        </button>
+      </router-link>
     </div>
   </div>
 
-    <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
+  <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
 
-    <!-- Call-to-Action Section -->
-    <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
-        <div class="text-center">
-            <p class="text-white text-lg font-heading mb-4">
-                Don't see what you're looking for? Add it!
-            </p>
-            <router-link :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
-            <button
-                class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
-                + Create an Entry
-            </button>
-            </router-link>
-        </div>
+  <!-- Call-to-Action Section -->
+  <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
+    <div class="text-center">
+      <p class="text-white text-lg font-heading mb-4">
+        Don't see what you're looking for? Add it!
+      </p>
+      <router-link :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
+        <button
+          class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
+          + Create an Entry
+        </button>
+      </router-link>
     </div>
+  </div>
 
   <!-- Search Bar -->
   <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" />
@@ -219,22 +225,11 @@ fetchWikiInfo();
 
   <!-- Advanced Search Options -->
   <div v-if="showAdvancedSearch" class="advanced-search">
-    <SearchBar
-      placeholder="Search by tags (comma-separated)..."
-      @enter="(value) => updateFilter('tags', value.tags)"
-    />
-    <SearchBar
-      placeholder="Search by content..."
-      @enter="(value) => updateFilter('content', value.content)"
-    />
-    <SearchBar
-      placeholder="Search by creator..."
-      @enter="(value) => updateFilter('createdBy', value.createdBy)"
-    />
-    <SearchBar
-      placeholder="Search by editors (comma-separated)..."
-      @enter="(value) => updateFilter('editors', value.editors)"
-    />
+    <SearchBar placeholder="Search by tags (comma-separated)..." @enter="(value) => updateFilter('tags', value.tags)" />
+    <SearchBar placeholder="Search by content..." @enter="(value) => updateFilter('content', value.content)" />
+    <SearchBar placeholder="Search by creator..." @enter="(value) => updateFilter('createdBy', value.createdBy)" />
+    <SearchBar placeholder="Search by editors (comma-separated)..."
+      @enter="(value) => updateFilter('editors', value.editors)" />
   </div>
 
   <!-- Results Section -->
@@ -247,10 +242,12 @@ fetchWikiInfo();
 .advanced-search {
   margin-top: 20px;
 }
+
 .loading {
   font-size: 1.25rem;
   color: #6b7280;
 }
+
 button {
   margin-top: 10px;
   padding: 10px 15px;
@@ -260,6 +257,7 @@ button {
   cursor: pointer;
   border-radius: 4px;
 }
+
 button:hover {
   background-color: #00b339;
 }
