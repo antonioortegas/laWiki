@@ -1,6 +1,10 @@
+require('dotenv').config();
+
 const axios = require('axios');
 const User = require('../models/userModel');
 const { get } = require('mongoose');
+const { Resend } = require('resend')
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -241,9 +245,13 @@ const addNotification = async (req, res) => {
     }
 };
 
-// TODO: Implement email sending
 const sendEmail = async (email, message) => {
-    // Send email
+    resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: email,
+      subject: 'Notificación: Entrada modificada',
+      html: message
+    });
 };
 
 // Delete a notification for user by id

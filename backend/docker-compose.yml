@@ -41,6 +41,7 @@ services:
       - WIKIS_API_HOST=${WIKIS_API_HOST}
       - ENTRIES_API_HOST=${ENTRIES_API_HOST}
       - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+      - RESEND_API_KEY=${RESEND_API_KEY}
 
   wiki-service:
     build:
