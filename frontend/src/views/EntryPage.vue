@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
-import MapComponent from '../components/mapComponent.vue';
+import MapComponent from '../components/Map.vue';
 import 'leaflet/dist/leaflet.css';
 import { useRoute } from 'vue-router';
 import router from '../router';
