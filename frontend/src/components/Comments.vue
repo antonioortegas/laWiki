@@ -43,7 +43,7 @@
     },
     data() {
       return {
-        currentUserId: "6744ce2eb67a4a58bf6954c0", // TODO: Replace with dynamic user ID
+        currentUserId: "674ba62aac31b52fcd5ffae9", // TODO: Replace with dynamic user ID
         newComment: "", // Stores the text of the new comment
         comments: [] // List of comments for the entry
       };
@@ -74,7 +74,7 @@
   
         const commentData = {
           content: this.newComment.trim(),
-          author: "6744ce2eb67a4a58bf6954c0", // TODO: Replace with dynamic author ID
+          author: "674ba62aac31b52fcd5ffae9", // TODO: Replace with dynamic author ID
         };
   
         try {

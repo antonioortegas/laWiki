@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       averageRating: 0, // Initial value
-      profileUserId: '6744ce2eb67a4a58bf6954c0', // TODO: Cambia esto al ID dinámico del usuario
+      profileUserId: '674ba62aac31b52fcd5ffae9', // TODO: Cambia esto al ID dinámico del usuario
       loggedUserEmail: 'john.smith@example.com' // 
     };
   },
