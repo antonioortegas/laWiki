@@ -12,43 +12,6 @@ const entries = ref([]); // Entries filtered by search
 const loading = ref(false); // Loading state for search
 const showAdvancedSearch = ref(false); // Toggle for advanced search view
 
-
-// Sample data for entries
-const entrySampleData = [
-  {
-    "entryId": "674ba62aac31b52fcd5ffb1a",
-    "title": "Cosmere: Mistborn",
-    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-  },
-  {
-    "entryId": "63e8e9d8f86d4e25c9a1b223",
-    "title": "Cosmere: Mistborn",
-    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-  },
-  {
-    "entryId": "63e8e9d8f86d4e25c9a1b224",
-    "title": "Cosmere: Mistborn",
-    "src": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg"
-  },
-  {
-    "entryId": "63e8e9d8f86d4e25c9a1b225",
-    "title": "Cosmere: Stormlight Archive",
-    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-  },
-  {
-    "entryId": "63e8e9d8f86d4e25c9a1b226",
-    "title": "Cosmere: Stormlight Archive",
-    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-  },
-  {
-    "entryId": "63e8e9d8f86d4e25c9a1b227",
-    "title": "Cosmere: Stormlight Archive",
-    "src": "https://upload.wikimedia.org/wikipedia/en/3/30/Stormlight_Logo.jpg"
-  },
-];
-
-
-
 const filters = ref({
   text: '',
   tags: '',
@@ -163,6 +126,7 @@ const fetchWikiInfo = async () => {
   try {
     const response = await axios.get(`/api/wikis/${$route.params.wikiId}`);
     wikiInfo.value = response.data[0];
+    console.log('Wiki Info:', wikiInfo.value);
 
     const promises = wikiInfo.value.entryUUIDs.map(async (entryId) => {
       await fetchEntryData(entryId);
@@ -214,23 +178,24 @@ fetchWikiInfo();
       </router-link>
     </div>
   </div>
-
+  
   <!-- Search Bar -->
-  <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" />
+   
+  <!-- <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" /> -->
 
   <!-- Toggle Advanced Search -->
-  <button @click="toggleAdvancedSearch">
+  <!-- <button @click="toggleAdvancedSearch">
     {{ showAdvancedSearch ? 'Hide Advanced Search' : 'Show Advanced Search' }}
-  </button>
+  </button> -->
 
   <!-- Advanced Search Options -->
-  <div v-if="showAdvancedSearch" class="advanced-search">
+  <!-- <div v-if="showAdvancedSearch" class="advanced-search">
     <SearchBar placeholder="Search by tags (comma-separated)..." @enter="(value) => updateFilter('tags', value.tags)" />
     <SearchBar placeholder="Search by content..." @enter="(value) => updateFilter('content', value.content)" />
     <SearchBar placeholder="Search by creator..." @enter="(value) => updateFilter('createdBy', value.createdBy)" />
     <SearchBar placeholder="Search by editors (comma-separated)..."
       @enter="(value) => updateFilter('editors', value.editors)" />
-  </div>
+  </div> -->
 
   <!-- Results Section -->
   <div v-if="loading" class="loading">Loading...</div>

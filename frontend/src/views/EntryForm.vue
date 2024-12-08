@@ -50,18 +50,14 @@ console.log("Creating empty entry with ID:");
         console.error("Error creating empty entry:", error);
     });
 
-    axios.put(`/api/wikis/${w}`, {
-        $push: { entryUUIDs: entryUUID.value }
-    })
-    .then(response => {
-        console.log("Entry added to wiki:", response.data);
-    })
-    .catch(error => {
-        console.error("Error updating wiki:", error);
-    });
+    
     router.push({ name: 'EntryPage', params: { entryId: entryUUID.value},query: {edit: true } });
 
 });
 
 
 </script>
+
+<template>
+    <!-- intentionally left blank -->
+</template>

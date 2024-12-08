@@ -2,6 +2,7 @@ const axios = require('axios');
 const Entry = require('../models/entryModel');
 
 const usersAPI = process.env.USERS_API_HOST || 'http://localhost:3001/users';
+const wikisAPI = process.env.WIKIS_API_HOST || 'http://localhost:3002/wikis';
 
 const getEntries = async (req, res) => {
     try {
@@ -57,6 +58,16 @@ const createEntry = async (req, res) => {
         if (!wiki || !title || !createdBy || !entryId) {
             return res.status(400).json('UUID, wiki, title, and createdBy are required');
         }
+        // add the entry to the wiki entryUUIDs array
+        // get the wiki from the wiki field in the entry
+        const response = await axios.get(`${wikisAPI}/${wiki}`);
+        // add the entry to the entryUUIDs array
+        const wikiToUpdate = response.data[0];
+        wikiToUpdate.entryUUIDs = wikiToUpdate.entryUUIDs.concat(entryId);
+        wikiToUpdate.numberOfEntries = wikiToUpdate.entryUUIDs.length;
+        
+        // save the wiki
+        await axios.put(`${wikisAPI}/${wiki}`, wikiToUpdate);
 
         const newEntry = new Entry(req.body);
         const savedEntry = await newEntry.save();
@@ -88,10 +99,22 @@ const updateEntry = async (req, res) => {
 
 const deleteEntry = async (req, res) => {
     try {
+        console.log(req.params.id);
         const deletedEntry = await Entry.findOneAndDelete({entryId: req.params.id});
         if (!deletedEntry) {
             return res.status(404).json('Entry not found');
         }
+        // delete the entry from the wiki entryUUIDs array
+        // get the wiki from the wiki field in the entry
+        const response = await axios.get(`${wikisAPI}/${deletedEntry.wiki}`);
+        // remove the entry from the entryUUIDs array
+        const wiki = response.data[0];
+        wiki.entryUUIDs = wiki.entryUUIDs.filter(uuid => uuid !== deletedEntry.entryId);
+        wiki.numberOfEntries = wiki.entryUUIDs.length;
+        
+        // save the wiki
+        await axios.put(`${wikisAPI}/${deletedEntry.wiki}`, wiki);
+        
         res.status(200).json('Entry deleted');
     } catch (err) {
         res.status(500).json({
