@@ -71,7 +71,11 @@ const saveEntry = async () => {
     {
     entry: entryId.value,
     content: text,
-    "createdBy": "60d0fe4f5311236168a109ca"
+    imageSrc: imageSrc.value,
+    latitude: latitude.value,
+    longitude: longitude.value,
+    zoom: zoom.value,
+    createdBy: "60d0fe4f5311236168a109ca"
     };   
     console.log(entry);
     await axios.post(`/api/versions/`, versionData);

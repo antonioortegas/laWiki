@@ -46,6 +46,18 @@ const EntrySchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         default: [],
     },
+    longitude: {
+        type: Number,
+        required: false
+    },
+    latitude: {
+        type: Number,
+        required: false
+    },
+    zoom: {
+        type: Number,
+        required: false
+    },
     comments: {
         type: [{
             author: {
