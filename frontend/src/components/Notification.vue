@@ -13,7 +13,9 @@
           :class="{ unread: !notification.read, placeholder: notification.isPlaceholder }"
           @click="markAsRead(notification)">
           <div class="notification-content">
-            <span>{{ notification.message }}</span>
+            <!-- Replace the link with the entry's title -->
+            <span v-if="notification.formattedMessage" v-html="notification.formattedMessage"></span>
+            <span v-else>{{ notification.message }}</span>
             <button v-if="!notification.isPlaceholder" class="delete-btn"
               @click.stop="deleteNotification(notification)">
               <i class="fas fa-trash"></i>
@@ -85,6 +87,49 @@ export default {
         console.error('Error al actualizar la notificación:', error);
         console.error('Detalle del error:', error.response?.data || error.message);
         }
+    },
+    // This method formats the notification message with a clickable link
+    async getFormattedMessage(notification) {
+      // Assuming the message follows a format like: "You received a reply|comment on http://localhost:3003/entries/entryId: [content]"
+      const regex = /You received a (reply|comment) on (https?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
+      const match = notification.message.match(regex);
+
+      console.log('Mensaje de notificación:', notification.message);
+      console.log('Coincidencia:', match);
+      if (match) {
+        const entryUrl = match[2];
+        const entryId = match[3]; // Entry ID
+        const content = match[4];
+
+        if(entryId){
+          try {
+            console.log('Obteniendo el nombre de la entrada con ID:', entryId);
+            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            var entryTitle = entryResponse.data[0].title;
+            console.log('response:', entryResponse);
+            console.log('Título de la entrada:', entryTitle);
+            //message = message.replace(entryId, entryTitle);  // Replace ID with title
+          } catch (error) {
+            console.error("Error al obtener el nombre de la entrada:", error);
+          }
+        }
+
+        // Create the formatted message with a clickable link
+        return `You received a reply on <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
+      }
+
+      // Return the original message if the format doesn't match
+      return notification.message;
+    },
+  },
+  watch: {
+    // Watch for new notifications and format them
+    async notifications(newNotifications) {
+      for (let notification of newNotifications) {
+        if (notification.message && !notification.formattedMessage) {
+          notification.formattedMessage = await this.getFormattedMessage(notification);
+        }
+      }
     },
   },
 };

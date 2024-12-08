@@ -6,11 +6,12 @@
       </div>
       <p class="comment-text">{{ content.content }}</p>
       <div class="comment-actions">
-        <!--button @click="toggleReplyForm" class="reply-btn">Reply</button-->
+        <button @click="toggleReplyForm" class="reply-btn">Reply</button>
         <!-- Show only if current user is the author of the comment -->
         <button v-if="currentUserId === content.author" @click="deleteComment" class="delete-btn">Delete</button>
       </div>
   
+      <!-- Reply form -->
       <form v-if="showReplyForm" @submit.prevent="submitReply" class="reply-form">
         <textarea 
           v-model="replyText" 
@@ -18,15 +19,18 @@
           class="reply-input"
           required
         ></textarea>
-        <button type="submit" class="submit-reply-btn">Enviar</button>
+        <button type="submit" class="submit-reply-btn">Reply</button>
       </form>
   
+      <!-- Replies -->
       <div v-if="content.replies.length" class="replies">
         <Comment 
           v-for="reply in content.replies" 
           :key="reply._id" 
           :content="reply" 
-          :depth="depth + 1" 
+          :depth="depth + 1"
+          :entryId="entryId"
+          :currentUserId="currentUserId" 
           @reply="forwardReply"
           @delete="forwardDelete"
         />
@@ -73,10 +77,10 @@
         try {
           console.log("Buscando autor: ", this.content.author);
           const response = await axios.get(`/api/users/${this.content.author}`);
-          this.authorName = response.data.name || "Usuario Desconocido";
+          this.authorName = response.data.name || "Anonymous User";
         } catch (error) {
           console.error("Error fetching author name:", error.response?.data || error.message);
-          this.authorName = "Usuario Desconocido";
+          this.authorName = "Anonymous User";
         }
       },
       // Toggles the reply form visibility
@@ -84,20 +88,24 @@
         this.showReplyForm = !this.showReplyForm;
       },
       // Submits a reply
-      submitReply() {
+      async submitReply() {
         if (!this.replyText.trim()) return;
-  
+
         const reply = {
-          _id: Date.now(), // Temporary unique ID
           content: this.replyText.trim(),
-          author: "usuario", // TODO: Replace with dynamic author ID
-          responseTo: this.content._id,
-          replies: []
+          author: this.currentUserId,
+          responseTo: this.content._id, // Enlazamos al comentario padre
         };
-  
-        this.$emit("reply", { parentId: this.content._id, reply });
-        this.replyText = ""; // Clear reply input
-        this.showReplyForm = false; // Hide reply form
+
+        try {
+          const response = await axios.put(`/api/entries/${this.entryId}/addComment`, reply);
+          const newReply = { ...response.data, replies: [] };
+          this.$emit("reply", { parentId: this.content._id, reply: newReply });
+          this.replyText = "";
+          this.showReplyForm = false;
+        } catch (error) {
+          console.error("Error al enviar la respuesta:", error.response?.data || error.message);
+        }
       },
       // Deletes the comment with a PUT request
       async deleteComment() {
