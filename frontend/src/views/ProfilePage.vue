@@ -51,10 +51,12 @@ const exampleUser = {
                         </div>
                     </div>
                     <!-- Additional Info -->
+                    <!--
                     <div>
                         <h3 class="text-lg font-semibold ">Additional Info</h3>
                         <p class="text-sm text-gray-600 mt-2">{{ exampleUser.additionalInfo }}</p>
                     </div>
+                    -->
                 </div>
                 
                 <!-- Email Notifications Toggle (Only visible if loggedUserEmail matches exampleUser.email) -->
@@ -69,12 +71,14 @@ const exampleUser = {
                 </div>
 
                 <!-- User Bio/Info -->
+                <!--
                 <div class="text-gray-700 mx-4 text-center mt-12">
                     <h3 class="text-lg font-bold mb-2">About</h3>
                     <p class="text-sm leading-relaxed text-left">
                         {{ exampleUser.bio }}
                     </p>
                 </div>
+                -->
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
 const Version = require('../models/versionModel');
-
+const Entry = require('../../../entry-service/src/models/entryModel');
 const getVersions = async (req, res) => {
     try {
         filter = {};
@@ -29,7 +29,18 @@ const getVersions = async (req, res) => {
         });
     }
 }
-
+const getVersionsByEntry = async (req, res) => {
+    try {
+        const filter = { entry: req.params.entryId };
+        const versions = await Version.find(filter);
+        res.status(200).json(versions);
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error retrieving versions by entry",
+            error: err
+        });
+    }
+}
 const getVersion = async (req, res) => {
     try {
         const version = await Version.findById(req.params.id);
@@ -48,7 +59,7 @@ const getVersion = async (req, res) => {
 // Create a new version
 const createVersion = async (req, res) => {
     try {
-        const newVersion = new version(req.body);
+        const newVersion = new Version(req.body);
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);
     } catch (err) {
@@ -98,5 +109,6 @@ module.exports = {
     getVersions,
     getVersionById,
     updateVersion,
-    deleteVersion
+    deleteVersion,
+    getVersionsByEntry,
 };
