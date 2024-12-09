@@ -77,23 +77,29 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, role } = req.body;
+        const { name, email, role, getNotificationsByEmail } = req.body;
 
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        user.name = name;
-        user.email = email;
-        user.role = role;
+        if(name)
+            user.name = name;
+        if(email)
+            user.email = email;
+        if(role)
+            user.role = role;
+        if(getNotificationsByEmail != undefined)
+            user.getNotificationsByEmail = getNotificationsByEmail;
 
+        console.log(user);
         const savedUser = await user.save();
         res.status(200).json(savedUser);
     }
     catch (error) {
         console.error('Error al actualizar el usuario:', error);
-        res.status(500).json({ message: 'Error al actualizar el usuario.' });
+        res.status(500).json({ message: 'Error al actualizar el usuario.', error: error });
     }
 }
 

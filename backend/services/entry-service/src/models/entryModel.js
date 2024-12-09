@@ -71,6 +71,10 @@ const EntrySchema = new mongoose.Schema({
             responseTo: {
                 type: mongoose.Schema.Types.ObjectId,
             },
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
         }],
         default: []
     },
