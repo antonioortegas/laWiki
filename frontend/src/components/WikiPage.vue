@@ -149,7 +149,7 @@ const toggleAdvancedSearch = () => {
     <!-- Resultados -->
     <div v-if="loading" class="loading">Cargando...</div>
     <ul v-if="entries.length" class="results">
-      <li v-for="entry in entries" :key="entry._id">
+      <li v-for="entry in entries" :key="entry.entryId">
         <h3>{{ entry.title }}</h3>
         <p>{{ entry.content }}</p>
         <small>Tags: {{ entry.tags.join(', ') }}</small>
