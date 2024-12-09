@@ -107,15 +107,25 @@ const updateFilter = (field, value) => {
 const toggleAdvancedSearch = () => {
   showAdvancedSearch.value = !showAdvancedSearch.value;
 };
-function filter(searchQuery) {
-    const key = Object.keys(searchQuery)[0];
-    const text = searchQuery[key].toLowerCase();
-    console.log('Filtering by:', text);
 
-    // Filter the original entry data
-    entries.value = entryData.value.filter((entry) =>
-      entry.title.toLowerCase().includes(text)
-    );
+function filter(searchQuery) {
+    const key = Object.keys(searchQuery)[0]; // 'title', 'content', o 'tags'
+    const text = searchQuery[key].toLowerCase();
+    console.log('Filtering by:', key, text);
+
+    // Filtrar según el campo proporcionado en el evento
+    entries.value = entryData.value.filter((entry) => {
+        if (key === 'title') {
+            return entry.title.toLowerCase().includes(text);
+        }
+        if (key === 'content') {
+            return entry.content.toLowerCase().includes(text);
+        }
+        if (key === 'tags') {
+            return entry.tags.some((tag) => tag.toLowerCase().includes(text));
+        }
+        return false; // En caso de un tipo desconocido, no incluir en los resultados
+    });
 }
 
 // Fetch entry data from the backend
@@ -172,7 +182,7 @@ fetchWikiInfo();
     </div>
   </div>
 
-  <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter"/>
+  <SearchBar :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter"/>
 
   <!-- Call-to-Action Section -->
   <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
