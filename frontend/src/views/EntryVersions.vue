@@ -35,7 +35,7 @@ function restoreVersion(entryId,version) {
         latitude: version.latitude,
         longitude: version.longitude,
         map: version.map,
-        zoom: version.zoom
+        zoom: version.zoom,
     })
     .then((response) => {
         console.log("Version restored successfully:", response.data);
