@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
-import MapComponent from '../components/MapComponent.vue';
+import MapComponent from '../components/Map.vue';
 import 'leaflet/dist/leaflet.css';
 import { useRoute } from 'vue-router';
 import router from '../router';
@@ -19,7 +19,11 @@ const title = ref(''); // Título de la entrada
 const imageSrc = ref(''); // URL de la imagen
 const markdownContent = ref(''); // Contenido Markdown
 const tags = ref(''); // Etiquetas de la entrada
+
 const wikiId = ref(' ');//wiki de la entrada
+
+const language = ref(''); // Idioma de la entrada
+
 // Estados para los campos del mapa
 const latitude = ref('');
 const longitude = ref('');
@@ -47,6 +51,7 @@ const loadEntry = async () => {
     longitude.value = data.longitude || '';
     zoom.value = data.zoom || '';
     wikiId.value= data.wiki || '';
+    language.value = data.language || '';
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -54,7 +59,7 @@ const loadEntry = async () => {
 
 // Guardar los cambios en el microservicio
 const saveEntry = async () => {
-  const text = (markdownContent.value==undefined) ? " " : markdownContent.value;
+  const text = (markdownContent.value == undefined) ? " " : markdownContent.value;
   try {
     const updatedData = {
       title: title.value,
@@ -63,21 +68,22 @@ const saveEntry = async () => {
       latitude: latitude.value,
       longitude: longitude.value,
       zoom: zoom.value,
+      language: language.value
     };
 
     const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
-    
 
-    const versionData = 
+
+    const versionData =
     {
-    entry: entryId.value,
-    content: text,
-    imageSrc: imageSrc.value,
-    latitude: latitude.value,
-    longitude: longitude.value,
-    zoom: zoom.value,
-    createdBy: "60d0fe4f5311236168a109ca"
-    };   
+      entry: entryId.value,
+      content: text,
+      imageSrc: imageSrc.value,
+      latitude: latitude.value,
+      longitude: longitude.value,
+      zoom: zoom.value,
+      createdBy: "60d0fe4f5311236168a109ca"
+    };
     console.log(entry);
     await axios.post(`/api/versions/`, versionData);
     console.log('Entrada actualizada exitosamente');
@@ -98,7 +104,7 @@ async function deleteEntry() {
       // Proceder a eliminar la entrada
       await axios.delete(`/api/entries/${route.params.entryId}`);
       console.log('Entry deleted successfully');
-      
+
       // Redirigir a la URL de la wiki
       router.push("/wiki/" + wikiUrl);
     } catch (error) {
@@ -154,52 +160,64 @@ onMounted(() => {
       </button>
     </div>
 
-<!-- Vista de solo lectura -->
-<div v-if="!isEditing" class="entry-page flex flex-col space-y-8 p-6">
-  <!-- Título -->
-  <div 
-    class="title-container relative flex items-center justify-center bg-cover bg-center h-64 text-center"
-    :style="{ backgroundImage: `url(${imageSrc})` }"
-  >
-    <h1 class="text-4xl font-bold text-white bg-black bg-opacity-50 px-6 py-3 rounded-lg shadow-lg">
-      {{ title }}
-    </h1>
-  </div>
-  
-  <!-- Contenido Markdown -->
-  <div class="markdown-content w-full max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <MarkdownPreview :content="markdownContent" />
-  </div>
+    <!-- Vista de solo lectura -->
+    <div v-if="!isEditing" class="entry-page flex flex-col space-y-8 p-6">
 
-  <!-- Contenedor para mapa -->
-  <div v-if="latitude && longitude && zoom" class="flex flex-col items-center space-y-4">
+      <!-- If there is a map, show it along the tile, if there is not, make the title cover the whole page -->
+      <div v-if="latitude && longitude && zoom" class="flex gap-4 md:flex-row flex-col">
+        <!-- Título -->
+        <div
+          class="title-container relative flex items-center justify-center bg-cover bg-center h-64 text-center md:w-2/3 w-full"
+          :style="{ backgroundImage: `url(${imageSrc})` }">
+          <h1 class="text-4xl font-bold text-white bg-black bg-opacity-50 px-6 py-3 rounded-lg shadow-lg">
+            {{ title }}
+          </h1>
 
-    <!-- Mapa -->
-    <div class="w-full max-w-4xl"> <!-- Centrado y limitación de ancho en pantallas grandes -->
-      <MapComponent 
-        :latitude="latitude" 
-        :longitude="longitude" 
-        :zoom="zoom" 
-        class="w-full h-[300px] rounded-lg shadow-md"
-      />
+        </div>
+        <!-- Contenedor para mapa -->
+        <div class="flex  items-center space-y-4 md:w-1/3 w-full">
+          <!-- Mapa -->
+          <div class="w-full max-w-4xl"> <!-- Centrado y limitación de ancho en pantallas grandes -->
+            <MapComponent :latitude="latitude" :longitude="longitude" :zoom="zoom"
+              class="w-full h-[300px] rounded-lg shadow-md" />
+          </div>
+        </div>
+      </div>
+
+      <div v-else class="flex gap-4">
+        <!-- Título -->
+        <div
+          class="title-container relative flex items-center justify-center bg-cover bg-center h-64 text-center w-full"
+          :style="{ backgroundImage: `url(${imageSrc})` }">
+          <h1 class="text-4xl font-bold text-white bg-black bg-opacity-50 px-6 py-3 rounded-lg shadow-lg">
+            {{ title }}
+          </h1>
+        </div>
+      </div>
+
+
+
+      <!-- Contenido Markdown -->
+      <div class="markdown-content w-full max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-md">
+        <MarkdownPreview :content="markdownContent" />
+      </div>
+
+
+      <!-- Etiquetas -->
+      <div v-if="tags" class="w-full max-w-4xl">
+        <!-- Título -->
+        <p class="text-lg font-semibold text-gray-700 mb-2">Tags</p>
+
+        <!-- Lista de etiquetas -->
+        <div class="flex flex-wrap gap-2">
+          <span v-for="tag in tags.split(',')" :key="tag" class="px-2 py-1 bg-gray-200 text-sm rounded-full">
+            {{ tag.trim() }}
+          </span>
+        </div>
+      </div>
+
+
     </div>
-  </div>
-
-  <!-- Etiquetas -->
-<div class="w-full max-w-4xl">
-  <!-- Título -->
-  <p class="text-lg font-semibold text-gray-700 mb-2">Tags</p>
-  
-  <!-- Lista de etiquetas -->
-  <div class="flex flex-wrap gap-2">
-    <span v-for="tag in tags.split(',')" :key="tag" class="px-2 py-1 bg-gray-200 text-sm rounded-full">
-      {{ tag.trim() }}
-    </span>
-  </div>
-</div>
-
-
-</div>
 
 
     <!-- Modo edición -->
@@ -221,15 +239,11 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Editor de Markdown -->
-      <div class="w-full max-w-4xl">
-        <MarkdownEditor v-model="markdownContent" />
-      </div>
-
       <!-- Campo de tags, separados por comas -->
       <div class="w-full max-w-4xl">
         <label class="block text-sm font-medium text-gray-700">Tags</label>
-        <input type="text" v-model="tags" class="w-full border-2 border-gray-300 rounded-lg p-3" placeholder="Comma-sepparated tags"/>
+        <input type="text" v-model="tags" class="w-full border-2 border-gray-300 rounded-lg p-3"
+          placeholder="Comma-sepparated tags" />
       </div>
 
       <!-- Campos de mapa -->
@@ -247,7 +261,36 @@ onMounted(() => {
           <input v-model="zoom" type="number" class="w-full border-2 border-gray-300 rounded-lg p-3" />
         </div>
       </div>
-      
+
+      <!-- Language -->
+      <div class="w-full max-w-4xl">
+        <label for="language" class="block text-sm font-semibold text-gray-700">Language</label>
+        <select id="language" v-model="language" class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <!-- Add more language options as needed -->
+        </select>
+      </div>
+
+      <!-- Responsive Flex container for editor and preview -->
+      <div class="flex flex-col lg:flex-row w-full lg:space-x-6 space-y-6 lg:space-y-0 mt-4">
+        <!-- Editor Container -->
+        <div class="editor-container lg:w-1/2 w-full overflow-hidden">
+          <MarkdownEditor v-model="markdownContent" />
+        </div>
+
+        <!-- Preview Container -->
+        <div
+          class="preview-container lg:w-1/2 w-full overflow-hidden border-2 border-gray-300 rounded-lg shadow-md pl-6 p-3 mb-9 font-body">
+          <div class="w-full border-b-2 border-gray-300 pb-2">
+            <h2 class="text-xl font-semibold font-heading">Preview</h2>
+          </div>
+          <MarkdownPreview :content="markdownContent" class="mt-4" />
+        </div>
+      </div>
+
       <div class="flex justify-center gap-8">
         <button @click="toggleEditMode"
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
@@ -261,7 +304,7 @@ onMounted(() => {
     </div>
 
     <!-- Comments Section -->
-    <Comments :entryId="entryId" v-if="!isEditing"/>
+    <Comments :entryId="entryId" v-if="!isEditing" />
 
   </div>
 </template>

@@ -197,18 +197,7 @@ function deleteWiki() {
             class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none" rows="6"></textarea>
         </div>
 
-        <!-- Language -->
-        <div>
-          <label for="language" class="block text-sm font-semibold text-gray-700">Language</label>
-          <select id="language" v-model="formData.language"
-            class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <!-- Add more language options as needed -->
-          </select>
-        </div>
+        
 
         <div class="flex justify-center gap-8">
 

@@ -17,9 +17,9 @@ defineProps({
 
 <template>
 
-  <div class="justify-items-center mx-auto p-10 relative sm:h-48 md:h-64 flex items-center justify-center">
+  <div class="justify-items-center mx-auto mt-4 p-10 relative sm:h-48 md:h-64 flex items-center justify-center">
     <!-- Background Image -->
-    <div class="absolute inset-0 w-full h-full bg-cover bg-center"
+    <div class="absolute inset-0 bg-center bg-no-repeat"
       :style="{ backgroundImage: `url(${backgroundImageUrl})` }"></div>
 
     <!-- Search Bar -->

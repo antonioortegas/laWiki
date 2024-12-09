@@ -110,8 +110,8 @@ export default {
 
 <style>
 #map {
-    width: 400px !important;
-    height: 400px !important;
+    width: 32rempx !important;
+    height: 16rem !important;
     inset: 0px !important;
     z-index: 0 !important;
 }
