@@ -1,5 +1,5 @@
 const Version = require('../models/versionModel');
-const Entry = require('../../../entry-service/src/models/entryModel');
+
 const getVersions = async (req, res) => {
     try {
         filter = {};

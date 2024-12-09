@@ -27,7 +27,7 @@ services:
 
   user-service:
     build:
-      context: .backend/services/user-service
+      context: ./backend/services/user-service
       dockerfile: Dockerfile
     container_name: user-service
     ports:
@@ -45,7 +45,7 @@ services:
 
   wiki-service:
     build:
-      context: .backend/services/wiki-service
+      context: ./backend/services/wiki-service
       dockerfile: Dockerfile
     container_name: wiki-service
     ports:
@@ -61,7 +61,7 @@ services:
 
   entry-service:
     build:
-      context: .backend/services/entry-service
+      context: ./backend/services/entry-service
       dockerfile: Dockerfile
     container_name: entry-service
     ports:
@@ -77,7 +77,7 @@ services:
 
   version-service:
     build:
-      context: .backend/services/version-service
+      context: ./backend/services/version-service
       dockerfile: Dockerfile
     container_name: version-service
     ports:
@@ -93,7 +93,7 @@ services:
   
   picture-service:
     build:
-      context: .backend/services/picture-service
+      context: ./backend/services/picture-service
       dockerfile: Dockerfile
     container_name: picture-service
     ports:
@@ -102,6 +102,21 @@ services:
       - CLOUD_NAME=${CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_USERS_API_HOST=${VITE_USERS_API_HOST}
+      - VITE_WIKIS_API_HOST=${VITE_WIKIS_API_HOST}
+      - VITE_ENTRIES_API_HOST=${VITE_ENTRIES_API_HOST}
+      - VITE_VERSIONS_API_HOST=${VITE_VERSIONS_API_HOST}
+      - VITE_PICTURES_API_HOST=${VITE_PICTURES_API_HOST}
+      - VITE_NODE_ENV=${VITE_NODE_ENV}
 
 volumes:
   mongo-data:
