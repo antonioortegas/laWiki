@@ -128,6 +128,7 @@ function filter(searchQuery) {
     });
 }
 
+
 // Fetch entry data from the backend
 const fetchEntryData = async (entryId) => {
   try {
