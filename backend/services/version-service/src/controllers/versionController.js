@@ -29,7 +29,18 @@ const getVersions = async (req, res) => {
         });
     }
 }
-
+const getVersionsByEntry = async (req, res) => {
+    try {
+        const filter = { entry: req.params.entryId };
+        const versions = await Version.find(filter);
+        res.status(200).json(versions);
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error retrieving versions by entry",
+            error: err
+        });
+    }
+}
 const getVersion = async (req, res) => {
     try {
         const version = await Version.findById(req.params.id);
@@ -48,7 +59,7 @@ const getVersion = async (req, res) => {
 // Create a new version
 const createVersion = async (req, res) => {
     try {
-        const newVersion = new version(req.body);
+        const newVersion = new Version(req.body);
         const savedVersion = await newVersion.save();
         res.status(201).json(savedVersion);
     } catch (err) {
@@ -59,7 +70,7 @@ const createVersion = async (req, res) => {
 // Get a specific version
 const getVersionById = async (req, res) => {
     try {
-        const versionFound = await version.findById(req.params.id);
+        const versionFound = await Version.findById(req.params.id);
         res.status(200).json(versionFound);
     } catch (err) {
         res.status(500).json({ message: 'No se encontró la versión', err });
@@ -69,7 +80,7 @@ const getVersionById = async (req, res) => {
 // Update a specific version
 const updateVersion = async (req, res) => {
     try {
-        const updatedVersion = await version.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const updatedVersion = await Version.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedVersion) {
             return res.status(404).json({ message: 'Versión no encontrada' });
         }
@@ -83,7 +94,7 @@ const updateVersion = async (req, res) => {
 // Delete a specific version
 const deleteVersion = async (req, res) => {
     try {
-        const deletedVersion = await version.findByIdAndDelete(req.params.id);
+        const deletedVersion = await Version.findByIdAndDelete(req.params.id);
         if (!deletedVersion) {
             return res.status(404).json({ message: 'Versión no encontrada' });
         }
@@ -98,5 +109,6 @@ module.exports = {
     getVersions,
     getVersionById,
     updateVersion,
-    deleteVersion
+    deleteVersion,
+    getVersionsByEntry,
 };

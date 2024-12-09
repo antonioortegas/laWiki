@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const versionSchema = new mongoose.Schema({
     entry: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     content: {
@@ -12,7 +12,28 @@ const versionSchema = new mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
-    }},
+    },
+    imageSrc:{
+        type: String,
+        required: false
+    },
+    latitude:{
+        type: Number,
+        required: false
+    },
+    longitude: {
+        type: Number,
+        required: false
+    },
+    zoom: {
+        type: Number,
+        required: false
+    },
+    map:{
+        type: String,
+        required: false
+    }
+    },
     {
         timestamps: true
     }

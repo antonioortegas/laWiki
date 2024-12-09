@@ -61,8 +61,6 @@ onMounted(() => {
         className: 'fa fa-image',
         title: 'Upload Image',
       },
-      '|',
-      'preview', 'side-by-side', 'fullscreen'
     ],
   });
 

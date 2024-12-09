@@ -42,11 +42,6 @@ const routes = [
     component: () => import('../views/NotFound.vue')
   },
   {
-    path: '/wiki/:wikiId/entry/new',
-    name: 'CreateEntry',
-    component: () => import('../views/EntryForm.vue')
-  },
-  {
     path: '/entry/:wikiId',
     name: 'CreateEntry',
     component: () => import('../views/EntryForm.vue')

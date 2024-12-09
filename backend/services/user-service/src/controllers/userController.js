@@ -1,6 +1,9 @@
 const axios = require('axios');
 const User = require('../models/userModel');
 const { get } = require('mongoose');
+require('dotenv').config();
+const { Resend } = require('resend')
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -74,23 +77,29 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, role } = req.body;
+        const { name, email, role, getNotificationsByEmail } = req.body;
 
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        user.name = name;
-        user.email = email;
-        user.role = role;
+        if(name)
+            user.name = name;
+        if(email)
+            user.email = email;
+        if(role)
+            user.role = role;
+        if(getNotificationsByEmail != undefined)
+            user.getNotificationsByEmail = getNotificationsByEmail;
 
+        console.log(user);
         const savedUser = await user.save();
         res.status(200).json(savedUser);
     }
     catch (error) {
         console.error('Error al actualizar el usuario:', error);
-        res.status(500).json({ message: 'Error al actualizar el usuario.' });
+        res.status(500).json({ message: 'Error al actualizar el usuario.', error: error });
     }
 }
 
@@ -241,9 +250,20 @@ const addNotification = async (req, res) => {
     }
 };
 
-// TODO: Implement email sending
 const sendEmail = async (email, message) => {
     // Send email
+    console.log('Sending email to:', email);
+    const { data, error } = await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: 'Notificación: Entrada modificada',
+        html: message
+    });
+    if (error) {
+        console.error('Error sending email:', error);
+    } else {
+        console.log('Email sent:', data);
+    }
 };
 
 // Delete a notification for user by id

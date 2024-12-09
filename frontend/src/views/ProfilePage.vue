@@ -51,19 +51,34 @@ const exampleUser = {
                         </div>
                     </div>
                     <!-- Additional Info -->
+                    <!--
                     <div>
                         <h3 class="text-lg font-semibold ">Additional Info</h3>
                         <p class="text-sm text-gray-600 mt-2">{{ exampleUser.additionalInfo }}</p>
                     </div>
+                    -->
                 </div>
                 
+                <!-- Email Notifications Toggle (Only visible if loggedUserEmail matches exampleUser.email) -->
+                <div v-if="loggedUserEmail === exampleUser.email" class="mt-4">
+                    <h3 class="text-lg font-semibold">Get notifications by email?:</h3>
+                    <input
+                        type="checkbox"
+                        v-model="notificationsEnabled"
+                        @change="changeNotificationConsent"
+                        class="mt-2"
+                    />
+                </div>
+
                 <!-- User Bio/Info -->
+                <!--
                 <div class="text-gray-700 mx-4 text-center mt-12">
                     <h3 class="text-lg font-bold mb-2">About</h3>
                     <p class="text-sm leading-relaxed text-left">
                         {{ exampleUser.bio }}
                     </p>
                 </div>
+                -->
             </div>
         </div>
     </div>
@@ -77,18 +92,33 @@ export default {
   components: { StarRating },
   data() {
     return {
-      averageRating: 0, // Initial value
-      profileUserId: '6744ce2eb67a4a58bf6954c0', // TODO: Cambia esto al ID dinámico del usuario
-      loggedUserEmail: 'john.smith@example.com' // 
+      averageRating: 0,
+      profileUserId: '6744ce2eb67a4a58bf6954c0', // TODO: Cambiar a ID dinámico del usuario
+      loggedUserEmail: 'example@gmail.com', // TODO: Cambiar a email del usuario logueado
+      notificationsEnabled: null
     };
   },
   async mounted() {
     try {
-      const response = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
+      const responseAv = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
+      const responseUser = await axios.get(`/api/users/${this.profileUserId}`);
 
-      this.averageRating = response.data.average || 0;
+      this.averageRating = responseAv.data.average || 0;
+      this.notificationsEnabled = responseUser.data.getNotificationsByEmail;
     } catch (error) {
       console.error('Error getting user rating: ', error);
+    }
+  },
+  methods: {
+    async changeNotificationConsent() {
+        try {
+            await axios.put(`/api/users/${this.profileUserId}/`, {
+                getNotificationsByEmail: this.notificationsEnabled
+            });
+            console.log('Enviado cambiar consentimiento a', this.notificationsEnabled);
+        } catch (error) {
+            console.error('Error updating notification consent: ', error);
+        }
     }
   }
 };

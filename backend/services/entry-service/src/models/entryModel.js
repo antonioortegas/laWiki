@@ -46,6 +46,18 @@ const EntrySchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         default: [],
     },
+    longitude: {
+        type: Number,
+        required: false
+    },
+    latitude: {
+        type: Number,
+        required: false
+    },
+    zoom: {
+        type: Number,
+        required: false
+    },
     comments: {
         type: [{
             author: {
@@ -59,6 +71,10 @@ const EntrySchema = new mongoose.Schema({
             responseTo: {
                 type: mongoose.Schema.Types.ObjectId,
             },
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
         }],
         default: []
     },

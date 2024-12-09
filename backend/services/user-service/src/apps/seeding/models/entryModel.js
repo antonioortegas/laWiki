@@ -2,12 +2,26 @@ const mongoose = require('mongoose');
 
 const EntrySchema = new mongoose.Schema({
     wiki: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
+        required: true
+    },
+    entryId: {
+        type: String,
         required: true
     },
     title: {
         type: String,
         required: true
+    },
+    imageSrc: {
+        type: String,
+        default: '',
+        required: false
+    },
+    map: {
+        type: String,
+        default: '',
+        required: false
     },
     content: {
         type: String,
@@ -32,6 +46,18 @@ const EntrySchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         default: [],
     },
+    longitude: {
+        type: Number,
+        required: false
+    },
+    latitude: {
+        type: Number,
+        required: false
+    },
+    zoom: {
+        type: Number,
+        required: false
+    },
     comments: {
         type: [{
             author: {
@@ -45,6 +71,10 @@ const EntrySchema = new mongoose.Schema({
             responseTo: {
                 type: mongoose.Schema.Types.ObjectId,
             },
+            createdAt: {
+                type: Date,
+                default: Date.now
+            }
         }],
         default: []
     },
