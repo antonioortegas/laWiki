@@ -77,40 +77,35 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { name, email, role } = req.body;
-
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true });
+        if (!updatedUser) {
+            return res.status(404).json('User not found');
         }
-
-        user.name = name;
-        user.email = email;
-        user.role = role;
-
-        const savedUser = await user.save();
-        res.status(200).json(savedUser);
+        res.status(200).json(updatedUser);
     }
-    catch (error) {
-        console.error('Error al actualizar el usuario:', error);
-        res.status(500).json({ message: 'Error al actualizar el usuario.' });
+    catch (err) {
+        res.status(500).json({
+            message: "Server error updating user",
+            error: err
+        });
     }
 }
 
 const deleteUser = async (req, res) => {
     try {
-        const { id } = req.params;
-        const user = await User.findById(id);
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        if (!deletedUser) {
+            return res.status(404).json('User not found');
         }
-        await user.remove();
-        res.status(200).json({ message: 'Usuario eliminado.' });
-    }
-    catch (error) {
-        console.error('Error al eliminar el usuario:', error);
-        res.status(500).json({ message: 'Error al eliminar el usuario.' });
+        res.status(200).json('User deleted');
+    } catch (err) {
+        res.status(500).json({
+            message: "Server error deleting user",
+            error: err
+        });
     }
 }
 

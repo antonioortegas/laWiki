@@ -14,12 +14,10 @@
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "emailjs-com": "^3.2.0",
     "express": "^4.21.1",
     "lawiki-user-service": "file:",
     "mailslurp-client": "^15.20.2",
     "mongoose": "^8.7.3",
-    "nodemailer": "^6.9.16",
     "resend": "^4.0.1"
   },
   "devDependencies": {
