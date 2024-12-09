@@ -1,138 +1,29 @@
 [
     {
-        "wiki": "63e8e9d8f86d4e25c9a1b111",
-        "title": "Vin",
-        "content": "Vin is the main protagonist of the first Mistborn trilogy, a skilled Mistborn with powerful Allomancy abilities.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b112",
+        "wiki": "Cosmere: Stormlight Archive",
+        "entryId": "63e8e9d8f86d4e25c9a1b225",
+        "title": "Kaladin",
+        "imageSrc": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg",
+        "content": "Kaladin is a former soldier who becomes a Windrunner and one of the main protagonists in the Stormlight Archive.",
+        "createdBy": "123456789012345678901234",
         "language": "en",
-        "tags": ["Cosmere", "Mistborn", "Character"],
-        "editors": ["63e8e9d8f86d4e25c9a1b113"],
         "comments": [
             {
-                "author": "63e8e9d8f86d4e25c9a1b114",
-                "content": "Vin is one of the best characters in the Cosmere."
+                "author": "123456789012345678901235",
+                "content": "Kaladin is my favorite character!"
             }
-        ]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b111",
-        "title": "Allomancy",
-        "content": "Allomancy is a form of Investiture that allows individuals to gain powers by ingesting and burning metals.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b112",
-        "language": "en",
-        "tags": ["Cosmere", "Magic", "Allomancy"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b111",
-        "title": "Kelsier",
-        "content": "Kelsier, known as the Survivor, is a charismatic Mistborn who inspires others to overthrow the Lord Ruler.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b113",
-        "language": "en",
-        "tags": ["Cosmere", "Mistborn", "Character"],
-        "editors": ["63e8e9d8f86d4e25c9a1b112"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b112",
-        "title": "Kaladin",
-        "content": "Kaladin is a former soldier who becomes a Windrunner and one of the main protagonists in the Stormlight Archive.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b113",
-        "language": "en",
+        ],
         "tags": ["Cosmere", "Stormlight Archive", "Character"]
     },
     {
-        "wiki": "63e8e9d8f86d4e25c9a1b112",
+        "wiki": "Cosmere: Stormlight Archive",
+        "entryId": "63e8e9d8f86d4e25c9a1b226",
         "title": "Shardplate",
+        "map": "3;3;3",
         "content": "Shardplate is magical armor worn by elite warriors, enhancing their strength and durability.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b114",
+        "createdBy": "123456789012345678901234",
         "language": "en",
         "tags": ["Cosmere", "Stormlight Archive", "Artifact"],
-        "editors": ["63e8e9d8f86d4e25c9a1b113", "63e8e9d8f86d4e25c9a1b112"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b112",
-        "title": "Odium",
-        "content": "Odium is a Shard in the Cosmere, representing hatred and conflict and posing a significant threat in the Stormlight Archive.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b114",
-        "language": "en",
-        "tags": ["Cosmere", "Stormlight Archive", "Shard"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b113",
-        "title": "Iron Man",
-        "content": "Tony Stark, also known as Iron Man, is a billionaire inventor and a founding member of the Avengers.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b115",
-        "language": "en",
-        "tags": ["Marvel", "Avengers", "Hero"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b113",
-        "title": "Infinity Stones",
-        "content": "The Infinity Stones are six powerful artifacts controlling fundamental aspects of existence.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b116",
-        "language": "en",
-        "tags": ["Marvel", "Avengers", "Artifact"],
-        "comments": [
-            {
-                "author": "63e8e9d8f86d4e25c9a1b115",
-                "content": "The Infinity Stones are pivotal in the MCU story arc."
-            }
-        ]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b113",
-        "title": "Thanos",
-        "content": "Thanos is a powerful Titan who seeks to bring balance to the universe by collecting all the Infinity Stones.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b115",
-        "language": "en",
-        "tags": ["Marvel", "Avengers", "Villain"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b114",
-        "title": "Star-Lord",
-        "content": "Peter Quill, known as Star-Lord, is the leader of the Guardians of the Galaxy and a skilled pilot and fighter.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b116",
-        "language": "en",
-        "tags": ["Marvel", "Guardians of the Galaxy", "Hero"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b114",
-        "title": "Rocket Raccoon",
-        "content": "Rocket is a genetically modified raccoon and a key member of the Guardians, known for his engineering skills.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b116",
-        "language": "en",
-        "tags": ["Marvel", "Guardians of the Galaxy", "Hero"],
-        "editors": ["63e8e9d8f86d4e25c9a1b115"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b114",
-        "title": "Groot",
-        "content": "Groot is a tree-like being and close friend of Rocket who can only say the phrase 'I am Groot.'",
-        "createdBy": "63e8e9d8f86d4e25c9a1b115",
-        "language": "en",
-        "tags": ["Marvel", "Guardians of the Galaxy", "Hero"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b115",
-        "title": "Pikachu",
-        "content": "Pikachu is an Electric-type Pokémon, the franchise's mascot, known for its lightning abilities.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b114",
-        "language": "en",
-        "tags": ["Pokémon", "Character", "Electric-type"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b115",
-        "title": "Poké Ball",
-        "content": "Poké Balls are devices used by trainers to capture and store Pokémon.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b114",
-        "language": "en",
-        "tags": ["Pokémon", "Item"]
-    },
-    {
-        "wiki": "63e8e9d8f86d4e25c9a1b115",
-        "title": "Ash Ketchum",
-        "content": "Ash Ketchum is a Pokémon trainer from Pallet Town on a journey to become a Pokémon Master.",
-        "createdBy": "63e8e9d8f86d4e25c9a1b116",
-        "language": "en",
-        "tags": ["Pokémon", "Trainer"]
+        "editors": ["123456789012345678901234"]
     }
 ]
