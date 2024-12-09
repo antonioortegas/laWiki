@@ -52,6 +52,7 @@ const loadEntry = async () => {
     zoom.value = data.zoom || '';
     wikiId.value= data.wiki || '';
     language.value = data.language || '';
+    tags.value = data.tags ? data.tags.join(', ') : '';
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -68,7 +69,8 @@ const saveEntry = async () => {
       latitude: latitude.value,
       longitude: longitude.value,
       zoom: zoom.value,
-      language: language.value
+      language: language.value,
+      tags: tags.value.split(',').map(tag => tag.trim())
     };
 
     const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
