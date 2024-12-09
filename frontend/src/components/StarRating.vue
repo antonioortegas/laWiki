@@ -75,21 +75,24 @@ export default {
       this.isHovering = false; // Indicate that hovering is inactive
       this.hoverStars = 0;
     },
-    // Sends the selected rating to the server
+    // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
-      try {
-        await axios.post(`/api/users/${this.profileUserId}/addRating`, {
-          ratedBy: this.loggedUserEmail,
-          score: star,
-        });
-
-        console.log("Sent rating:", star);
-        console.log("For user ID:", this.profileUserId);
-        console.log("By logged user ID:", this.loggedUserEmail);
-
-        this.$emit("update:value", star); // Update the rating locally
-      } catch (error) {
-        console.error("Error submitting rating:", error.response?.data || error.message);
+      if(loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
+        try {
+          const loggedUser = await axios.get(`/api/users/${this.loggedUserId}`);
+          await axios.post(`/api/users/${this.profileUserId}/addRating`, {
+            ratedBy: this.loggedUserEmail,
+            score: star,
+          });
+  
+          console.log("Sent rating:", star);
+          console.log("For user ID:", this.profileUserId);
+          console.log("By logged user ID:", this.loggedUserEmail);
+  
+          this.$emit("update:value", star); // Update the rating locally
+        } catch (error) {
+          console.error("Error submitting rating:", error.response?.data || error.message);
+        }
       }
     }
   }
