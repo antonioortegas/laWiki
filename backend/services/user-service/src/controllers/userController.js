@@ -252,12 +252,18 @@ const addNotification = async (req, res) => {
 
 const sendEmail = async (email, message) => {
     // Send email
-    resend.emails.send({
+    console.log('Sending email to:', email);
+    const { data, error } = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
         subject: 'Notificación: Entrada modificada',
         html: message
     });
+    if (error) {
+        console.error('Error sending email:', error);
+    } else {
+        console.log('Email sent:', data);
+    }
 };
 
 // Delete a notification for user by id

@@ -1,0 +1,108 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo-dev-microservices
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express-microservices
+    environment:
+      - ME_CONFIG_BASICAUTH_USERNAME=${ME_CONFIG_BASICAUTH_USERNAME}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${ME_CONFIG_BASICAUTH_PASSWORD}
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${ME_CONFIG_MONGODB_ADMINUSERNAME}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_CONFIG_MONGODB_ADMINPASSWORD}
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+
+  user-service:
+    build:
+      context: .backend/services/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "${USER_SERVICE_PORT}:${USER_SERVICE_PORT}"
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+
+  wiki-service:
+    build:
+      context: .backend/services/wiki-service
+      dockerfile: Dockerfile
+    container_name: wiki-service
+    ports:
+      - "${WIKI_SERVICE_PORT}:${WIKI_SERVICE_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+
+  entry-service:
+    build:
+      context: .backend/services/entry-service
+      dockerfile: Dockerfile
+    container_name: entry-service
+    ports:
+      - "${ENTRY_SERVICE_PORT}:${ENTRY_SERVICE_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+
+  version-service:
+    build:
+      context: .backend/services/version-service
+      dockerfile: Dockerfile
+    container_name: version-service
+    ports:
+      - "${VERSION_SERVICE_PORT}:${VERSION_SERVICE_PORT}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - USERS_API_HOST=${USERS_API_HOST}
+      - WIKIS_API_HOST=${WIKIS_API_HOST}
+      - ENTRIES_API_HOST=${ENTRIES_API_HOST}
+      - VERSIONS_API_HOST=${VERSIONS_API_HOST}
+  
+  picture-service:
+    build:
+      context: .backend/services/picture-service
+      dockerfile: Dockerfile
+    container_name: picture-service
+    ports:
+      - "${PICTURE_SERVICE_PORT}:${PICTURE_SERVICE_PORT}"
+    environment:
+      - CLOUD_NAME=${CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+
+volumes:
+  mongo-data:
+  mongo-config:
