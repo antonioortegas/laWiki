@@ -19,6 +19,9 @@ const title = ref(''); // Título de la entrada
 const imageSrc = ref(''); // URL de la imagen
 const markdownContent = ref(''); // Contenido Markdown
 const tags = ref(''); // Etiquetas de la entrada
+
+const wikiId = ref(' ');//wiki de la entrada
+
 const language = ref(''); // Idioma de la entrada
 
 // Estados para los campos del mapa
@@ -47,6 +50,7 @@ const loadEntry = async () => {
     latitude.value = data.latitude || '';
     longitude.value = data.longitude || '';
     zoom.value = data.zoom || '';
+    wikiId.value= data.wiki || '';
     language.value = data.language || '';
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
@@ -141,6 +145,10 @@ onMounted(() => {
   <div class="entry-page flex flex-col space-y-8 p-6 relative">
     <!-- Botones en la esquina superior derecha -->
     <div class="absolute top-4 right-6 flex space-x-4">
+      <router-link :to="{ name: 'WikiPage' ,params:{wikiId}}" 
+        class="flex items-center px-4 py-2 border-2 border-accent text-sm text-accent hover:bg-accent hover:text-background rounded-lg shadow-md transition-all space-x-2">
+        <span>Home</span>
+      </router-link>
       <router-link :to="{ name: 'EntryVersions', params: { entryId } }"
         class="flex items-center px-4 py-2 border-2 border-accent text-sm text-accent hover:bg-accent hover:text-background rounded-lg shadow-md transition-all space-x-2">
         <span>See version history</span>
