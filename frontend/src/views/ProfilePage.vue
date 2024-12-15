@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       averageRating: 0,
-      profileUserId: '6744ce2eb67a4a58bf6954c0', // TODO: Cambiar a ID dinámico del usuario
+      profileUserId: '123456789012345678901234', // TODO: Cambiar a ID dinámico del usuario
       loggedUserEmail: 'example@gmail.com', // TODO: Cambiar a email del usuario logueado
       notificationsEnabled: null
     };

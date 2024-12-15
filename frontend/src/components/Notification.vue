@@ -91,13 +91,15 @@ export default {
     // This method formats the notification message with a clickable link
     async getFormattedMessage(notification) {
       // Assuming the message follows a format like: "You received a reply|comment on http://localhost:3003/entries/entryId: [content]"
-      const regex = /You received a (reply|comment) on (https?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
-      const match = notification.message.match(regex);
+      const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
+      const regexEdit = /Your entry ([a-zA-Z0-9]{24}) has been (deleted|updated)/;
+      
+      const match = notification.message.match(regexComment);
+      const match2 = notification.message.match(regexEdit);
 
       console.log('Mensaje de notificación:', notification.message);
-      console.log('Coincidencia:', match);
       if (match) {
-        const entryUrl = match[2];
+        const type = match[1]; // Reply or comment
         const entryId = match[3]; // Entry ID
         const content = match[4];
 
@@ -115,7 +117,26 @@ export default {
         }
 
         // Create the formatted message with a clickable link
-        return `You received a reply on <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
+        return `You received a ${type} on <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
+      } else if (match2) {
+        const entryId = match2[1]; // Entry ID
+        const action = match2[2]; // Deleted or updated
+
+        if(entryId){
+          try {
+            console.log('Obteniendo el nombre de la entrada con ID:', entryId);
+            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            var entryTitle = entryResponse.data[0].title;
+            console.log('response:', entryResponse);
+            console.log('Título de la entrada:', entryTitle);
+            //message = message.replace(entryId, entryTitle);  // Replace ID with title
+          } catch (error) {
+            console.error("Error al obtener el nombre de la entrada:", error);
+          }
+        }
+
+        // Create the formatted message with a clickable link
+        return `Your entry <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a> has been ${action}`;
       }
 
       // Return the original message if the format doesn't match
