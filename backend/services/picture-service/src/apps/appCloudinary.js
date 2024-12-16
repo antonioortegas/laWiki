@@ -1,6 +1,6 @@
-import express from 'express'
-import morgan from 'morgan' 
-import routerCloudinary from '../routes/routesCloudinary.js'
+const express = require('express')
+const morgan = require('morgan')
+const routerCloudinary = require('../routes/routesCloudinary')
 
 const app = express()
 
@@ -9,4 +9,4 @@ app.use(express.json())
 
 app.use('/cloudinary', routerCloudinary)
 
-export default app;
+module.exports = app;
