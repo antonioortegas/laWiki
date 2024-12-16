@@ -24,6 +24,8 @@ const wikiId = ref(' ');//wiki de la entrada
 
 const language = ref(''); // Idioma de la entrada
 
+const entryCreator = ref(''); //Creador de la entrada
+
 // Estados para los campos del mapa
 const latitude = ref('');
 const longitude = ref('');
@@ -53,6 +55,7 @@ const loadEntry = async () => {
     wikiId.value= data.wiki || '';
     language.value = data.language || '';
     tags.value = data.tags ? data.tags.join(', ') : '';
+    entryCreator.value = data.createdBy || '';
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -75,7 +78,6 @@ const saveEntry = async () => {
 
     const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
 
-
     const versionData =
     {
       entry: entryId.value,
@@ -87,7 +89,12 @@ const saveEntry = async () => {
       createdBy: "60d0fe4f5311236168a109ca"
     };
     console.log(entry);
+    
     await axios.post(`/api/versions/`, versionData);
+    
+    // Notificar al creador de la entrada
+    sendNotification(entryCreator.value, title.value, "updated");
+
     console.log('Entrada actualizada exitosamente');
   } catch (error) {
     console.error('Error al actualizar la entrada:', error.response || error.message);
@@ -101,11 +108,16 @@ async function deleteEntry() {
       // Obtener los datos de la entrada
       const response = await axios.get(`/api/entries/${route.params.entryId}`);
       const entry = response.data[0]; // Asumiendo que `entry` está en el primer índice del array
+      const title = response.data[3];
+      const createdBy = response.data[7];
       const wikiUrl = entry.wiki || '/'; // Redirigir a '/' si no existe el atributo 'wiki'
 
       // Proceder a eliminar la entrada
       await axios.delete(`/api/entries/${route.params.entryId}`);
       console.log('Entry deleted successfully');
+
+      // Notificar al creador de la entrada
+      sendNotification(entryCreator.value, title, "deleted");
 
       // Redirigir a la URL de la wiki
       router.push("/wiki/" + wikiUrl);
@@ -135,6 +147,19 @@ const handleFileUpload = async (event) => {
     }
   }
 };
+
+// Enviar la notificación al creador de la entrada
+async function sendNotification(entryCreator, title, editType) {
+  try {
+    // Enviar la notificación al creador de la entrada
+    await axios.post(`/api/users/${entryCreator}/newNotification`, {
+      message: "Your entry " + entryId.value + " has been " + editType,
+    });
+    console.log('Notification sent successfully');
+  } catch (error) {
+    console.error('Error sending notification:', error);
+  }
+}
 
 // Cargar datos al montar el componente
 onMounted(() => {

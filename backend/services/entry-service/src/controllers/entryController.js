@@ -222,6 +222,7 @@ const addComment = async (req, res) => {
 
         let notificationMessage;
         let userIdToNotify;
+        console.log('responseTo', responseTo);
 
         if (responseTo) {
             // If the comment is a response to another comment, notify the author of the parent comment
@@ -234,7 +235,7 @@ const addComment = async (req, res) => {
         } else {
             // If the comment is a response to an entry, notify the author of the entry
             userIdToNotify = entry.createdBy; // El autor de la entrada
-            notificationMessage = `You received a comment on ${entryAPI}/(${entry.entryId}: ${content}`;
+            notificationMessage = `You received a comment on ${entryAPI}/${entry.entryId}: ${content}`;
         }
 
         // Send a notification to the user
