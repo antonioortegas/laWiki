@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import SearchBar from '@/components/EntrySearchBar.vue';
+import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
 // Reactive data
@@ -107,7 +107,9 @@ const updateFilter = (field, value) => {
 const toggleAdvancedSearch = () => {
   showAdvancedSearch.value = !showAdvancedSearch.value;
 };
+
 function filter(searchQuery) {
+    con
     const key = Object.keys(searchQuery)[0];
     const text = searchQuery[key].toLowerCase();
     console.log('Filtering by:', text);
@@ -150,6 +152,11 @@ const fetchWikiInfo = async () => {
 };
 
 fetchWikiInfo();
+
+const advancedFilter = (searchQuery) => {
+    // just log the search query for now
+    console.log('Advanced filter:', searchQuery);
+};
 </script>
 
 <template>
@@ -172,7 +179,8 @@ fetchWikiInfo();
     </div>
   </div>
 
-  <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter"/>
+  <!-- enter and keydown are not being used for now, refactored to put everything on "updateQuery" -->
+  <EntrySearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter" @updateQuery="advancedFilter"/>
 
   <!-- Call-to-Action Section -->
   <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
