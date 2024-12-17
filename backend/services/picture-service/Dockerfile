@@ -12,10 +12,10 @@ RUN npm install
 
 # Bundle app source
 COPY src ./src
-COPY server.js ./
+COPY index.js ./
 
 # Expose port 4000
 EXPOSE 4000
 
 # Start the app
-CMD [ "node", "server.js" ]
+CMD [ "node", "index.js" ]

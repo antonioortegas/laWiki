@@ -1,11 +1,10 @@
-import express from 'express'
-import multer from 'multer'
-import { upload } from '../controllers/CloudinaryController.js'
+const express = require('express')
+const multer = require('multer')
+const cloudinaryController = require('../controllers/CloudinaryController')
 
 const routerCloudinary = express.Router()
 const fileUpload = multer();
 
-routerCloudinary.post('/subirFoto', fileUpload.single('foto'), upload);
+routerCloudinary.post('/subirFoto', fileUpload.single('foto'), cloudinaryController.upload)
 
-
-export default routerCloudinary
+module.exports = routerCloudinary;
