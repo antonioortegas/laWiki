@@ -154,9 +154,44 @@ const fetchWikiInfo = async () => {
 fetchWikiInfo();
 
 const advancedFilter = (searchQuery) => {
-    // just log the search query for now
-    console.log('Advanced filter:', searchQuery);
+  console.log('Advanced filter:', searchQuery);
+
+  // Extrae los campos del objeto de búsqueda
+  const { title, content, editor, tags } = searchQuery;
+
+  // Normaliza los valores de búsqueda para que no sea sensible a mayúsculas/minúsculas
+  const searchTitle = title?.toLowerCase() || '';
+  const searchContent = content?.toLowerCase() || '';
+  const searchEditor = editor?.toLowerCase() || '';
+  const searchTags = tags
+    ? tags.split(',').map((tag) => tag.trim().toLowerCase())
+    : [];
+
+  // Filtra las entradas originales según los criterios de búsqueda avanzada
+  entries.value = entryData.value.filter((entry) => {
+    const matchesTitle = searchTitle
+      ? entry.title.toLowerCase().includes(searchTitle)
+      : true;
+
+    const matchesContent = searchContent
+      ? entry.content.toLowerCase().includes(searchContent)
+      : true;
+
+    const matchesEditor = searchEditor
+      ? entry.editors.some((ed) => ed.toLowerCase().includes(searchEditor)) ||
+        entry.createdBy.toLowerCase().includes(searchEditor)
+      : true;
+
+    const matchesTags = searchTags.length
+      ? searchTags.every((tag) =>
+          entry.tags.some((entryTag) => entryTag.toLowerCase().includes(tag))
+        )
+      : true;
+
+    return matchesTitle && matchesContent && matchesEditor && matchesTags;
+  });
 };
+
 </script>
 
 <template>
