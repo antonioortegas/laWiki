@@ -30,7 +30,7 @@ export default {
   },
   data() {
     return {
-      currentUserId: "6744ce2eb67a4a58bf6954c0", // TODO: Replace with dynamic user ID
+      currentUserId: "123456789012345678901234", // TODO: Replace with dynamic user ID, John Doe for now
       newComment: "", // Stores the text of the new comment
       comments: [] // List of comments for the entry
     };
@@ -72,7 +72,7 @@ export default {
 
       const commentData = {
         content: this.newComment.trim(),
-        author: "6744ce2eb67a4a58bf6954c0", // TODO: Replace with dynamic author ID
+        author: this.currentUserId, // TODO: Replace with dynamic author ID
       };
 
       try {

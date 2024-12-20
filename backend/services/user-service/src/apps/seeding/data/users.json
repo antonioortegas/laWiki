@@ -10,7 +10,8 @@
             { "ratedBy": "123456789012345678901235", "score": 4 }
         ],
         "notifications": [
-            { "message": "Welcome to the platform!", "read": true }
+            { "message": "Welcome to the platform!", "read": false },
+            { "message": "You have a new rating!", "read": true }
         ]
     },
     {

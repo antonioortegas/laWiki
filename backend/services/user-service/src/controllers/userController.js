@@ -253,17 +253,71 @@ const addNotification = async (req, res) => {
 const sendEmail = async (email, message) => {
     // Send email
     console.log('Sending email to:', email);
+    const emailMessage = await formatEmailMessage(message);
+    console.log('Email message:', emailMessage);
     const { data, error } = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
-        subject: 'Notificación: Entrada modificada',
-        html: message
+        subject: 'New notification on La Wiki',
+        html: emailMessage
     });
     if (error) {
         console.error('Error sending email:', error);
     } else {
         console.log('Email sent:', data);
     }
+};
+
+// Format email message with entry title and clickable link
+const formatEmailMessage = async (message) => {
+    const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
+    const regexEdit = /Your entry ([a-zA-Z0-9]{24}) has been (deleted|updated)/;
+    
+    const match = message.match(regexComment);
+    const match2 = message.match(regexEdit);
+
+    console.log('Mensaje de notificación:', message);
+    if (match) {
+      const type = match[1]; // Reply or comment
+      const entryId = match[3]; // Entry ID
+      const content = match[4];
+      const entryUrl = `${entriesAPI}/${entryId}`;
+
+      if(entryId){
+        try {
+          console.log('Obteniendo el nombre de la entrada con ID:', entryId);
+          const entryResponse = await axios.get(`${entriesAPI}/${entryId}`);
+          var entryTitle = entryResponse.data[0].title;
+          console.log('Título de la entrada:', entryTitle);
+        } catch (error) {
+          console.error("Error al obtener el nombre de la entrada:", error);
+        }
+      }
+
+      // Create the formatted message with a clickable link
+      return `You received a ${type} on <a href="${entryUrl}" target="_blank">${entryTitle}</a>: ${content}`;
+    } else if (match2) {
+      const entryId = match2[1]; // Entry ID
+      const action = match2[2]; // Deleted or updated
+      const entryUrl = `${entriesAPI}/${entryId}`;
+
+      if(entryId){
+        try {
+          console.log('Obteniendo el nombre de la entrada con ID:', entryId);
+          const entryResponse = await axios.get(`${entriesAPI}/${entryId}`);
+          var entryTitle = entryResponse.data[0].title;
+          console.log('Título de la entrada:', entryTitle);
+        } catch (error) {
+          console.error("Error al obtener el nombre de la entrada:", error);
+        }
+      }
+
+      // Create the formatted message with a clickable link
+      return `Your entry <a href="${entryUrl}" target="_blank">${entryTitle}</a> has been ${action}`;
+    }
+
+    // If message does not match any pattern, return the original message
+    return message;
 };
 
 // Delete a notification for user by id

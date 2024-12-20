@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import SearchBar from '@/components/SearchBar.vue';
+import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
 // Reactive data
@@ -108,6 +108,18 @@ const toggleAdvancedSearch = () => {
   showAdvancedSearch.value = !showAdvancedSearch.value;
 };
 
+function filter(searchQuery) {
+    con
+    const key = Object.keys(searchQuery)[0];
+    const text = searchQuery[key].toLowerCase();
+    console.log('Filtering by:', text);
+
+    // Filter the original entry data
+    entries.value = entryData.value.filter((entry) =>
+      entry.title.toLowerCase().includes(text)
+    );
+}
+
 // Fetch entry data from the backend
 const fetchEntryData = async (entryId) => {
   try {
@@ -140,6 +152,46 @@ const fetchWikiInfo = async () => {
 };
 
 fetchWikiInfo();
+
+const advancedFilter = (searchQuery) => {
+  console.log('Advanced filter:', searchQuery);
+
+  // Extrae los campos del objeto de búsqueda
+  const { title, content, editor, tags } = searchQuery;
+
+  // Normaliza los valores de búsqueda para que no sea sensible a mayúsculas/minúsculas
+  const searchTitle = title?.toLowerCase() || '';
+  const searchContent = content?.toLowerCase() || '';
+  const searchEditor = editor?.toLowerCase() || '';
+  const searchTags = tags
+    ? tags.split(',').map((tag) => tag.trim().toLowerCase())
+    : [];
+
+  // Filtra las entradas originales según los criterios de búsqueda avanzada
+  entries.value = entryData.value.filter((entry) => {
+    const matchesTitle = searchTitle
+      ? entry.title.toLowerCase().includes(searchTitle)
+      : true;
+
+    const matchesContent = searchContent
+      ? entry.content.toLowerCase().includes(searchContent)
+      : true;
+
+    const matchesEditor = searchEditor
+      ? entry.editors.some((ed) => ed.toLowerCase().includes(searchEditor)) ||
+        entry.createdBy.toLowerCase().includes(searchEditor)
+      : true;
+
+    const matchesTags = searchTags.length
+      ? searchTags.every((tag) =>
+          entry.tags.some((entryTag) => entryTag.toLowerCase().includes(tag))
+        )
+      : true;
+
+    return matchesTitle && matchesContent && matchesEditor && matchesTags;
+  });
+};
+
 </script>
 
 <template>
@@ -162,7 +214,8 @@ fetchWikiInfo();
     </div>
   </div>
 
-  <SearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" />
+  <!-- enter and keydown are not being used for now, refactored to put everything on "updateQuery" -->
+  <EntrySearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter" @updateQuery="advancedFilter"/>
 
   <!-- Call-to-Action Section -->
   <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">

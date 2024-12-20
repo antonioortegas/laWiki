@@ -8,11 +8,51 @@
         "description": "A wiki focused on the Stormlight Archive series by Brandon Sanderson, another major part of the Cosmere universe.",
         "content": "This wiki covers characters, artifacts, and locations central to the Stormlight Archive series.",
         "createdBy": "123456789012345678901234",  
-        "language": "en",
+        "language": "es",
         "tags": ["Cosmere", "Fantasy", "Stormlight Archive"],
         "entries": [
             "63e8e9d8f86d4e25c9a1b225",
             "63e8e9d8f86d4e25c9a1b226"
-        ]
+        ],
+        "src": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734454340/bgr5rsqjiziwzeixucbk.jpg",
+        "numberOfEntries": 2
+    },
+    {
+        "title": "Montañas del mundo",
+        "entryUUIDs": [
+            "b20b1220-acee-422c-8d17-281065e9b036",
+            "865c485d-c0f5-4674-9ffb-53b115835a95",
+            "2753ba02-8129-4f0b-8ebc-f16ac915bc32"
+        ],
+        "description": "Explora las maravillas naturales que se elevan hacia el cielo en todos los rincones del planeta. Esta wiki está dedicada a documentar y celebrar las montañas más impresionantes, su geografía, cultura y biodiversidad.",
+        "content": "Las montañas han fascinado a la humanidad desde tiempos inmemoriales, actuando como barreras naturales, fuentes de agua, y destinos de aventura. Desde los picos cubiertos de nieve del Himalaya hasta los desafiantes Andes, cada cordillera cuenta una historia única sobre la evolución de la Tierra y la interacción del hombre con su entorno.\n\nEn esta wiki, encontrarás información detallada sobre las montañas más emblemáticas, sus características geológicas, las especies que las habitan y su impacto cultural y espiritual en las civilizaciones que han crecido a su sombra. Además, descubriremos cómo estas maravillas naturales son puntos clave para la conservación del medio ambiente y el turismo sostenible.\n\n¡Únete a nosotros en este recorrido por las alturas del mundo y comparte tus conocimientos sobre las montañas que has explorado o admirado desde lejos!",
+        "src": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734520741/ywtdyqibzdv7q5snsslm.webp",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "tags": [
+            "Montañas, Geografía, Naturaleza, Aventura, Paisajes"
+        ],
+        "entries": [],
+        "numberOfEntries": 3
+    },
+    {
+        "title": "Películas",
+        "entryUUIDs": [
+            "f3901a05-e082-49c4-8560-923c9846b29d",
+            "628bcc3e-1208-4ad9-baa0-8bce86bcdc2f",
+            "fdc00b98-852c-441a-abe0-b0f0d57f488b",
+            "fc54c47f-3dbc-4553-8b72-a430aaf8a8b7",
+            "c3c24a24-458d-4dc8-ba4f-6b3029da08ac"
+        ],
+        "description": "Bienvenido a la Wiki de Películas, un lugar donde el séptimo arte cobra vida. Aquí encontrarás información detallada sobre películas icónicas de todos los géneros, épocas y estilos. Desde clásicos que definieron generaciones hasta producciones modernas que desafían los límites de la creatividad, esta wiki está diseñada para cinéfilos y curiosos por igual.",
+        "content": "El cine es una de las formas de arte más poderosas, capaz de transmitir emociones, contar historias inolvidables y reflejar el espíritu de su tiempo. A lo largo de su historia, las películas han evolucionado desde el cine mudo hasta las superproducciones digitales actuales, pasando por movimientos innovadores como el neorrealismo, la nouvelle vague y el cine independiente.\n\nEsta wiki se enfoca en explorar las características, el contexto histórico y los detalles únicos que hacen que cada película destacada sea especial. Sumérgete en el mundo del cine y descubre los secretos detrás de las historias que tanto nos impactan.",
+        "src": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553010/uyoymfndbgvczm3y50g7.jpg",
+        "createdBy": "123456789012345678901234",
+        "language": "en",
+        "tags": [
+            "Cine, Películas, Géneros cinematográficos"
+        ],
+        "entries": [],
+        "numberOfEntries": 5
     }
 ]
