@@ -3,8 +3,8 @@
         "wiki": "Cosmere: Stormlight Archive",
         "entryId": "63e8e9d8f86d4e25c9a1b225",
         "title": "Kaladin",
-        "imageSrc": "https://i.blogs.es/2f8f3d/mistborn_dbg_preview-1-1-/1366_2000.jpeg",
-        "content": "Kaladin is a former soldier who becomes a Windrunner and one of the main protagonists in the Stormlight Archive.",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734456860/m7gwk6xl3sytnnjmrskx.jpg",
+        "content": "## Kaladin - *The Stormlight Archive*  \n\nKaladin Stormblessed is one of the main protagonists in Brandon Sanderson's *The Stormlight Archive*, an epic fantasy series set in the world of Roshar.  \n\n### Overview  \nKaladin is a complex and deeply compelling character who undergoes significant growth throughout the series. He is known for his leadership skills, combat ability, and unshakable drive to protect others, even in the face of overwhelming adversity.  \n\n### Key Traits  \n- **Role**: Soldier, leader, and protector  \n- **Personality**: Determined, selfless, and fiercely loyal  \n- **Skills**: Exceptional combat abilities, tactical leadership, and an innate ability to inspire those around him  \n\n### Themes  \nKaladin\u2019s journey explores themes of **honor**, **leadership**, and **struggle against despair**. His story is deeply rooted in concepts of responsibility and the emotional toll of protecting others.\n\n### Additional Notes  \nKaladin\u2019s nickname, *Stormblessed*, reflects both his reputation and his connection to the harsh, storm-filled world of Roshar. His experiences are central to the broader narrative, offering a personal lens into the grand events shaping the series.  \n\n*For more details, dive into Brandon Sanderson's masterfully crafted series, starting with* *The Way of Kings*.",
         "createdBy": "123456789012345678901234",
         "language": "en",
         "comments": [
@@ -13,17 +13,207 @@
                 "content": "Kaladin is my favorite character!"
             }
         ],
-        "tags": ["Cosmere", "Stormlight Archive", "Character"]
+        "tags": [
+            "Cosmere",
+            "Stormlight Archive",
+            "Character"
+        ]
     },
     {
         "wiki": "Cosmere: Stormlight Archive",
         "entryId": "63e8e9d8f86d4e25c9a1b226",
         "title": "Shardplate",
-        "map": "3;3;3",
         "content": "Shardplate is magical armor worn by elite warriors, enhancing their strength and durability.",
         "createdBy": "123456789012345678901234",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734696627/vn6dgjlrzemyewypaopl.jpg",
         "language": "en",
-        "tags": ["Cosmere", "Stormlight Archive", "Artifact"],
-        "editors": ["123456789012345678901234"]
+        "tags": [
+            "Cosmere",
+            "Stormlight Archive",
+            "Artifact"
+        ],
+        "editors": [
+            "123456789012345678901234"
+        ]
+    },
+    {
+        "wiki": "Montañas del mundo",
+        "entryId": "b20b1220-acee-422c-8d17-281065e9b036",
+        "title": "K2: La Montaña Salvaje",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734521012/zafaojyzs1sltsq3btdw.jpg",
+        "map": "",
+        "language": "es",
+        "createdBy": "123456789012345678901234",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "K2",
+            "Karakórum",
+            "Alpinismo",
+            "Himalaya",
+            "Montañas"
+        ],
+        "comments": [],
+        "content": "# K2: La Montaña Salvaje  \n\nConocida como la \"Montaña Salvaje\" debido a su extrema dificultad, el K2 es el segundo pico más alto del mundo con 8.611 metros sobre el nivel del mar. Situado en la cordillera del Karakórum, en la frontera entre Pakistán y China, este coloso es un desafío que pocos montañistas se atreven a enfrentar.  \n\n### Características principales:  \n- **Altura:** 8.611 metros.  \n- **Ubicación:** Cordillera del Karakórum, entre Pakistán y China.  \n- **Primera Ascensión:** Lograda en 1954 por una expedición italiana liderada por Achille Compagnoni y Lino Lacedelli.  \n\nEl K2 es conocido por sus impredecibles condiciones climáticas y la dificultad técnica de sus rutas, lo que lo convierte en uno de los picos más letales. A diferencia del Everest, no tiene rutas relativamente \"fáciles\" y los rescates son extremadamente complicados.",
+        "latitude": 35.880981,
+        "longitude": 76.508102,
+        "zoom": 10
+    },
+    {
+        "wiki": "Montañas del mundo",
+        "entryId": "865c485d-c0f5-4674-9ffb-53b115835a95",
+        "title": "Everest: El Techo del Mundo",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734521304/cobs7xzh3jky60sxwjt2.avif",
+        "map": "",
+        "language": "es",
+        "createdBy": "123456789012345678901234",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "Everest",
+            "Himalaya",
+            "Nepal",
+            "Montañismo",
+            "Montaña"
+        ],
+        "comments": [],
+        "content": "# Everest: El Techo del Mundo  \n\nCon 8.849 metros de altitud, el Monte Everest, ubicado en la cordillera del Himalaya, es el pico más alto del planeta. Este coloso es conocido como \"Sagarmatha\" en Nepal y \"Chomolungma\" en el Tíbet, nombres que reflejan la reverencia que las culturas locales sienten por la montaña.\n\n### Características principales:  \n- **Altura:** 8.849 metros.  \n- **Ubicación:** Frontera entre Nepal y la Región Autónoma del Tíbet (China).  \n- **Primera Ascensión:** Alcanzada en 1953 por Edmund Hillary y Tenzing Norgay.  \n\nEl Everest se ha convertido en un ícono mundial del montañismo y el turismo de aventura. Cada año, cientos de escaladores de todo el mundo intentan conquistar su cima, aunque no sin riesgos significativos como avalanchas, tormentas, y mal de altura.",
+        "latitude": 27.986065,
+        "longitude": 86.922623,
+        "zoom": 15
+    },
+    {
+        "wiki": "Montañas del mundo",
+        "entryId": "2753ba02-8129-4f0b-8ebc-f16ac915bc32",
+        "title": "Mulhacén: El Gigante de Sierra Nevada",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734521713/asrgy34wfevuyrfmbrby.jpg",
+        "map": "",
+        "language": "es",
+        "editors": [],
+        "createdBy": "123456789012345678901234",
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "Mulhacén",
+            "Sierra Nevada",
+            "España",
+            "Andalucía",
+            "Naturaleza",
+            "Montaña"
+        ],
+        "comments": [],
+        "content": "# Mulhacén: El Gigante de Sierra Nevada  \n\nEl Mulhacén, con sus 3.479 metros, es el pico más alto de la península ibérica y forma parte del Parque Nacional de Sierra Nevada en Andalucía, España. Su nombre proviene de Muley Hacén, un rey nazarí de Granada que, según la leyenda, está enterrado en la cima.  \n\n### Características principales:  \n- **Altura:** 3.479 metros.  \n- **Ubicación:** Sierra Nevada, Andalucía, España.  \n- **Acceso:** Relativamente sencillo, ideal para senderistas experimentados y principiantes.  \n\nA diferencia de los picos del Himalaya, el Mulhacén no requiere equipos de escalada especializados, y su ascenso puede completarse en un día desde los refugios cercanos. Las vistas desde la cima incluyen el mar Mediterráneo e incluso, en días claros, las montañas del norte de África.",
+        "latitude": 37.051999792,
+        "longitude": -3.306832106,
+        "zoom": 15
+    },
+    {
+        "wiki": "Películas",
+        "entryId": "628bcc3e-1208-4ad9-baa0-8bce86bcdc2f",
+        "title": "Fargo (1996)",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553298/jiurnsbzi1o9fbdzfdh7.jpg",
+        "map": "",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "Fargo",
+            "Hermanos Coen",
+            "Cine Negro",
+            "Comedia Negra",
+            "90s"
+        ],
+        "comments": [],
+        "content": "# Fargo: Un Crimen en las Nieves  \n\nEscrita y dirigida por los hermanos Coen, **Fargo** es una mezcla magistral de cine negro y comedia negra. Ambientada en las nevadas tierras de Minnesota y Dakota del Norte, la película narra un fallido plan de secuestro que desencadena una serie de eventos inesperados y trágicos.  \n\n### Detalles principales:  \n- **Director:** Joel y Ethan Coen  \n- **Género:** Comedia negra, Crimen  \n- **País:** Estados Unidos  \n- **Protagonistas:** Frances McDormand, William H. Macy, Steve Buscemi  \n\nLa actuación de Frances McDormand como Marge Gunderson, una policía embarazada y astuta, se llevó los elogios de la crítica y le valió un Premio Óscar. \n\n**Fargo** combina el humor absurdo con la brutalidad del crimen, creando una experiencia cinematográfica única e inolvidable."
+    },
+    {
+        "wiki": "Películas",
+        "entryId": "fdc00b98-852c-441a-abe0-b0f0d57f488b",
+        "title": "Interstellar (2014)",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553394/sqsf7njhmccgxqv0rlax.jpg",
+        "map": "",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "Interstellar",
+            "Ciencia Ficción",
+            "Christopher Nolan",
+            "Espacio",
+            "Matthew McConaughey"
+        ],
+        "comments": [],
+        "content": "# Interstellar: Un Viaje a lo Desconocido  \n\nDirigida por Christopher Nolan, **Interstellar** es una epopeya de ciencia ficción que explora los límites del tiempo, el espacio y las emociones humanas. La historia sigue a un grupo de astronautas que buscan un nuevo hogar para la humanidad mientras enfrentan desafíos interdimensionales.  \n\n### Detalles principales:  \n- **Director:** Christopher Nolan  \n- **Género:** Ciencia ficción, Drama  \n- **País:** Estados Unidos  \n- **Protagonistas:** Matthew McConaughey, Anne Hathaway, Jessica Chastain  \n\nLa película combina teorías científicas sobre los agujeros de gusano con una narrativa profundamente emocional centrada en la relación padre-hija. La impresionante banda sonora de Hans Zimmer y los efectos visuales revolucionarios hacen de **Interstellar** una obra maestra del cine moderno."
+    },
+    {
+        "wiki": "Películas",
+        "entryId": "fc54c47f-3dbc-4553-8b72-a430aaf8a8b7",
+        "title": "Blade Runner (1982)",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553438/hinb9msmipn5koyvflsx.jpg",
+        "map": "",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "Blade Runner",
+            "Ciencia Ficción",
+            "Ridley Scott",
+            "Distopía",
+            "80s"
+        ],
+        "comments": [],
+        "content": "# Blade Runner: Sueños de Androides y Distopías Futuras  \n\nDirigida por Ridley Scott y basada en la novela de Philip K. Dick, **Blade Runner** es un clásico de la ciencia ficción que explora la identidad, la humanidad y el futuro distópico de 2019. La película sigue al cazador de replicantes Rick Deckard en su misión de \"retirar\" androides rebeldes.  \n\n### Detalles principales:  \n- **Director:** Ridley Scott  \n- **Género:** Ciencia ficción, Neo-noir  \n- **País:** Estados Unidos  \n- **Protagonistas:** Harrison Ford, Rutger Hauer, Sean Young  \n\nCon su estética cyberpunk, un guion reflexivo y la inolvidable actuación de Rutger Hauer como el replicante Roy Batty, **Blade Runner** se ha convertido en una obra de culto que redefine el género. Su final abierto y la pregunta \"¿Es Deckard un replicante?\" siguen siendo objeto de debate entre los fans."
+    },
+    {
+        "wiki": "Películas",
+        "entryId": "c3c24a24-458d-4dc8-ba4f-6b3029da08ac",
+        "title": "La Princesa Mononoke (1997)",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553552/ug8isrrxwka2kwwkp32b.jpg",
+        "map": "",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "editors": [],
+        "atachments": [],
+        "version": [],
+        "tags": [
+            "La Princesa Mononoke",
+            "Studio Ghibli",
+            "Hayao Miyazaki",
+            "Animación japonesa",
+            "Ecología"
+        ],
+        "comments": [],
+        "content": "# La Princesa Mononoke: Una Fábula Épica de Naturaleza y Humanidad  \n\nDirigida por el legendario Hayao Miyazaki y producida por Studio Ghibli, **La Princesa Mononoke** es una obra maestra de la animación japonesa que aborda temas de ecología, conflicto y equilibrio. La película sigue al joven Ashitaka en su intento de mediar entre los dioses del bosque y los humanos, cuya industrialización amenaza con destruir la naturaleza.  \n\n### Detalles principales:  \n- **Director:** Hayao Miyazaki  \n- **Género:** Fantasía, Aventura, Drama  \n- **País:** Japón  \n- **Estudio:** Studio Ghibli  \n- **Protagonistas:** Ashitaka, San (la Princesa Mononoke), Lady Eboshi  \n\nAmbientada en un Japón medieval ficticio, la película combina mitología, animación detallada y una narrativa rica en simbolismo. La complejidad de sus personajes, como Lady Eboshi, que no es del todo villana, y San, quien lucha por proteger la naturaleza, resalta la dificultad de encontrar un equilibrio entre progreso y sostenibilidad.  \n\nLa banda sonora, compuesta por Joe Hisaishi, eleva la emotividad de cada escena y complementa el impresionante diseño visual. **La Princesa Mononoke** no solo es una película; es una experiencia que invita a reflexionar sobre nuestra relación con el medio ambiente."
+    },
+    {
+        "wiki": "Películas",
+        "entryId": "f3901a05-e082-49c4-8560-923c9846b29d",
+        "title": "La Haine (1995)",
+        "imageSrc": "http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553151/qiczrhmcuffulbrc1wla.jpg",
+        "map": "",
+        "createdBy": "123456789012345678901234",
+        "language": "es",
+        "editors": [],
+        "atachments": [],
+        "tags": [
+            "La Haine",
+            "Drama Social",
+            "Francia",
+            "Mathieu Kassovitz",
+            "90s"
+        ],
+        "comments": [],
+        "content": "# La Haine: Retrato de una Sociedad en Crisis  \n\nDirigida por Mathieu Kassovitz, **La Haine** es un drama social francés que explora las tensiones raciales y económicas en los suburbios de París. Estrenada en 1995, la película sigue a tres jóvenes amigos, Vinz, Saïd y Hubert, durante 24 horas cruciales tras un disturbio violento en su barrio.  \n\n### Detalles principales:  \n- **Director:** Mathieu Kassovitz  \n- **Género:** Drama social  \n- **País:** Francia  \n- **Protagonistas:** Vincent Cassel, Hubert Koundé, Saïd Taghmaoui  \n\nRodada en blanco y negro, **La Haine** captura la crudeza de la vida en los márgenes de la sociedad y plantea preguntas profundas sobre la violencia, la discriminación y el ciclo de opresión. Su frase más icónica, *\"Hasta aquí todo va bien\"*, refleja la tensión constante que atraviesa la película.\n\n![Image](http://res.cloudinary.com/dwdxsnsie/image/upload/v1734553088/st4dgv2jevguiooznljm.jpg)",
+        "latitude": null,
+        "longitude": null,
+        "zoom": null
     }
 ]
