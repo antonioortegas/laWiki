@@ -251,10 +251,7 @@ const addNotification = async (req, res) => {
 };
 
 const sendEmail = async (email, message) => {
-    // Send email
-    console.log('Sending email to:', email);
     const emailMessage = await formatEmailMessage(message);
-    console.log('Email message:', emailMessage);
     const { data, error } = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
