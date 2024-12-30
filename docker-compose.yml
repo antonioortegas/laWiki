@@ -102,6 +102,17 @@ services:
       - CLOUD_NAME=${CLOUD_NAME}
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+  
+  translation-service:
+    build:
+      context: ./backend/services/translation-service
+      dockerfile: Dockerfile
+    container_name: translation-service
+    ports:
+      - "${TRANSLATION_SERVICE_PORT}:${TRANSLATION_SERVICE_PORT}"
+    environment:
+      - APILAYER_KEY=${APILAYER_KEY}
+ 
 
   frontend:
     build:
@@ -116,6 +127,7 @@ services:
       - VITE_ENTRIES_API_HOST=${VITE_ENTRIES_API_HOST}
       - VITE_VERSIONS_API_HOST=${VITE_VERSIONS_API_HOST}
       - VITE_PICTURES_API_HOST=${VITE_PICTURES_API_HOST}
+      - VITE_TRANSLATION_API_HOST=${VITE_TRANSLATION_API_HOST}
       - VITE_NODE_ENV=${VITE_NODE_ENV}
 
 volumes:
