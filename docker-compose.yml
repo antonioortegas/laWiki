@@ -111,7 +111,8 @@ services:
     ports:
       - "${TRANSLATION_SERVICE_PORT}:${TRANSLATION_SERVICE_PORT}"
     environment:
-      - APILAYER_KEY=${APILAYER_KEY}
+      - KEYAZURE=${KEYAZURE}
+      - REGION=${REGION}
  
 
   frontend:
