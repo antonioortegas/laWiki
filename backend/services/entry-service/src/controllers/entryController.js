@@ -72,6 +72,9 @@ const createEntry = async (req, res) => {
 
         const newEntry = new Entry(req.body);
         const savedEntry = await newEntry.save();
+
+        await axios.put(`${usersAPI}/${createdBy}/addUserEntry`, { entryId });
+
         res.status(201).json(savedEntry);
     } catch (err) {
         res.status(500).json({
@@ -219,32 +222,45 @@ const addComment = async (req, res) => {
         await entry.save();
         
         const savedComment = entry.comments[entry.comments.length - 1];
+        await axios.put(`${usersAPI}/${author}/addUserComment`, { 
+            entryId: entry.entryId, 
+            commentId: savedComment._id,
+            content: savedComment.content,
+            responseTo: savedComment.responseTo,
+        });
 
         let notificationMessage;
         let userIdToNotify;
         console.log('responseTo', responseTo);
 
         if (responseTo) {
-            // If the comment is a response to another comment, notify the author of the parent comment
+            // If the comment is a response to a comment, notify the author of the parent comment
             const parentComment = entry.comments.find(comment => comment._id.toString() === responseTo);
             if (!parentComment) {
                 return res.status(404).json('Parent comment not found');
             }
-            userIdToNotify = parentComment.author;
-            notificationMessage = `You received a reply on ${entryAPI}/${entry.entryId}: ${content}`;
-        } else {
+            // No notifico si es respuesta a su propio comentario
+            if(parentComment.author.toString() !== entry.createdBy.toString()) {
+                userIdToNotify = parentComment.author;
+                notificationMessage = `You received a reply on ${entryAPI}/${entry.entryId}: ${content}`;
+            }
+        } else if (entry.createdBy.toString() !== author) {
+            console.log('entry.createdBy', entry.createdBy.toString());
+            console.log('author', author);
             // If the comment is a response to an entry, notify the author of the entry
             userIdToNotify = entry.createdBy; // El autor de la entrada
             notificationMessage = `You received a comment on ${entryAPI}/${entry.entryId}: ${content}`;
         }
 
-        // Send a notification to the user
-        try {
-            await axios.post(`${usersAPI}/${userIdToNotify}/newNotification`, {
-                message: notificationMessage
-            });
-        } catch (err) {
-            console.log('Error sending notification to user', err);
+        if(userIdToNotify) {
+            // Send a notification to the user
+            try {
+                await axios.post(`${usersAPI}/${userIdToNotify}/newNotification`, {
+                    message: notificationMessage
+                });
+            } catch (err) {
+                console.log('Error sending notification to user', err);
+            }    
         }
 
         res.status(200).json(savedComment);
@@ -264,14 +280,24 @@ const deleteComment = async (req, res) => {
             return res.status(404).json('Entry not found');
         }
 
-        const commentId = req.params.idComment;
+        const { commentId } = req.body;
 
         // IDs of the child comments to delete related to the parent
-        const idsToDelete = getCommentIdsToDelete(entry.comments, commentId);
+        const commentsToDelete = getCommentsToDelete(entry.comments, commentId);
 
-        entry.comments = entry.comments.filter(comment => !idsToDelete.includes(comment._id.toString()));
+        //const idsToDelete = commentsToDelete.map(comment => comment.id);
+
+        entry.comments = entry.comments.filter(comment => !commentsToDelete.some(c => c.id === comment._id.toString()));
 
         await entry.save();
+
+        // Notificar al microservicio de usuarios sobre los comentarios eliminados
+        for (const { id, author } of commentsToDelete) {
+            await axios.put(`${usersAPI}/${author}/deleteUserComment`, {
+                entryId: entry.entryId,
+                commentId: id,
+            });
+        }
 
         res.status(200).json('Comment and its replies deleted');
     } catch (err) {
@@ -283,15 +309,31 @@ const deleteComment = async (req, res) => {
 }
 
 // Aux method to delete responses to a comment
-const getCommentIdsToDelete = (comments, parentId) => {
-    let idsToDelete = [parentId];
+const getCommentsToDelete = (comments, parentId, visited = new Set()) => {
+    let commentsToDelete = [];
+
     comments.forEach(comment => {
-        if (comment.responseTo && comment.responseTo.toString() === parentId) {
-            idsToDelete = idsToDelete.concat(getCommentIdsToDelete(comments, comment._id.toString()));
+        const commentId = comment._id.toString();
+
+        // Si el comentario ya fue visitado, saltarlo
+        if (visited.has(commentId)) {
+            return;
+        }
+
+        // Si el comentario es el objetivo o responde al objetivo
+        if (commentId === parentId || (comment.responseTo && comment.responseTo.toString() === parentId)) {
+            // Marcar como visitado y agregar al array
+            visited.add(commentId);
+            commentsToDelete.push({ id: commentId, author: comment.author });
+
+            // Recursivamente procesar hijos
+            commentsToDelete = commentsToDelete.concat(getCommentsToDelete(comments, commentId, visited));
         }
     });
-    return idsToDelete;
+
+    return commentsToDelete;
 };
+
 
 module.exports = {
     getEntries,

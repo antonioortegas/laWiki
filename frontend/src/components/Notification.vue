@@ -97,7 +97,6 @@ export default {
       const match = notification.message.match(regexComment);
       const match2 = notification.message.match(regexEdit);
 
-      console.log('Mensaje de notificación:', notification.message);
       if (match) {
         const type = match[1]; // Reply or comment
         const entryId = match[3]; // Entry ID

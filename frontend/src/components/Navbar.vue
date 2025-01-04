@@ -1,4 +1,5 @@
 <template>
+  <!--div v-if="dataReady"-->
   <nav class="relative">
     <!-- Add relative position to the nav -->
     <div class="flex bg-primary py-2 px-2 items-center justify-between">
@@ -19,16 +20,18 @@
           <NotificationBell :notifications="notifications" :user-id="userId"
             @notificationDeleted="removeNotification" />
         </div>
-          <router-link :to="{ name: 'ProfilePage', params: { userId: userId } }">
-            <oAuth :user="user" @login-success="handleLogin" />
-          </router-link>
-        </div>
+        <router-link :to="{ name: 'ProfilePage', params: { userId: userId } }">
+          <oAuth :user="user" @login-success="handleLogin" />
+        </router-link>
+      </div>
     </div>
   </nav>
+  <!--/div-->
 </template>
 
 <!-- Notification script -->
 <script>
+import { data } from "autoprefixer";
 import NotificationBell from "./Notification.vue";
 import oAuth from "./oAuth.vue";
 import axios from "axios";
@@ -66,11 +69,17 @@ const deleteAuthTokenCookie = () => {
 
 export default {
   components: { NotificationBell, oAuth },
+  computed: {
+    profilePageKey() {
+      return this.userId; // Cambiará siempre que cambie el userId
+    },
+  },
   data() {
     return {
       user: null,
       notifications: [], // Inital empty list
-      userId: "123456789012345678901234", // TODO: Cambiar esto al ID dinámico del usuario
+      userId: "123456789012345678901234", // Default user ID,
+      dataReady: false,
     };
   },
   methods: {
@@ -90,34 +99,32 @@ export default {
     async verifyTokenLocally() {
       const authToken = getAuthTokenFromCookie();
       if (authToken) {
-        axios
-          .post("/api/users/validate-token", { token: authToken })
-          .then((response) => {
-            if (response.data.valid) {
-              this.user = response.data.user; // Establecer datos del usuario
-              this.userId = this.user._id; // Establecer el ID del usuario
-              console.log("Sesión válida. Nuevo userId:", this.userId);
-              this.renewToken(); // Se renueva el token para alargar la sesión
+        try {
+          const response = await axios.post("/api/users/validate-token", { token: authToken })
+          if (response.data.valid) {
+            this.user = response.data.user; // Establecer datos del usuario
+            this.userId = this.user._id; // Establecer el ID del usuario
+            //console.log("Sesión válida. Nuevo userId:", this.userId);
 
-              // Al recuperar del backend la imagen no funcionaba, con esto se corrige
-              if (this.user.profilePicture) {
-                this.user.picture = this.user.profilePicture;
-              } else {
-                console.log("No se ha encontrado una imagen de perfil. Usando imagen predeterminada. Usuario:", this.user);
-                this.user.picture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-              }
+            await this.renewToken(); // Se renueva el token para alargar la sesión
+
+            // Al recuperar del backend la imagen no funcionaba, con esto se corrige
+            if (this.user.profilePicture) {
+              this.user.picture = this.user.profilePicture;
             } else {
-              console.warn("Token inválido o caducado. Se ha cerrado la sesión");
-              this.signOut(); // Limpiar estado y redirigir
+              //console.log("No se ha encontrado una imagen de perfil. Usando imagen predeterminada. Usuario:", this.user);
+              this.user.picture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
             }
-          })
-          .catch((error) => {
-            console.error("Error al validar el token:", error);
-            this.signOut();
-          });
+          } else {
+            alert("Token inválido o caducado. Se ha cerrado la sesión");
+            this.signOut(); // Limpiar estado y redirigir
+          }
+        } catch (error) {
+          console.error("Error al validar el token:", error);
+          this.signOut();
+        }
       } else {
         console.log("No hay token almacenado.");
-        //google.accounts.id.prompt();
       }
     },
     async renewToken() {
@@ -142,7 +149,6 @@ export default {
           if (this.user.profilePicture) {
             this.user.picture = this.user.profilePicture;
           } else {
-            console.log("No se ha encontrado una imagen de perfil. Usando imagen predeterminada. Usuario:", this.user);
             this.user.picture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
           }
         }
@@ -157,15 +163,13 @@ export default {
   },
   async mounted() {
     try {
-      this.verifyTokenLocally();
+      await this.verifyTokenLocally();
 
       const path = `api/users/${this.userId}/notifications`;
       const response = await axios.get(`/api/users/${this.userId}/notifications`);
-      console.log("Path:", path);
-      console.log("Notifications Response:", response);
+
       if (Array.isArray(response.data)) {
         this.notifications = response.data;
-        console.log("Notifications:", this.notifications);
       } else {
         this.notifications = [];
         console.error("Invalid response data:", response.data);
@@ -181,9 +185,14 @@ export default {
           isPlaceholder: true,
         });
       }
+
+      this.dataReady = true;
+      console.log("Datos listos");
     } catch (error) {
       console.error("Error retrieving notifications:", error);
     }
   },
 };
 </script>
+
+<router-view :key="profilePageKey" />

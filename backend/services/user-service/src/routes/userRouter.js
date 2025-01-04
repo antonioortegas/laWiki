@@ -17,6 +17,12 @@ router.get('/:idUser/notifications', userController.getNotifications);
 router.post('/:idUser/newNotification', userController.addNotification);
 router.delete('/:idUser/deleteNotification/:idNotification', userController.deleteNotification);
 router.put('/:idUser/read/', userController.markAsRead);
+router.put('/:idUser/addUserComment/', userController.addUserComment);
+router.put('/:idUser/deleteUserComment/', userController.delUserComment);
+router.get('/:idUser/countUserComments', userController.countUserComments);
+//router.get('/:idUser/addUserEntry', userController.addUserEntry);
+//router.put('/:idUser/deleteUserEntry', userController.delUserEntry);
+router.get('/:idUser/countUserEntries', userController.countUserEntries);
 
 // Custom operations for user
 router.get('/min-rating/:minRating', userController.getUsersByMinRating);

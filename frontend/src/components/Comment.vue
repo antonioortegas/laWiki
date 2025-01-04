@@ -1,7 +1,7 @@
 <template>
     <div :style="{ marginLeft: depth * 20 + 'px' }" class="comment-container">
       <div class="comment-header">
-        <span class="author">{{ authorName }}</span>
+        <a :href= "`/profile/${author._id}`"><span class="author">{{ author.name }}</span></a>
         <span class="time">{{ formatTime(content.createdAt) }}</span>
       </div>
       <p class="comment-text">{{ content.content }}</p>
@@ -65,22 +65,22 @@
       return {
         showReplyForm: false,
         replyText: "",
-        authorName: "",
+        author: "",
       };
     },
     async mounted() {
-      await this.fetchAuthorName();
+      await this.fetchAuthor();
     },
     methods: {
       // Fetches the author's name using their ID
-      async fetchAuthorName() {
+      async fetchAuthor() {
         try {
           console.log("Buscando autor: ", this.content.author);
           const response = await axios.get(`/api/users/${this.content.author}`);
-          this.authorName = response.data.name || "Anonymous User";
+          this.author = response.data;
         } catch (error) {
           console.error("Error fetching author name:", error.response?.data || error.message);
-          this.authorName = "Anonymous User";
+          this.author.name = "Anonymous User";
         }
       },
       // Toggles the reply form visibility
@@ -112,8 +112,11 @@
         try {
             console.log("Eliminando comentario: ", this.content._id);
             console.log("De la entrada: ", this.entryId);
+            console.log("Escrito por: ", this.content.author);
 
-            await axios.put(`/api/entries/${this.entryId}/deleteComment/${this.content._id}`);
+            await axios.put(`/api/entries/${this.entryId}/deleteComment/`, {
+                commentId: this.content._id
+            });
             
             // Emitir el evento para que el componente padre elimine el comentario de la lista
             this.$emit("delete", this.content._id);

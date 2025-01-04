@@ -1,20 +1,13 @@
 <template>
   <div class="rating-container">
     <div class="stars" @mouseleave="clearHover">
-      <div
-        v-for="star in stars"
-        :key="star"
-        class="star"
-        :class="{ filled: isHovering ? star <= hoverStars : star <= fullStars }"
-        @mouseenter="updateHover(star)"
-        @click="setRating(star)"
-      >
+      <div v-for="star in stars" :key="star" class="star"
+        :class="{ filled: isHovering ? star <= hoverStars : star <= fullStars }" @mouseenter="updateHover(star)"
+        @click="setRating(star)">
         ★
       </div>
     </div>
-    <div 
-      class="rating-number" 
-      :class="{'is-text': isText, 'is-number': !isText}">
+    <div class="rating-number" :class="{ 'is-text': isText, 'is-number': !isText }">
       {{ displayValue }}
     </div>
   </div>
@@ -38,7 +31,7 @@ export default {
       default: null,
       required: true
     },
-    loggedUserEmail: {
+    loggedUserId: {
       type: String,
       default: null,
       required: true
@@ -78,27 +71,25 @@ export default {
     // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
       const loggedUser = await axios.get(`/api/users/${this.loggedUserId}`);
-      
-      if(loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
-        if(loggedUser.data._id === this.profileUserId) {
-          console.log("You can't rate yourself!");
+
+      if (loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
+        if (loggedUser.data._id === this.profileUserId) {
+          alert("You can't rate yourself!");
           return;
         } else {
           try {
             await axios.post(`/api/users/${this.profileUserId}/addRating`, {
-              ratedBy: this.loggedUserEmail,
+              ratedBy: this.loggedUserId,
               score: star,
             });
-    
-            console.log("Sent rating:", star);
-            console.log("For user ID:", this.profileUserId);
-            console.log("By logged user ID:", this.loggedUserEmail);
-    
-            this.$emit("update:value", star); // Update the rating locally
+
+            location.reload(); // Refresh the page to update the rating
           } catch (error) {
             console.error("Error submitting rating:", error.response?.data || error.message);
           }
         }
+      } else {
+        alert("You must be a writer to rate users.");
       }
     }
   }
@@ -115,7 +106,8 @@ export default {
 
 .stars {
   display: flex;
-  cursor: pointer; /* Indicate interactivity */
+  cursor: pointer;
+  /* Indicate interactivity */
 }
 
 .star {
@@ -145,5 +137,4 @@ export default {
 .rating-number.is-number {
   font-size: 1.2rem;
 }
-
 </style>

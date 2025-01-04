@@ -58,7 +58,34 @@ const userSchema = new mongoose.Schema({
             }
         }],
         default: []
-    }},
+    },
+    comments: {
+        type: [{
+            entryId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            },
+            commentId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            },
+            content: {
+                type: String,
+                required: true
+            },
+            responseTo: {
+                type: mongoose.Schema.Types.ObjectId,
+            }
+        }],
+    },
+    entries: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'entryId'
+        }],
+        default: []
+    }
+},
     {
         timestamps: true
     }
