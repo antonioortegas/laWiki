@@ -202,7 +202,7 @@ const translateEntryTo = async () => {
     }
     
   }else{
-    dialog('The language is the same as the original');
+    alert('The language is the same as the original');
   }
     // Aquí puedes agregar la lógica para traducir la entrada
   }
