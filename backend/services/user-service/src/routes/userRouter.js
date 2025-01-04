@@ -22,4 +22,9 @@ router.put('/:idUser/read/', userController.markAsRead);
 router.get('/min-rating/:minRating', userController.getUsersByMinRating);
 router.get('/search/:name', userController.getUsersByPartialName);
 
+// oAuth operations
+router.post('/login', userController.login);
+router.post('/validate-token', userController.validateToken);
+router.post('/renew-token', userController.renewToken);
+
 module.exports = router;

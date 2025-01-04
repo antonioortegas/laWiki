@@ -1,22 +1,10 @@
-<script setup>
-const exampleUser = {
-    username: "SprenBonded",
-    email: "example@gmail.com",
-    userPfp: "https://avatars.githubusercontent.com/u/100814779?v=4",
-    comments: 42,
-    entries: 15,
-    additionalInfo: "Lorem ipsum dolor sit amet...",
-    averageRating: 3.5,
-    bio: "This is a short bio or description about the user. Include interesting details here!"
-}
-</script>
-
 <template>
     <div class="">
         <div class="shadow-lg bg-accent h-[72.5vh] my-16 mx-8 sm:mx-32 rounded-3xl">
             <div class="h-1/6 relative">
                 <div class="absolute inset-0 flex justify-center items-end -bottom-10">
-                    <img class="object-cover h-20 w-20 rounded-full border-4 border-background" :src="exampleUser.userPfp" alt="" />
+                    <img class="object-cover h-20 w-20 rounded-full border-4 border-background"
+                        :src="exampleUser.userPfp" alt="" />
                 </div>
             </div>
             <div class="h-5/6 bg-background rounded-3xl p-8 font-body">
@@ -43,11 +31,8 @@ const exampleUser = {
                         <h3 class="text-lg font-semibold">Average Rating</h3>
                         <div class="flex justify-center items-center mt-2">
                             <!-- Component StarRating -->
-                            <StarRating
-                                :value="averageRating"
-                                :profileUserId="profileUserId"
-                                :loggedUserEmail="loggedUserEmail"
-                             />
+                            <StarRating :value="averageRating" :profileUserId="profileUserId"
+                                :loggedUserEmail="loggedUserEmail" />
                         </div>
                     </div>
                     <!-- Additional Info -->
@@ -58,16 +43,12 @@ const exampleUser = {
                     </div>
                     -->
                 </div>
-                
+
                 <!-- Email Notifications Toggle (Only visible if loggedUserEmail matches exampleUser.email) -->
                 <div v-if="loggedUserEmail === exampleUser.email" class="mt-4">
                     <h3 class="text-lg font-semibold">Get notifications by email?:</h3>
-                    <input
-                        type="checkbox"
-                        v-model="notificationsEnabled"
-                        @change="changeNotificationConsent"
-                        class="mt-2"
-                    />
+                    <input type="checkbox" v-model="notificationsEnabled" @change="changeNotificationConsent"
+                        class="mt-2" />
                 </div>
 
                 <!-- User Bio/Info -->
@@ -89,38 +70,49 @@ import StarRating from '../components/StarRating.vue';
 import axios from 'axios';
 
 export default {
-  components: { StarRating },
-  data() {
-    return {
-      averageRating: 0,
-      profileUserId: '123456789012345678901234', // TODO: Cambiar a ID dinámico del usuario
-      loggedUserEmail: 'example@gmail.com', // TODO: Cambiar a email del usuario logueado
-      notificationsEnabled: null
-    };
-  },
-  async mounted() {
-    try {
-      const responseAv = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
-      const responseUser = await axios.get(`/api/users/${this.profileUserId}`);
-
-      this.averageRating = responseAv.data.average || 0;
-      this.notificationsEnabled = responseUser.data.getNotificationsByEmail;
-    } catch (error) {
-      console.error('Error getting user rating: ', error);
-    }
-  },
-  methods: {
-    async changeNotificationConsent() {
+    components: { StarRating },
+    props: {
+        userId: String
+    },
+    data() {
+        return {
+            user: null,
+            averageRating: 0,
+            loggedUserEmail: null,
+            notificationsEnabled: null
+        };
+    },
+    async mounted() {
         try {
-            await axios.put(`/api/users/${this.profileUserId}/`, {
-                getNotificationsByEmail: this.notificationsEnabled
-            });
-            console.log('Enviado cambiar consentimiento a', this.notificationsEnabled);
+            const responseAv = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
+            const responseUser = await axios.get(`/api/users/${this.profileUserId}`);
+
+            this.averageRating = responseAv.data.average || 0;
+            this.notificationsEnabled = responseUser.data.getNotificationsByEmail;
         } catch (error) {
-            console.error('Error updating notification consent: ', error);
+            console.error('Error getting user rating: ', error);
+        }
+    },
+    methods: {
+        async changeNotificationConsent() {
+            try {
+                await axios.put(`/api/users/${this.profileUserId}/`, {
+                    getNotificationsByEmail: this.notificationsEnabled
+                });
+                console.log('Enviado cambiar consentimiento a', this.notificationsEnabled);
+            } catch (error) {
+                console.error('Error updating notification consent: ', error);
+            }
+        },
+        async getUserByOauth() {
+            try {
+                const response = await axios.get('/api/users/oauth');
+                console.log('User by OAuth: ', response.data);
+            } catch (error) {
+                console.error('Error getting user by OAuth: ', error);
+            }
         }
     }
-  }
 };
 
 </script>
