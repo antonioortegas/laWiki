@@ -70,6 +70,10 @@ export default {
     },
     // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
+      if(this.loggedUserId === null) {
+        alert("You must be logged in to rate users.");
+        return;
+      }
       const loggedUser = await axios.get(`/api/users/${this.loggedUserId}`);
 
       if (loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {

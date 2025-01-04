@@ -519,7 +519,7 @@ const addUserComment = async (req, res) => {
 };
 
 // Delete a comment from the list of comments of a user
-const delUserComment = async (req, res) => {
+const deleteUserComment = async (req, res) => {
     try {
         const { idUser } = req.params;
         const { entryId, commentId } = req.body;
@@ -564,6 +564,53 @@ const countUserComments = async (req, res) => {
     }
 };
 
+// Add an entry to the list of entries of a user
+const addUserEntry = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId, title } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        user.entries.push({
+            entryId: entryId,
+            title: title
+        });
+        await user.save();
+
+        res.status(201).json({ message: 'Entry added to user' });
+    }
+    catch (error) {
+        console.error('Error when adding entry to user:', error.message);
+        res.status(500).json({ message: 'Error when adding entry to user:', error: error.message });
+    }
+};
+
+// Delete an entry from the list of entries of a user
+const deleteUserEntry = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.entries.pull({ entryId: entryId });
+        await user.save();
+
+        res.status(200).json({ message: 'Entry deleted from user' });
+    }
+    catch (error) {
+        console.error('Error when deleting entry from user:', error.message);
+        res.status(500).json({ message: 'Error when deleting entry from user:', error: error.message });
+    }
+};
+
 // Get count of entries for a user
 const countUserEntries = async (req, res) => {
     try {
@@ -599,8 +646,10 @@ module.exports = {
     deleteNotification,
     markAsRead,
     addUserComment,
-    delUserComment,
+    deleteUserComment,
     countUserComments,
+    addUserEntry,
+    deleteUserEntry,
     countUserEntries,
     addRating,
     login,

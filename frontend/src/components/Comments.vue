@@ -9,7 +9,7 @@
     <!-- Comments List -->
     <div v-if="comments.length" class="comments-list">
       <Comment v-for="comment in comments" :key="comment._id" :content="comment" :depth="0" :entryId="entryId"
-        :currentUserId="currentUserId" @reply="addReply" @delete="removeComment" />
+        :currentUserId="loggedUser" @reply="addReply" @delete="removeComment" />
     </div>
     <div v-else class="no-comments">No comments yet. Be the first!</div>
   </div>
@@ -30,13 +30,14 @@ export default {
   },
   data() {
     return {
-      currentUserId: "123456789012345678901234", // TODO: Replace with dynamic user ID, John Doe for now
+      loggedUser: "", // ID of the logged user, gets fetched from the API
       newComment: "", // Stores the text of the new comment
       comments: [] // List of comments for the entry
     };
   },
   async mounted() {
     await this.fetchComments();
+    await this.fetchLoggedUser();
   },
   methods: {
     // Fetch comments from the API
@@ -68,11 +69,15 @@ export default {
     },
     // Submit a new comment
     async submitComment() {
+      if (this.loggedUser === "") {
+        alert("You must be logged in to comment.");
+        return;
+      }
       if (!this.newComment.trim()) return;
 
       const commentData = {
         content: this.newComment.trim(),
-        author: this.currentUserId, // TODO: Replace with dynamic author ID
+        author: this.loggedUser,
       };
 
       try {
@@ -116,7 +121,33 @@ export default {
         });
       };
       this.comments = removeRecursive(this.comments);
-    }
+    },
+    async fetchLoggedUser() {
+      try {
+        const response = await axios.post('/api/users/validate-token', {
+          token: this.getAuthTokenFromCookie(), // Usar el token almacenado en cookies
+        });
+        if (response.data.valid && response.data.user) {
+          this.loggedUser = response.data.user._id;
+        } else {
+          console.warn('Token inválido o caducado.');
+        }
+      } catch (error) {
+        console.error('Error al validar el token:', error);
+      }
+    },
+    getAuthTokenFromCookie() {
+      const name = "authToken=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const cookies = decodedCookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name)) {
+          return cookie.substring(name.length);
+        }
+      }
+      return null;
+    },
   }
 };
 </script>

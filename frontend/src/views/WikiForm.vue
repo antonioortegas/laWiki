@@ -13,6 +13,7 @@ const formData = ref({
   src: "",
   tags: "",
   language: "en",
+  createdBy: "",
 });
 const fileInput = ref(null);
 
@@ -24,6 +25,7 @@ const sampleWikiData = {
   content: "This wiki explores the characters, magic systems, and major events in the Mistborn series.",
   tags: ["Fantasy", "Brandon Sanderson", "Cosmere"],
   language: "en",
+  createdBy: "123456789012345678901235",
 };
 
 // Access route parameters
@@ -77,7 +79,7 @@ async function fetchWikiData(id) {
 }
 
 // Submit handler
-function submitForm() {
+async function submitForm() {
   if (isEditing.value) {
     console.log("Updating wiki:", formData.value);
     // Add API call for updating the wiki (e.g., PUT request)
@@ -93,7 +95,8 @@ function submitForm() {
   } else {
     // createdBy is required for creating a new wiki
     // simulate it for now, since user authentication is not implemented
-    formData.value.createdBy = "63e8e9d8f86d4e25c9a1b116";
+    formData.value.createdBy = await fetchLoggedUserId();
+    console.log("Autor: ", formData.value.createdBy);
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
     axios.post("/api/wikis", formData.value)
@@ -124,6 +127,35 @@ function deleteWiki() {
         console.error("Error deleting wiki:", error);
         // Handle error (e.g., show error message)
       });
+  }
+}
+
+function getAuthTokenFromCookie() {
+  const name = "authToken=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const cookies = decodedCookie.split(';');
+  for (let cookie of cookies) {
+    cookie = cookie.trim();
+    if (cookie.startsWith(name)) {
+      return cookie.substring(name.length);
+    }
+  }
+  return null;
+}
+
+async function fetchLoggedUserId() {
+  try {
+    const response = await axios.post('/api/users/validate-token', {
+      token: getAuthTokenFromCookie(), // Usar el token almacenado en cookies
+    });
+    if (response.data.valid && response.data.user) {
+      return response.data.user._id;
+    } else {
+      console.warn('Token inválido o caducado.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error al validar el token:', error);
   }
 }
 
@@ -197,7 +229,7 @@ function deleteWiki() {
             class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none" rows="6"></textarea>
         </div>
 
-        
+
 
         <div class="flex justify-center gap-8">
 

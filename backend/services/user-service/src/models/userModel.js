@@ -80,8 +80,14 @@ const userSchema = new mongoose.Schema({
     },
     entries: {
         type: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'entryId'
+            entryId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            },
+            title: {
+                type: String,
+                required: true
+            },
         }],
         default: []
     }

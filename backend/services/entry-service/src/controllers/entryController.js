@@ -73,7 +73,10 @@ const createEntry = async (req, res) => {
         const newEntry = new Entry(req.body);
         const savedEntry = await newEntry.save();
 
-        await axios.put(`${usersAPI}/${createdBy}/addUserEntry`, { entryId });
+        await axios.put(`${usersAPI}/${createdBy}/addUserEntry`, { 
+            entryId : entryId,
+            title: title
+        });
 
         res.status(201).json(savedEntry);
     } catch (err) {
@@ -231,7 +234,6 @@ const addComment = async (req, res) => {
 
         let notificationMessage;
         let userIdToNotify;
-        console.log('responseTo', responseTo);
 
         if (responseTo) {
             // If the comment is a response to a comment, notify the author of the parent comment
@@ -240,7 +242,7 @@ const addComment = async (req, res) => {
                 return res.status(404).json('Parent comment not found');
             }
             // No notifico si es respuesta a su propio comentario
-            if(parentComment.author.toString() !== entry.createdBy.toString()) {
+            if(parentComment.author.toString() !== author) {
                 userIdToNotify = parentComment.author;
                 notificationMessage = `You received a reply on ${entryAPI}/${entry.entryId}: ${content}`;
             }

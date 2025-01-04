@@ -51,7 +51,11 @@
                     <div v-if="loggedUser.email === user.email" class="mt-4">
                         <h3 class="text-lg font-semibold">Get notifications by email?:</h3>
                         <input type="checkbox" v-model="notificationsEnabled" @change="changeNotificationConsent"
-                            class="mt-2" />
+                            class="mt-2" /><br />
+                        <button @click="signOut"
+                            class="mt-5 bg-red-500 text-white font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transform transition-transform hover:scale-105 px-6 py-3">
+                            Sign Out
+                        </button>
                     </div>
 
                     <!-- User Bio/Info -->
@@ -86,7 +90,7 @@ export default {
             user: null,
             profileUserId: null,
             averageRating: 0,       // Se obtiene en el created
-            loggedUser: null,
+            loggedUser: "",
             notificationsEnabled: null,
             isDataReady: false,
             userComments: 0,
@@ -124,7 +128,6 @@ export default {
                 await axios.put(`/api/users/${this.userId}/`, {
                     getNotificationsByEmail: this.notificationsEnabled
                 });
-                console.log('Enviado cambiar consentimiento a', this.notificationsEnabled);
             } catch (error) {
                 console.error('Error updating notification consent: ', error);
             }
@@ -160,7 +163,7 @@ export default {
                 const userResponse = await axios.get(`/api/users/${this.profileUserId}`);
                 const responseAv = await axios.get(`/api/users/${this.userId}/averageRating`);
 
-                
+
                 this.averageRating = responseAv.data.average || 0;
                 this.user = userResponse.data;
 
@@ -172,7 +175,6 @@ export default {
 
                 this.countUserComments();
                 this.countUserEntries();
-                console.log('User:', this.user);
             } catch (error) {
                 console.error('Error getting user data: ', error);
             }
@@ -192,6 +194,10 @@ export default {
             } catch (error) {
                 console.error('Error counting user entries:', error);
             }
+        },
+        signOut() {
+            deleteAuthTokenCookie();
+            this.user = null;
         },
     }
 };
