@@ -8,6 +8,7 @@
 <script>
 import StarRating from './StarRating.vue';
 import axios from 'axios';
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export default {
   components: { StarRating },
@@ -19,7 +20,7 @@ export default {
   },
   async mounted() {
     try {
-      const response = await axios.get(`http://localhost:3001/users/${this.userId}/averageRating`);
+      const response = await axios.get(`${VITE_USERS_API_HOST}${this.userId}/averageRating`);
 
       console.log("Respuesta del backend:", response.data); // Depuración
       this.averageRating = response.data.average || 0;

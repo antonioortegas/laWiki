@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 import axios from 'axios';
+const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
 
 // Reactive original and filtered data
 const originalWikiData = ref([]);
@@ -11,7 +12,7 @@ const filteredWikiData = ref([]);
 // Fetch function
 async function fetchWikiData() {
     try {
-        const response = await axios.get('/api/wikis');
+        const response = await axios.get('${VITE_WIKIS_API_HOST}');
         originalWikiData.value = response.data.map((wiki) => {
             const { title } = wiki;
             wiki.path = `/wiki/${title}`;

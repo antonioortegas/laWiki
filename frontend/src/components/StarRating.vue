@@ -23,6 +23,7 @@
 
 <script>
 import axios from "axios";
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export default {
   props: {
@@ -77,7 +78,7 @@ export default {
     },
     // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
-      const loggedUser = await axios.get(`/api/users/${this.loggedUserId}`);
+      const loggedUser = await axios.get(`${VITE_USERS_API_HOST}${this.loggedUserId}`);
       
       if(loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
         if(loggedUser.data._id === this.profileUserId) {
@@ -85,7 +86,7 @@ export default {
           return;
         } else {
           try {
-            await axios.post(`/api/users/${this.profileUserId}/addRating`, {
+            await axios.post(`${VITE_USERS_API_HOST}${this.profileUserId}/addRating`, {
               ratedBy: this.loggedUserEmail,
               score: star,
             });

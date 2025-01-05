@@ -1,3 +1,4 @@
+
 <template>
   <div class="comments-container">
     <!-- Comment Form -->
@@ -18,6 +19,7 @@
 <script>
 import axios from 'axios';
 import Comment from './Comment.vue';
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 
 export default {
   name: "Comments",
@@ -42,7 +44,7 @@ export default {
     // Fetch comments from the API
     async fetchComments() {
       try {
-        const response = await axios.get(`/api/entries/${this.entryId}/comments`);
+        const response = await axios.get(`${VITE_ENTRIES_API_HOST}${this.entryId}/comments`);
         const flatComments = response.data;
 
         // Create a map for quick access to each comment by its ID
@@ -76,7 +78,7 @@ export default {
       };
 
       try {
-        const response = await axios.put(`/api/entries/${this.entryId}/addComment`, commentData);
+        const response = await axios.put(`${VITE_ENTRIES_API_HOST}${this.entryId}/addComment`, commentData);
         const newComment = {
           _id: response.data._id,
           content: response.data.content,

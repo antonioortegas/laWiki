@@ -87,6 +87,7 @@ const exampleUser = {
 <script>
 import StarRating from '../components/StarRating.vue';
 import axios from 'axios';
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export default {
   components: { StarRating },
@@ -100,8 +101,8 @@ export default {
   },
   async mounted() {
     try {
-      const responseAv = await axios.get(`/api/users/${this.profileUserId}/averageRating`);
-      const responseUser = await axios.get(`/api/users/${this.profileUserId}`);
+      const responseAv = await axios.get(`${VITE_USERS_API_HOST}${this.profileUserId}/averageRating`);
+      const responseUser = await axios.get(`${VITE_USERS_API_HOST}${this.profileUserId}`);
 
       this.averageRating = responseAv.data.average || 0;
       this.notificationsEnabled = responseUser.data.getNotificationsByEmail;
@@ -112,7 +113,7 @@ export default {
   methods: {
     async changeNotificationConsent() {
         try {
-            await axios.put(`/api/users/${this.profileUserId}/`, {
+            await axios.put(`${VITE_USERS_API_HOST}${this.profileUserId}/`, {
                 getNotificationsByEmail: this.notificationsEnabled
             });
             console.log('Enviado cambiar consentimiento a', this.notificationsEnabled);

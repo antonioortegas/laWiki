@@ -29,6 +29,8 @@
 
 <script>
 import axios from "axios";
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 
 export default {
   name: "NotificationBell",
@@ -64,7 +66,7 @@ export default {
 
       try {
         await axios.delete(
-          `/api/users/${this.userId}/deleteNotification/${notification._id}`
+          `${VITE_USERS_API_HOST}${this.userId}/deleteNotification/${notification._id}`
         );
         console.log("Notificación eliminada:", notification._id);
         this.$emit("notificationDeleted", notification._id);
@@ -80,7 +82,7 @@ export default {
       // Send read call to the server
       try {
         const response = await axios.put(
-          `/api/users/${this.userId}/read/`,
+          `${VITE_USERS_API_HOST}${this.userId}/read/`,
           { idNotification: notification._id }
         );
       } catch (error) {
@@ -106,7 +108,7 @@ export default {
         if(entryId){
           try {
             console.log('Obteniendo el nombre de la entrada con ID:', entryId);
-            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            const entryResponse = await axios.get(`${VITE_ENTRIES_API_HOST}${entryId}`);
             var entryTitle = entryResponse.data[0].title;
             console.log('response:', entryResponse);
             console.log('Título de la entrada:', entryTitle);
@@ -125,7 +127,7 @@ export default {
         if(entryId){
           try {
             console.log('Obteniendo el nombre de la entrada con ID:', entryId);
-            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            const entryResponse = await axios.get(`${VITE_ENTRIES_API_HOST}${entryId}`);
             var entryTitle = entryResponse.data[0].title;
             console.log('response:', entryResponse);
             console.log('Título de la entrada:', entryTitle);

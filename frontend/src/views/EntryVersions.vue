@@ -4,11 +4,13 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import router from '../router';
+const VITE_VERSIONS_API_HOST = import.meta.env.VITE_VERSIONS_API_HOST;
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 
 const route = useRoute();
 const sampleData = ref([]);
 onMounted(() => {
-    axios.get(`/api/versions/entry/${route.params.entryId}`)
+    axios.get(`${VITE_VERSIONS_API_HOST}entry/${route.params.entryId}`)
         .then((response) => {
             const r = response.data;
             sampleData.value = r.map(item => {
@@ -29,7 +31,7 @@ function restoreVersion(entryId,version) {
   if (confirm("Are you sure you want to restore to an earlier version?")) {
     console.log("Restoring to an earlier version...");
     
-    axios.put(`/api/entries/restore/${entryId}`, {
+    axios.put(`${VITE_ENTRIES_API_HOST}restore/${entryId}`, {
         content: version.content,
         imageSrc: version.imageSrc,
         latitude: version.latitude,
