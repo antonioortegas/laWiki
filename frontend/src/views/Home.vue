@@ -12,7 +12,9 @@ const filteredWikiData = ref([]);
 // Fetch function
 async function fetchWikiData() {
     try {
-        const response = await axios.get('${VITE_WIKIS_API_HOST}');
+        const response = await axios.get(VITE_WIKIS_API_HOST);
+        console.log('url:', {VITE_WIKIS_API_HOST});
+        console.log('response:', response);
         originalWikiData.value = response.data.map((wiki) => {
             const { title } = wiki;
             wiki.path = `/wiki/${title}`;
