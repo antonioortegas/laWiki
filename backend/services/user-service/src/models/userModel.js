@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     oauthId: {
         type: String,
-        required: true,
         unique: true
     },
     name: {
@@ -26,7 +25,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ['reader', 'writer', 'admin'],
+        enum: ['reader', 'writer', 'editor', 'admin'],
         default: 'reader'
     },
     averageRating: {
@@ -62,7 +61,7 @@ const userSchema = new mongoose.Schema({
     comments: {
         type: [{
             entryId: {
-                type: mongoose.Schema.Types.ObjectId,
+                type: String,
                 required: true
             },
             commentId: {
@@ -75,13 +74,14 @@ const userSchema = new mongoose.Schema({
             },
             responseTo: {
                 type: mongoose.Schema.Types.ObjectId,
+                default: null
             }
         }],
     },
     entries: {
         type: [{
             entryId: {
-                type: mongoose.Schema.Types.ObjectId,
+                type: String,
                 required: true
             },
             title: {

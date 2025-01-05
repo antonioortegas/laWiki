@@ -9,13 +9,14 @@
     <!-- Comments List -->
     <div v-if="comments.length" class="comments-list">
       <Comment v-for="comment in comments" :key="comment._id" :content="comment" :depth="0" :entryId="entryId"
-        :currentUserId="loggedUser" @reply="addReply" @delete="removeComment" />
+        :currentUserId="this.loggedUserId" @reply="addReply" @delete="removeComment" />
     </div>
     <div v-else class="no-comments">No comments yet. Be the first!</div>
   </div>
 </template>
 
 <script>
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios';
 import Comment from './Comment.vue';
 
@@ -28,16 +29,24 @@ export default {
       required: true
     }
   },
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
+  },
   data() {
     return {
-      loggedUser: "", // ID of the logged user, gets fetched from the API
       newComment: "", // Stores the text of the new comment
+      loggedUserId: "",
       comments: [] // List of comments for the entry
     };
   },
   async mounted() {
     await this.fetchComments();
-    await this.fetchLoggedUser();
+    this.loggedUserId = this.user?._id;
   },
   methods: {
     // Fetch comments from the API
@@ -69,7 +78,7 @@ export default {
     },
     // Submit a new comment
     async submitComment() {
-      if (this.loggedUser === "") {
+      if (this.loggedUserId === "") {
         alert("You must be logged in to comment.");
         return;
       }
@@ -77,15 +86,16 @@ export default {
 
       const commentData = {
         content: this.newComment.trim(),
-        author: this.loggedUser,
+        author: this.loggedUserId,
       };
 
       try {
+        console.log("Comment data:", commentData);
         const response = await axios.put(`/api/entries/${this.entryId}/addComment`, commentData);
         const newComment = {
           _id: response.data._id,
           content: response.data.content,
-          author: response.data.author,
+          author: this.loggedUserId,
           createdAt: response.data.createdAt,
           responseTo: response.data.responseTo,
           replies: []
@@ -121,32 +131,6 @@ export default {
         });
       };
       this.comments = removeRecursive(this.comments);
-    },
-    async fetchLoggedUser() {
-      try {
-        const response = await axios.post('/api/users/validate-token', {
-          token: this.getAuthTokenFromCookie(), // Usar el token almacenado en cookies
-        });
-        if (response.data.valid && response.data.user) {
-          this.loggedUser = response.data.user._id;
-        } else {
-          console.warn('Token inválido o caducado.');
-        }
-      } catch (error) {
-        console.error('Error al validar el token:', error);
-      }
-    },
-    getAuthTokenFromCookie() {
-      const name = "authToken=";
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const cookies = decodedCookie.split(';');
-      for (let cookie of cookies) {
-        cookie = cookie.trim();
-        if (cookie.startsWith(name)) {
-          return cookie.substring(name.length);
-        }
-      }
-      return null;
     },
   }
 };

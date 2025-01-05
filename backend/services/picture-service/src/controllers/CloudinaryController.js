@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary')
+const { v2: cloudinary } = require('cloudinary');
 const streamifier = require('streamifier')
 const dotenv = require('dotenv');
 dotenv.config();

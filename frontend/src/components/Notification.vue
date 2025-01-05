@@ -91,7 +91,7 @@ export default {
     // This method formats the notification message with a clickable link
     async getFormattedMessage(notification) {
       // Assuming the message follows a format like: "You received a reply|comment on http://localhost:3003/entries/entryId: [content]"
-      const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
+      const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}): (.+)/;
       const regexEdit = /Your entry ([a-zA-Z0-9]{24}) has been (deleted|updated)/;
       
       const match = notification.message.match(regexComment);
@@ -116,7 +116,7 @@ export default {
         }
 
         // Create the formatted message with a clickable link
-        return `You received a ${type} on <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
+        return `You received a ${type} on <a href="/entry/${entryId}" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
       } else if (match2) {
         const entryId = match2[1]; // Entry ID
         const action = match2[2]; // Deleted or updated

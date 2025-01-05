@@ -4,10 +4,7 @@ const { get } = require('mongoose');
 require('dotenv').config();
 const { Resend } = require('resend')
 const resend = new Resend(process.env.RESEND_API_KEY);
-const { OAuth2Client } = require('google-auth-library');
-//const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const jwt = require("jsonwebtoken");
-const { addComment } = require('../../../entry-service/src/controllers/entryController');
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -403,6 +400,7 @@ const addRating = async (req, res) => {
 
 // Login a user with oAuthId
 const login = async (req, res) => {
+    console.log("Logging in user...");
     try {
         const { token } = req.body;
         const decodedToken = jwt.decode(token);
@@ -436,6 +434,7 @@ const login = async (req, res) => {
         // Generar el token JWT con caducidad de 7 dias
         const tokenJwt = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 
+        console.log("User logged in successfully: ", user);
         // Enviar el usuario y el token como respuesta
         res.status(200).json({ user, customToken: tokenJwt });
     } catch (error) {
@@ -445,6 +444,7 @@ const login = async (req, res) => {
 
 // Validate a token
 const validateToken = async (req, res) => {
+    console.log("Validating token...");
     const { token } = req.body;
 
     try {
@@ -470,6 +470,7 @@ const validateToken = async (req, res) => {
 
 // Renew a token
 const renewToken = async (req, res) => {
+    console.log("Renewing token...");
     const { token } = req.body;
 
     try {
@@ -507,6 +508,7 @@ const addUserComment = async (req, res) => {
         }
 
         newComment = { entryId, commentId, content, responseTo };
+        console.log('New comment:', newComment);
         user.comments.push(newComment);
         await user.save();
 

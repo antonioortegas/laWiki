@@ -31,10 +31,9 @@ export default {
       default: null,
       required: true
     },
-    loggedUserId: {
-      type: String,
+    loggedUser: {
+      type: Object,
       default: null,
-      required: true
     }
   },
   data() {
@@ -70,26 +69,29 @@ export default {
     },
     // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
-      if(this.loggedUserId === null) {
+      console.log("loggedUser:", this.loggedUser);
+      if(this.loggedUser === null) {
         alert("You must be logged in to rate users.");
         return;
       }
-      const loggedUser = await axios.get(`/api/users/${this.loggedUserId}`);
 
-      if (loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
-        if (loggedUser.data._id === this.profileUserId) {
+      if (this.loggedUser.role === 'writer' || this.loggedUser.role === 'admin') {
+        if (this.loggedUser._id === this.profileUserId) {
           alert("You can't rate yourself!");
           return;
         } else {
           try {
             await axios.post(`/api/users/${this.profileUserId}/addRating`, {
-              ratedBy: this.loggedUserId,
+              ratedBy: this.loggedUser._id,
               score: star,
             });
 
             location.reload(); // Refresh the page to update the rating
           } catch (error) {
             console.error("Error submitting rating:", error.response?.data || error.message);
+            if(error.response?.data.message === "Already rated by this user") {
+              alert("You have already rated this user.");
+            }
           }
         }
       } else {

@@ -1,5 +1,4 @@
 <template>
-  <!--div v-if="dataReady"-->
   <nav class="relative">
     <!-- Add relative position to the nav -->
     <div class="flex bg-primary py-2 px-2 items-center justify-between">
@@ -16,73 +15,90 @@
 
       <!-- Right Section (Avatar) -->
       <div class="flex items-center space-x-1 font-body">
-        <div class="relative mr-2">
+        <div v-if="this.authStore.token" class="relative mr-2">
           <NotificationBell :notifications="notifications" :user-id="userId"
             @notificationDeleted="removeNotification" />
         </div>
-        <router-link :to="{ name: 'ProfilePage', params: { userId: userId } }">
-          <oAuth :user="user" @login-success="handleLogin" />
-        </router-link>
+        <div v-if="this.authStore.user">
+          <router-link :to="{ name: 'ProfilePage', params: { userId: userId } }">
+            <oAuth :user="user" @login-success="handleLogin" />
+          </router-link>
+        </div>
+        <div v-else>
+          <oAuth :user="this.authStore.user" @login-success="handleLogin" />
+        </div>
       </div>
     </div>
   </nav>
-  <!--/div-->
 </template>
 
-<!-- Notification script -->
+
 <script>
-import { data } from "autoprefixer";
+import { useAuthStore } from "../stores/auth";
 import NotificationBell from "./Notification.vue";
 import oAuth from "./oAuth.vue";
 import axios from "axios";
 
-// Función para manejar cookies
-const setAuthTokenCookie = (token) => {
-  const expirationTime = new Date();
-  expirationTime.setTime(expirationTime.getTime() + 7 * 24 * 60 * 60 * 1000);
-  document.cookie = `authToken=${token}; expires=${expirationTime.toUTCString()}; path=/`;
-};
-
-// Función para obtener el token de las cookies
-const getAuthTokenFromCookie = () => {
-  const name = "authToken=";
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const cookies = decodedCookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    let cookie = cookies[i];
-    while (cookie.charAt(0) === " ") {
-      cookie = cookie.substring(1);
-    }
-    if (cookie.indexOf(name) === 0) {
-      return cookie.substring(name.length, cookie.length);
-    }
-  }
-  return null; // Si no se encuentra la cookie
-};
-
-// Función para eliminar la cookie
-const deleteAuthTokenCookie = () => {
-  document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-};
-
-
 export default {
   components: { NotificationBell, oAuth },
-  computed: {
-    profilePageKey() {
-      return this.userId; // Cambiará siempre que cambie el userId
-    },
-  },
+
   data() {
     return {
-      user: null,
       notifications: [], // Inital empty list
-      userId: "123456789012345678901234", // Default user ID,
-      dataReady: false,
+      userId: "-", // Placeholder value,
     };
   },
+
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
+    token() {
+      return this.authStore.getLoggedUserToken;
+    },
+    isLoggedIn() {
+      return this.authStore.isLoggedIn;
+    },
+  },
+
   methods: {
+    async handleLogin(token) {
+      try {
+        await this.authStore.login(token); // Llamar al store para manejar el inicio de sesión
+        this.userId = this.authStore.user._id; // Actualizar el ID del usuario
+
+        // Obtener notificaciones después del inicio de sesión
+        await this.fetchNotifications();
+        location.reload(); // Recargar la página para actualizar componentes de las páginas
+      } catch (error) {
+        console.error("Error al manejar el inicio de sesión:", error);
+      }
+    },
+
+
+    async fetchNotifications() {
+      try {
+        if (!this.isLoggedIn || !this.userId) return;
+
+        const response = await axios.get(`/api/users/${this.userId}/notifications`);
+        this.notifications = response.data || [];
+        if (this.notifications.length === 0) {
+          this.notifications.push({
+            _id: "placeholder",
+            message: "Nothing to see here...",
+            read: true,
+            isPlaceholder: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+      }
+    },
+
+
     // Update the notifications list after deleting a notification
     removeNotification(notificationId) {
       this.notifications = this.notifications.filter((n) => n._id !== notificationId);
@@ -96,100 +112,34 @@ export default {
         });
       }
     },
-    async verifyTokenLocally() {
-      const authToken = getAuthTokenFromCookie();
-      if (authToken) {
-        try {
-          const response = await axios.post("/api/users/validate-token", { token: authToken })
-          if (response.data.valid) {
-            this.user = response.data.user; // Establecer datos del usuario
-            this.userId = this.user._id; // Establecer el ID del usuario
-            //console.log("Sesión válida. Nuevo userId:", this.userId);
-
-            await this.renewToken(); // Se renueva el token para alargar la sesión
-
-            // Al recuperar del backend la imagen no funcionaba, con esto se corrige
-            if (this.user.profilePicture) {
-              this.user.picture = this.user.profilePicture;
-            } else {
-              //console.log("No se ha encontrado una imagen de perfil. Usando imagen predeterminada. Usuario:", this.user);
-              this.user.picture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-            }
-          } else {
-            alert("Token inválido o caducado. Se ha cerrado la sesión");
-            this.signOut(); // Limpiar estado y redirigir
-          }
-        } catch (error) {
-          console.error("Error al validar el token:", error);
-          this.signOut();
-        }
-      } else {
-        console.log("No hay token almacenado.");
-      }
-    },
-    async renewToken() {
-      const authToken = getAuthTokenFromCookie();
-      if (authToken) {
-        try {
-          const response = await axios.post("/api/users/renew-token", { token: authToken });
-          setAuthTokenCookie(response.data.newToken);
-        } catch {
-          this.signOut();
-        }
-      }
-    },
-    async handleLogin(token) {
-      try {
-        const response = await axios.post("/api/users/login", { token });
-        if (response.data.customToken) {
-          setAuthTokenCookie(response.data.customToken);
-          this.user = response.data.user;
-          this.userId = this.user._id; // Establecer el ID del usuario para el router
-
-          if (this.user.profilePicture) {
-            this.user.picture = this.user.profilePicture;
-          } else {
-            this.user.picture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
-          }
-        }
-      } catch (error) {
-        console.error("Error al manejar el login:", error);
-      }
-    },
-    signOut() {
-      deleteAuthTokenCookie();
-      this.user = null;
-    },
   },
   async mounted() {
     try {
-      await this.verifyTokenLocally();
+      await this.authStore.verifyTokenAndRestore();
+      const authToken = this.authStore.token;
+      if (authToken) {
+        console.log("Token encontrado en cookies. Restaurando sesión...");
+        this.userId = this.authStore.user?._id || "-";
 
-      const path = `api/users/${this.userId}/notifications`;
-      const response = await axios.get(`/api/users/${this.userId}/notifications`);
+        // Configurar imagen predeterminada si falta
+        if (this.authStore.user) {
+          if (this.authStore.user.profilePicture) {
+            this.authStore.user.picture = this.authStore.user.profilePicture;
+          } else {
+            this.authStore.user.picture =
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+          }
+        }
 
-      if (Array.isArray(response.data)) {
-        this.notifications = response.data;
+        // Obtener notificaciones del usuario autenticado
+        if (this.userId !== "-") {
+          await this.fetchNotifications();
+        }
       } else {
-        this.notifications = [];
-        console.error("Invalid response data:", response.data);
+        console.log("No se encontró token. El usuario no ha iniciado sesión.");
       }
-
-      this.notifications = response.data || [];
-
-      if (this.notifications.length === 0) { //use a placeholder if there are no notifications
-        this.notifications.push({
-          id: "placeholder", // Unique ID for the placeholder
-          message: "Nothing to see here...",
-          read: true,
-          isPlaceholder: true,
-        });
-      }
-
-      this.dataReady = true;
-      console.log("Datos listos");
     } catch (error) {
-      console.error("Error retrieving notifications:", error);
+      console.error("Error al inicializar el Navbar:", error);
     }
   },
 };

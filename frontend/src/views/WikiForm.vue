@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; // To access route params
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
@@ -13,7 +14,7 @@ const formData = ref({
   src: "",
   tags: "",
   language: "en",
-  createdBy: "",
+  createdBy: "123456789012345678901235",
 });
 const fileInput = ref(null);
 
@@ -32,6 +33,7 @@ const sampleWikiData = {
 const route = useRoute();
 
 const isEditing = ref(false); // Determines if editing an existing wiki
+const authStore = useAuthStore();
 
 onMounted(() => {
   if (route.params.wikiId) {
@@ -39,6 +41,10 @@ onMounted(() => {
     console.log("Editing wiki with ID:", route.params.wikiId);
     // Simulate fetching wiki data by ID
     fetchWikiData(route.params.wikiId);
+  }
+
+  if(authStore.user){
+    formData.value.createdBy = authStore.user._id;
   }
 });
 
@@ -93,10 +99,6 @@ async function submitForm() {
         // Handle error (e.g., show error message)
       });
   } else {
-    // createdBy is required for creating a new wiki
-    // simulate it for now, since user authentication is not implemented
-    formData.value.createdBy = await fetchLoggedUserId();
-    console.log("Autor: ", formData.value.createdBy);
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
     axios.post("/api/wikis", formData.value)
@@ -127,35 +129,6 @@ function deleteWiki() {
         console.error("Error deleting wiki:", error);
         // Handle error (e.g., show error message)
       });
-  }
-}
-
-function getAuthTokenFromCookie() {
-  const name = "authToken=";
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const cookies = decodedCookie.split(';');
-  for (let cookie of cookies) {
-    cookie = cookie.trim();
-    if (cookie.startsWith(name)) {
-      return cookie.substring(name.length);
-    }
-  }
-  return null;
-}
-
-async function fetchLoggedUserId() {
-  try {
-    const response = await axios.post('/api/users/validate-token', {
-      token: getAuthTokenFromCookie(), // Usar el token almacenado en cookies
-    });
-    if (response.data.valid && response.data.user) {
-      return response.data.user._id;
-    } else {
-      console.warn('Token inválido o caducado.');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error al validar el token:', error);
   }
 }
 
