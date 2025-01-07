@@ -82,7 +82,7 @@ export default {
           return;
         } else {
           try {
-            await axios.post(`/api/users/${this.profileUserId}/addRating`, {
+            await axios.post(`${VITE_USERS_API_HOST}/${this.profileUserId}/addRating`, {
               ratedBy: this.loggedUser._id,
               score: star,
             });

@@ -6,6 +6,7 @@ import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 // Form data
 const formData = ref({
@@ -65,7 +66,7 @@ async function verifyTokenLocally() {
     const authToken = getAuthTokenFromCookie();
     if (authToken) {
         try {
-            const response = await axios.post("/api/users/validate-token", { token: authToken })
+            const response = await axios.post(`${VITE_USERS_API_HOST}/validate-token`, { token: authToken })
             if (response.data.valid) {
                 this.user = response.data.user; // Establecer datos del usuario
                 this.userId = this.user._id; // Establecer el ID del usuario
@@ -98,7 +99,7 @@ async function renewToken() {
     const authToken = getAuthTokenFromCookie();
     if (authToken) {
         try {
-            const response = await axios.post("/api/users/renew-token", { token: authToken });
+            const response = await axios.post(`${VITE_USERS_API_HOST}/renew-token`, { token: authToken });
             setAuthTokenCookie(response.data.newToken);
         } catch {
             this.signOut();

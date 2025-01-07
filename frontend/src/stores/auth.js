@@ -1,6 +1,7 @@
 // stores/auth.js
 import { defineStore } from "pinia";
 import axios from "axios";
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export const useAuthStore = defineStore("auth", {
     state: () => ({
@@ -35,7 +36,7 @@ export const useAuthStore = defineStore("auth", {
          */
         async login(googleToken) {
             try {
-                const response = await axios.post("/api/users/login", { token: googleToken });
+                const response = await axios.post(`${VITE_USERS_API_HOST}/login",`{ token: googleToken });
 
                 // Guardar usuario y token en el estado
                 this.token = response.data.customToken;
@@ -58,7 +59,7 @@ export const useAuthStore = defineStore("auth", {
         async verifyTokenAndRestore() {
             try {
                 const token = await this.getAuthTokenFromCookie();
-                const response = await axios.post("/api/users/validate-token", { token });
+                const response = await axios.post(`${VITE_USERS_API_HOST}/validate-token`, { token });
                 if (response.data.valid) {
                     this.user = response.data.user; // Restaurar datos del usuario
                     await this.renewToken(); // Renovar el token en las cookies
@@ -83,7 +84,7 @@ export const useAuthStore = defineStore("auth", {
             if (!token) return;
 
             try {
-                const response = await axios.post("/api/users/renew-token", { token });
+                const response = await axios.post(`${VITE_USERS_API_HOST}/renew-token`, { token });
                 this.token = response.data.newToken;
                 this.setAuthTokenCookie(this.token);
             } catch (error) {

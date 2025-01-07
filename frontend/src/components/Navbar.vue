@@ -38,6 +38,7 @@ import { useAuthStore } from "../stores/auth";
 import NotificationBell from "./Notification.vue";
 import oAuth from "./oAuth.vue";
 import axios from "axios";
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export default {
   components: { NotificationBell, oAuth },
@@ -83,7 +84,7 @@ export default {
       try {
         if (!this.isLoggedIn || !this.userId) return;
 
-        const response = await axios.get(`/api/users/${this.userId}/notifications`);
+        const response = await axios.get(`${VITE_USERS_API_HOST}/${this.userId}/notifications`);
         this.notifications = response.data || [];
         if (this.notifications.length === 0) {
           this.notifications.push({

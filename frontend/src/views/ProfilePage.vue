@@ -145,7 +145,7 @@ export default {
     methods: {
         async changeNotificationConsent() {
             try {
-                await axios.put(`/api/users/${this.userId}/`, {
+                await axios.put(`${VITE_USERS_API_HOST}/${this.userId}/`, {
                     getNotificationsByEmail: this.notificationsEnabled
                 });
             } catch (error) {
@@ -155,8 +155,8 @@ export default {
 
         async fetchProfileUserData() {
             try {
-                const userResponse = await axios.get(`/api/users/${this.profileUserId}`);
-                const responseAv = await axios.get(`/api/users/${this.userId}/averageRating`);
+                const userResponse = await axios.get(`${VITE_USERS_API_HOST}/${this.profileUserId}`);
+                const responseAv = await axios.get(`${VITE_USERS_API_HOST}/${this.userId}/averageRating`);
 
 
                 this.averageRating = responseAv.data.average || 0;
@@ -176,7 +176,7 @@ export default {
         },
         async countUserComments() {
             try {
-                const response = await axios.get(`/api/users/${this.profileUserId}/countUserComments`);
+                const response = await axios.get(`${VITE_USERS_API_HOST}/${this.profileUserId}/countUserComments`);
                 this.userComments = response.data.count;
             } catch (error) {
                 console.error('Error counting user comments:', error);
@@ -184,7 +184,7 @@ export default {
         },
         async countUserEntries() {
             try {
-                const response = await axios.get(`/api/users/${this.profileUserId}/countUserEntries`);
+                const response = await axios.get(`${VITE_USERS_API_HOST}/${this.profileUserId}/countUserEntries`);
                 this.userEntries = response.data.count;
             } catch (error) {
                 console.error('Error counting user entries:', error);

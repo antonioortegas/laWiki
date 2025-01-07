@@ -33,6 +33,8 @@
 
 <script>
 import axios from 'axios';
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 export default {
   name: "Comment",
@@ -68,7 +70,7 @@ export default {
     // Fetches the author's name using their ID
     async fetchAuthor() {
       try {
-        const response = await axios.get(`/api/users/${this.content.author}`);
+        const response = await axios.get(`${VITE_USERS_API_HOST}/${this.content.author}`);
         this.author = response.data;
       } catch (error) {
         console.error("Error fetching author name:", error.response?.data || error.message);
@@ -90,7 +92,7 @@ export default {
       };
 
       try {
-        const response = await axios.put(`/api/entries/${this.entryId}/addComment`, reply);
+        const response = await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/addComment`, reply);
         const newReply = { ...response.data, replies: [] };
         this.$emit("reply", { parentId: this.content._id, reply: newReply });
         this.replyText = "";
@@ -103,7 +105,7 @@ export default {
     async deleteComment() {
       console.log("Deleting comment:", this.content._id);
       try {
-        await axios.put(`/api/entries/${this.entryId}/deleteComment/`, {
+        await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/deleteComment/`, {
           commentId: this.content._id
         });
       console.log("Borrado de entry");
