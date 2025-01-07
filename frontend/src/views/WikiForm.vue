@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; // To access route params
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
@@ -14,6 +15,7 @@ const formData = ref({
   src: "",
   tags: "",
   language: "en",
+  createdBy: "123456789012345678901235",
 });
 const fileInput = ref(null);
 
@@ -25,12 +27,14 @@ const sampleWikiData = {
   content: "This wiki explores the characters, magic systems, and major events in the Mistborn series.",
   tags: ["Fantasy", "Brandon Sanderson", "Cosmere"],
   language: "en",
+  createdBy: "123456789012345678901235",
 };
 
 // Access route parameters
 const route = useRoute();
 
 const isEditing = ref(false); // Determines if editing an existing wiki
+const authStore = useAuthStore();
 
 onMounted(() => {
   if (route.params.wikiId) {
@@ -38,6 +42,10 @@ onMounted(() => {
     console.log("Editing wiki with ID:", route.params.wikiId);
     // Simulate fetching wiki data by ID
     fetchWikiData(route.params.wikiId);
+  }
+
+  if(authStore.user){
+    formData.value.createdBy = authStore.user._id;
   }
 });
 
@@ -78,7 +86,7 @@ async function fetchWikiData(id) {
 }
 
 // Submit handler
-function submitForm() {
+async function submitForm() {
   if (isEditing.value) {
     console.log("Updating wiki:", formData.value);
     // Add API call for updating the wiki (e.g., PUT request)
@@ -92,9 +100,6 @@ function submitForm() {
         // Handle error (e.g., show error message)
       });
   } else {
-    // createdBy is required for creating a new wiki
-    // simulate it for now, since user authentication is not implemented
-    formData.value.createdBy = "63e8e9d8f86d4e25c9a1b116";
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
     axios.post(`${VITE_WIKIS_API_HOST}`, formData.value)
@@ -198,7 +203,7 @@ function deleteWiki() {
             class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none" rows="6"></textarea>
         </div>
 
-        
+
 
         <div class="flex justify-center gap-8">
 

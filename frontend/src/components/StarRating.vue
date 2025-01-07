@@ -1,20 +1,13 @@
 <template>
   <div class="rating-container">
     <div class="stars" @mouseleave="clearHover">
-      <div
-        v-for="star in stars"
-        :key="star"
-        class="star"
-        :class="{ filled: isHovering ? star <= hoverStars : star <= fullStars }"
-        @mouseenter="updateHover(star)"
-        @click="setRating(star)"
-      >
+      <div v-for="star in stars" :key="star" class="star"
+        :class="{ filled: isHovering ? star <= hoverStars : star <= fullStars }" @mouseenter="updateHover(star)"
+        @click="setRating(star)">
         ★
       </div>
     </div>
-    <div 
-      class="rating-number" 
-      :class="{'is-text': isText, 'is-number': !isText}">
+    <div class="rating-number" :class="{ 'is-text': isText, 'is-number': !isText }">
       {{ displayValue }}
     </div>
   </div>
@@ -39,10 +32,9 @@ export default {
       default: null,
       required: true
     },
-    loggedUserEmail: {
-      type: String,
+    loggedUser: {
+      type: Object,
       default: null,
-      required: true
     }
   },
   data() {
@@ -78,28 +70,33 @@ export default {
     },
     // Sends the selected rating to the server, if the user is a writer
     async setRating(star) {
-      const loggedUser = await axios.get(`${VITE_USERS_API_HOST}/${this.loggedUserId}`);
-      
-      if(loggedUser.data.role === 'writer' || loggedUser.data.role === 'admin') {
-        if(loggedUser.data._id === this.profileUserId) {
-          console.log("You can't rate yourself!");
+      console.log("loggedUser:", this.loggedUser);
+      if(this.loggedUser === null) {
+        alert("You must be logged in to rate users.");
+        return;
+      }
+
+      if (this.loggedUser.role === 'writer' || this.loggedUser.role === 'admin') {
+        if (this.loggedUser._id === this.profileUserId) {
+          alert("You can't rate yourself!");
           return;
         } else {
           try {
-            await axios.post(`${VITE_USERS_API_HOST}/${this.profileUserId}/addRating`, {
-              ratedBy: this.loggedUserEmail,
+            await axios.post(`/api/users/${this.profileUserId}/addRating`, {
+              ratedBy: this.loggedUser._id,
               score: star,
             });
-    
-            console.log("Sent rating:", star);
-            console.log("For user ID:", this.profileUserId);
-            console.log("By logged user ID:", this.loggedUserEmail);
-    
-            this.$emit("update:value", star); // Update the rating locally
+
+            location.reload(); // Refresh the page to update the rating
           } catch (error) {
             console.error("Error submitting rating:", error.response?.data || error.message);
+            if(error.response?.data.message === "Already rated by this user") {
+              alert("You have already rated this user.");
+            }
           }
         }
+      } else {
+        alert("You must be a writer to rate users.");
       }
     }
   }
@@ -116,7 +113,8 @@ export default {
 
 .stars {
   display: flex;
-  cursor: pointer; /* Indicate interactivity */
+  cursor: pointer;
+  /* Indicate interactivity */
 }
 
 .star {
@@ -146,5 +144,4 @@ export default {
 .rating-number.is-number {
   font-size: 1.2rem;
 }
-
 </style>

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios';
 import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
@@ -24,6 +25,38 @@ const filters = ref({
 });
 
 const $route = useRoute();
+const authStore = useAuthStore();
+const userRole = ref(authStore.user?.role);
+const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
+const warningEntryMessage = ref('');
+const warningWikiMessage = ref('');
+const showEntryAlert = ref(false);
+const showWikiAlert = ref(false);
+
+if (!canEditEntries.value) {
+  console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
+  warningEntryMessage.value = "You must be a writer or an editor to create an entry.";
+}
+
+if (!canEditWiki.value) {
+  console.log('User does not have the necessary permissions to edit the wiki.', canEditWiki.value);
+  warningWikiMessage.value = "You must be an editor to edit the wiki.";
+}
+
+const showEntryWarning = () => {
+  showEntryAlert.value = true;
+  setTimeout(() => {
+    showEntryAlert.value = false;
+  }, 3000);
+};
+
+const showWikiWarning = () => {
+  showWikiAlert.value = true;
+  setTimeout(() => {
+    showWikiAlert.value = false;
+  }, 3000);
+};
 
 // Normalize filters
 const normalizeFilters = () => ({
@@ -112,15 +145,15 @@ const toggleAdvancedSearch = () => {
 };
 
 function filter(searchQuery) {
-    con
-    const key = Object.keys(searchQuery)[0];
-    const text = searchQuery[key].toLowerCase();
-    console.log('Filtering by:', text);
+  con
+  const key = Object.keys(searchQuery)[0];
+  const text = searchQuery[key].toLowerCase();
+  console.log('Filtering by:', text);
 
-    // Filter the original entry data
-    entries.value = entryData.value.filter((entry) =>
-      entry.title.toLowerCase().includes(text)
-    );
+  // Filter the original entry data
+  entries.value = entryData.value.filter((entry) =>
+    entry.title.toLowerCase().includes(text)
+  );
 }
 
 // Fetch entry data from the backend
@@ -182,13 +215,13 @@ const advancedFilter = (searchQuery) => {
 
     const matchesEditor = searchEditor
       ? entry.editors.some((ed) => ed.toLowerCase().includes(searchEditor)) ||
-        entry.createdBy.toLowerCase().includes(searchEditor)
+      entry.createdBy.toLowerCase().includes(searchEditor)
       : true;
 
     const matchesTags = searchTags.length
       ? searchTags.every((tag) =>
-          entry.tags.some((entryTag) => entryTag.toLowerCase().includes(tag))
-        )
+        entry.tags.some((entryTag) => entryTag.toLowerCase().includes(tag))
+      )
       : true;
 
     return matchesTitle && matchesContent && matchesEditor && matchesTags;
@@ -208,17 +241,30 @@ const advancedFilter = (searchQuery) => {
       <p v-if="wikiInfo.numberOfEntries" class="text-gray-600 text-sm sm:text-base mt-1">
         Containing <span class="font-semibold text-primary">{{ wikiInfo.numberOfEntries }}</span> entries and growing!
       </p>
-      <router-link :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
-        <button type="submit"
+      <router-link v-if="canEditWiki" :to="{ name: 'EditWiki', params: { wikiId: $route.params.wikiId } }">
+        <button type="submit" :disabled="!canEditWiki"
           class="px-6 py-3 my-2 bg-primary text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent transform transition-transform hover:scale-105">
           Edit Wiki
         </button>
       </router-link>
+      <div v-else>
+        <button @click="showWikiWarning"
+          class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md"
+          style="background-color: gray!important; cursor: not-allowed;">
+          Edit Wiki
+        </button>
+        <!-- Show warning if the user cannot edit the wiki -->
+        <div v-if="showWikiAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">
+          {{ warningWikiMessage }}
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- enter and keydown are not being used for now, refactored to put everything on "updateQuery" -->
-  <EntrySearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter" @keyDown="filter" @updateQuery="advancedFilter"/>
+  <EntrySearchBar placeholderText="Search for an entry..." :backgroundImageUrl="wikiInfo.src" @enter="filter"
+    @keyDown="filter" @updateQuery="advancedFilter" />
+
 
   <!-- Call-to-Action Section -->
   <div class="bg-secondary mx-8 sm:mx-32 my-4 p-6 rounded-3xl shadow-lg font-heading overflow-hidden">
@@ -226,17 +272,28 @@ const advancedFilter = (searchQuery) => {
       <p class="text-white text-lg font-heading mb-4">
         Don't see what you're looking for? Add it!
       </p>
-      <router-link :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
+      <router-link v-if="canEditEntries" :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
         <button
           class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
           + Create an Entry
         </button>
       </router-link>
+      <div v-else>
+        <button @click="showEntryWarning"
+          class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md"
+          style="background-color: gray!important; cursor: not-allowed;">
+          + Create an Entry
+        </button>
+        <!-- Show warning if the user cannot create an entry -->
+        <div v-if="showEntryAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">
+          {{ warningEntryMessage }}
+        </div>
+      </div>
     </div>
   </div>
-  
+
   <!-- Search Bar -->
-   
+
   <!-- <SearchBar placeholder="Search for an entry..." @enter="(value) => updateFilter('text', value.text)" /> -->
 
   <!-- Toggle Advanced Search -->

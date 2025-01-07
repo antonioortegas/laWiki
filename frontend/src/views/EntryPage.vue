@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from "../stores/auth";
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
 import MapComponent from '../components/Map.vue';
@@ -34,6 +35,12 @@ const entryCreator = ref(''); //Creador de la entrada
 const latitude = ref('');
 const longitude = ref('');
 const zoom = ref('');
+
+// Gestion usuario actual y permisos
+const authStore = useAuthStore();
+const userRole = ref(authStore.user?.role);
+const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canDeleteEntries = ref(userRole.value === 'admin' || userRole.value === 'editor');
 
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {
@@ -90,7 +97,7 @@ const saveEntry = async () => {
       latitude: latitude.value,
       longitude: longitude.value,
       zoom: zoom.value,
-      createdBy: "60d0fe4f5311236168a109ca"
+      createdBy: authStore.user._id,
     };
     console.log(entry);
     
@@ -185,10 +192,12 @@ onMounted(() => {
         <span>See version history</span>
       </router-link>
 
-      <button v-if="!isEditing" @click="toggleEditMode"
-        class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
-        Edit
-      </button>
+      <div v-if="canEditEntries">
+        <button v-if="!isEditing" @click="toggleEditMode"
+          class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
+          Edit
+        </button>
+      </div>
     </div>
 
     <!-- Vista de solo lectura -->
@@ -327,7 +336,7 @@ onMounted(() => {
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
           Save Changes
         </button>
-        <button type="button" @click="deleteEntry"
+        <button v-if="canDeleteEntries" type="button" @click="deleteEntry"
           class="px-6 py-3 bg-red-500 text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transform transition-transform hover:scale-105">
           Delete Entry
         </button>

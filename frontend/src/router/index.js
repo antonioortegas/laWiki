@@ -24,7 +24,8 @@ const routes = [
   {
     path: '/profile/:userId',
     name: 'ProfilePage',
-    component: () => import('../views/ProfilePage.vue')
+    component: () => import('../views/ProfilePage.vue'),
+    props: true
   },
   {
     path: '/wiki/new',

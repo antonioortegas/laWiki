@@ -1,146 +1,135 @@
 <template>
-    <div :style="{ marginLeft: depth * 20 + 'px' }" class="comment-container">
-      <div class="comment-header">
-        <span class="author">{{ authorName }}</span>
+  <div :style="{ marginLeft: depth * 20 + 'px' }" class="comment-container">
+    <div class="comment-header">
+      <div v-if="author">
+        <a :href="`/profile/${author._id}`"><span class="author">{{ author.name }}</span></a>
         <span class="time">{{ formatTime(content.createdAt) }}</span>
       </div>
-      <p class="comment-text">{{ content.content }}</p>
-      <div class="comment-actions">
-        <button @click="toggleReplyForm" class="reply-btn">Reply</button>
-        <!-- Show only if current user is the author of the comment -->
-        <button v-if="currentUserId === content.author" @click="deleteComment" class="delete-btn">Delete</button>
-      </div>
-  
-      <!-- Reply form -->
-      <form v-if="showReplyForm" @submit.prevent="submitReply" class="reply-form">
-        <textarea 
-          v-model="replyText" 
-          placeholder="Write a response..." 
-          class="reply-input"
-          required
-        ></textarea>
-        <button type="submit" class="submit-reply-btn">Reply</button>
-      </form>
-  
-      <!-- Replies -->
-      <div v-if="content.replies.length" class="replies">
-        <Comment 
-          v-for="reply in content.replies" 
-          :key="reply._id" 
-          :content="reply" 
-          :depth="depth + 1"
-          :entryId="entryId"
-          :currentUserId="currentUserId" 
-          @reply="forwardReply"
-          @delete="forwardDelete"
-        />
+      <div v-else>
+        <span class="author">Anonymous User</span>
+        <span class="time">{{ formatTime(content.createdAt) }}</span>
       </div>
     </div>
+    <p class="comment-text">{{ content.content }}</p>
+    <div class="comment-actions">
+      <button @click="toggleReplyForm" class="reply-btn">Reply</button>
+      <!-- Show only if current user is the author of the comment -->
+      <button v-if="currentUserId === content.author" @click="deleteComment" class="delete-btn">Delete</button>
+    </div>
+
+    <!-- Reply form -->
+    <form v-if="showReplyForm" @submit.prevent="submitReply" class="reply-form">
+      <textarea v-model="replyText" placeholder="Write a response..." class="reply-input" required></textarea>
+      <button type="submit" class="submit-reply-btn">Reply</button>
+    </form>
+
+    <!-- Replies -->
+    <div v-if="content.replies.length" class="replies">
+      <Comment v-for="reply in content.replies" :key="reply._id" :content="reply" :depth="depth + 1" :entryId="entryId"
+        :currentUserId="currentUserId" @reply="forwardReply" @delete="forwardDelete" />
+    </div>
+  </div>
 </template>
-  
+
 <script>
-  import axios from 'axios';
-  
-  const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
-  const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+import axios from 'axios';
 
-  export default {
-    name: "Comment",
-    props: {
-      content: {
-        type: Object,
-        required: true
-      },
-      depth: {
-        type: Number,
-        required: true
-      },
-      entryId: {
-        type: String,
-        required: true
-      },
-      currentUserId: {
-        type: String,
-        required: true
-      }
+export default {
+  name: "Comment",
+  props: {
+    content: {
+      type: Object,
+      required: true
     },
-    data() {
-      return {
-        showReplyForm: false,
-        replyText: "",
-        authorName: "",
-      };
+    depth: {
+      type: Number,
+      required: true
     },
-    async mounted() {
-      await this.fetchAuthorName();
+    entryId: {
+      type: String,
+      required: true
     },
-    methods: {
-      // Fetches the author's name using their ID
-      async fetchAuthorName() {
-        try {
-          console.log("Buscando autor: ", this.content.author);
-          const response = await axios.get(`${VITE_USERS_API_HOST}/${this.content.author}`);
-          this.authorName = response.data.name || "Anonymous User";
-        } catch (error) {
-          console.error("Error fetching author name:", error.response?.data || error.message);
-          this.authorName = "Anonymous User";
-        }
-      },
-      // Toggles the reply form visibility
-      toggleReplyForm() {
-        this.showReplyForm = !this.showReplyForm;
-      },
-      // Submits a reply
-      async submitReply() {
-        if (!this.replyText.trim()) return;
-
-        const reply = {
-          content: this.replyText.trim(),
-          author: this.currentUserId,
-          responseTo: this.content._id, // Enlazamos al comentario padre
-        };
-
-        try {
-          const response = await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/addComment`, reply);
-          const newReply = { ...response.data, replies: [] };
-          this.$emit("reply", { parentId: this.content._id, reply: newReply });
-          this.replyText = "";
-          this.showReplyForm = false;
-        } catch (error) {
-          console.error("Error al enviar la respuesta:", error.response?.data || error.message);
-        }
-      },
-      // Deletes the comment with a PUT request
-      async deleteComment() {
-        try {
-            console.log("Eliminando comentario: ", this.content._id);
-            console.log("De la entrada: ", this.entryId);
-
-            await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/deleteComment/${this.content._id}`);
-            
-            // Emitir el evento para que el componente padre elimine el comentario de la lista
-            this.$emit("delete", this.content._id);
-        } catch (error) {
-            console.error("Error deleting comment:", error.response?.data || error.message);
-        }
-      },
-      // Forwards the reply event up the chain
-      forwardReply(payload) {
-        this.$emit("reply", payload);
-      },
-      // Forwards the delete event up the chain
-      forwardDelete(commentId) {
-        this.$emit("delete", commentId);
-      },
-      // Formats the timestamp into a readable time
-      formatTime(timestamp) {
-        const date = new Date(timestamp);
-        return date.toLocaleString();
-      }
+    currentUserId: {
+      type: String,
+      required: true
     }
-  };
+  },
+  data() {
+    return {
+      showReplyForm: false,
+      replyText: "",
+      author: "",
+    };
+  },
+  async mounted() {
+    await this.fetchAuthor();
+  },
+  methods: {
+    // Fetches the author's name using their ID
+    async fetchAuthor() {
+      try {
+        const response = await axios.get(`/api/users/${this.content.author}`);
+        this.author = response.data;
+      } catch (error) {
+        console.error("Error fetching author name:", error.response?.data || error.message);
+        this.author.name = "Anonymous User";
+      }
+    },
+    // Toggles the reply form visibility
+    toggleReplyForm() {
+      this.showReplyForm = !this.showReplyForm;
+    },
+    // Submits a reply
+    async submitReply() {
+      if (!this.replyText.trim()) return;
+
+      const reply = {
+        content: this.replyText.trim(),
+        author: this.currentUserId,
+        responseTo: this.content._id, // Enlazamos al comentario padre
+      };
+
+      try {
+        const response = await axios.put(`/api/entries/${this.entryId}/addComment`, reply);
+        const newReply = { ...response.data, replies: [] };
+        this.$emit("reply", { parentId: this.content._id, reply: newReply });
+        this.replyText = "";
+        this.showReplyForm = false;
+      } catch (error) {
+        console.error("Error al enviar la respuesta:", error.response?.data || error.message);
+      }
+    },
+    // Deletes the comment with a PUT request
+    async deleteComment() {
+      console.log("Deleting comment:", this.content._id);
+      try {
+        await axios.put(`/api/entries/${this.entryId}/deleteComment/`, {
+          commentId: this.content._id
+        });
+      console.log("Borrado de entry");
+        // Emitir el evento para que el componente padre elimine el comentario de la lista
+        this.$emit("delete", this.content._id);
+      } catch (error) {
+        console.error("Error deleting comment:", error.response?.data || error.message);
+      }
+    },
+    // Forwards the reply event up the chain
+    forwardReply(payload) {
+      this.$emit("reply", payload);
+    },
+    // Forwards the delete event up the chain
+    forwardDelete(commentId) {
+      this.$emit("delete", commentId);
+    },
+    // Formats the timestamp into a readable time
+    formatTime(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString();
+    }
+  }
+};
 </script>
-  
+
 
 <style scoped>
 .comment-container {
@@ -232,4 +221,4 @@
   padding-left: 20px;
   border-left: 2px solid #ddd;
 }
-</style> 
+</style>

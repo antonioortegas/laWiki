@@ -1,21 +1,3 @@
-<script setup>
-import axios from "axios";
-defineProps({
-  username: {
-    type: String,
-    required: true,
-    default: "Username",
-  },
-  userPfp: {
-    type: String,
-    required: true,
-    default: "https://placehold.co/400x400",
-  },
-});
-
-const exampleUserId = "SprenBonded";
-</script>
-
 <template>
   <nav class="relative">
     <!-- Add relative position to the nav -->
@@ -26,102 +8,141 @@ const exampleUserId = "SprenBonded";
       </a>
 
       <!-- Center Section (Text) -->
-      <a class="absolute left-1/2 transform -translate-x-1/2 flex items-center hover:scale-105 hover:underline" href="/">
+      <a class="absolute left-1/2 transform -translate-x-1/2 flex items-center hover:scale-105 hover:underline"
+        href="/">
         <span class="font-heading font-bold text-3xl">laWiki</span>
       </a>
 
       <!-- Right Section (Avatar) -->
       <div class="flex items-center space-x-1 font-body">
-        <div class="relative mr-2">
-          <NotificationBell
-            :notifications="notifications"
-            :user-id="userId"
-            @notificationDeleted="removeNotification"
-             />
+        <div v-if="this.authStore.token" class="relative mr-2">
+          <NotificationBell :notifications="notifications" :user-id="userId"
+            @notificationDeleted="removeNotification" />
         </div>
-        <router-link :to="{ name: 'ProfilePage', params: { userId: exampleUserId } }">
-        <div class="flex items-center hover:scale-105">
-            <span class="hidden sm:block text-md md:text-md font-semibold mr-2 hover:underline underline-offset-3">{{
-              username }}</span>
-            <img :src="userPfp" class="h-12 rounded-full" alt="User Profile Picture" />
-          </div>
-        </router-link>
+        <div v-if="this.authStore.user">
+          <router-link :to="{ name: 'ProfilePage', params: { userId: userId } }">
+            <oAuth :user="user" @login-success="handleLogin" />
+          </router-link>
+        </div>
+        <div v-else>
+          <oAuth :user="this.authStore.user" @login-success="handleLogin" />
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
-<!-- Notification script -->
+
 <script>
+import { useAuthStore } from "../stores/auth";
 import NotificationBell from "./Notification.vue";
-const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
-
-const exampleNotification = 
-  {
-    _id: "1",
-    message: "Welcome to laWiki!",
-    read: false,
-    isPlaceholder: false,
-  };
-
+import oAuth from "./oAuth.vue";
+import axios from "axios";
 
 export default {
-  components: { NotificationBell },
+  components: { NotificationBell, oAuth },
+
   data() {
     return {
-      notifications: [
-        {
-          _id: "1",
-          message: "Welcome to laWiki!",
-          read: false,
-          isPlaceholder: false,
-        },
-      ], // Inital empty list
-      userId: "123456789012345678901234", // TODO: Cambiar esto al ID dinámico del usuario
+      notifications: [], // Inital empty list
+      userId: "-", // Placeholder value,
     };
   },
+
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
+    token() {
+      return this.authStore.getLoggedUserToken;
+    },
+    isLoggedIn() {
+      return this.authStore.isLoggedIn;
+    },
+  },
+
   methods: {
+    async handleLogin(token) {
+      try {
+        await this.authStore.login(token); // Llamar al store para manejar el inicio de sesión
+        this.userId = this.authStore.user._id; // Actualizar el ID del usuario
+
+        // Obtener notificaciones después del inicio de sesión
+        await this.fetchNotifications();
+        location.reload(); // Recargar la página para actualizar componentes de las páginas
+      } catch (error) {
+        console.error("Error al manejar el inicio de sesión:", error);
+      }
+    },
+
+
+    async fetchNotifications() {
+      try {
+        if (!this.isLoggedIn || !this.userId) return;
+
+        const response = await axios.get(`/api/users/${this.userId}/notifications`);
+        this.notifications = response.data || [];
+        if (this.notifications.length === 0) {
+          this.notifications.push({
+            _id: "placeholder",
+            message: "Nothing to see here...",
+            read: true,
+            isPlaceholder: true,
+          });
+        }
+      } catch (error) {
+        console.error("Error al obtener notificaciones:", error);
+      }
+    },
+
+
     // Update the notifications list after deleting a notification
     removeNotification(notificationId) {
       this.notifications = this.notifications.filter((n) => n._id !== notificationId);
-      
+
       if (this.notifications.length === 0) {
         this.notifications.push({
           _id: "placeholder",
           message: "Nothing to see here...",
           read: true,
           isPlaceholder: true,
-      });
-    }
+        });
+      }
     },
   },
   async mounted() {
     try {
-      const path = `api/users/${this.userId}/notifications`;
-      const response = await axios.get(`${VITE_USERS_API_HOST}/${this.userId}/notifications`);
-      console.log("Path:", path);
-      console.log("Response:", response);
-      if(Array.isArray(response.data)) {
-        this.notifications = response.data;
-        console.log("Notifications:", this.notifications);
+      await this.authStore.verifyTokenAndRestore();
+      const authToken = this.authStore.token;
+      if (authToken) {
+        console.log("Token encontrado en cookies. Restaurando sesión...");
+        this.userId = this.authStore.user?._id || "-";
+
+        // Configurar imagen predeterminada si falta
+        if (this.authStore.user) {
+          if (this.authStore.user.profilePicture) {
+            this.authStore.user.picture = this.authStore.user.profilePicture;
+          } else {
+            this.authStore.user.picture =
+              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+          }
+        }
+
+        // Obtener notificaciones del usuario autenticado
+        if (this.userId !== "-") {
+          await this.fetchNotifications();
+        }
       } else {
-        this.notifications = [];
-        console.error("Invalid response data:", response.data);
-      }
-
-      this.notifications = response.data || [];
-
-      if (this.notifications.length === 0) { //use a placeholder if there are no notifications
-        this.notifications.push({
-          id: "placeholder", // Unique ID for the placeholder
-          message: "Nothing to see here...",
-          read: true,
-          isPlaceholder: true,
-        });
+        console.log("No se encontró token. El usuario no ha iniciado sesión.");
       }
     } catch (error) {
-      console.error("Error retrieving notifications:", error);
+      console.error("Error al inicializar el Navbar:", error);
     }
   },
 };
 </script>
+
+<router-view :key="profilePageKey" />

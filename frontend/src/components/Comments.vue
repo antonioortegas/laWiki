@@ -9,13 +9,14 @@
     <!-- Comments List -->
     <div v-if="comments.length" class="comments-list">
       <Comment v-for="comment in comments" :key="comment._id" :content="comment" :depth="0" :entryId="entryId"
-        :currentUserId="currentUserId" @reply="addReply" @delete="removeComment" />
+        :currentUserId="this.loggedUserId" @reply="addReply" @delete="removeComment" />
     </div>
     <div v-else class="no-comments">No comments yet. Be the first!</div>
   </div>
 </template>
 
 <script>
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios';
 import Comment from './Comment.vue';
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
@@ -29,15 +30,24 @@ export default {
       required: true
     }
   },
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
+  },
   data() {
     return {
-      currentUserId: "123456789012345678901234", // TODO: Replace with dynamic user ID, John Doe for now
       newComment: "", // Stores the text of the new comment
+      loggedUserId: "",
       comments: [] // List of comments for the entry
     };
   },
   async mounted() {
     await this.fetchComments();
+    this.loggedUserId = this.user?._id;
   },
   methods: {
     // Fetch comments from the API
@@ -69,11 +79,15 @@ export default {
     },
     // Submit a new comment
     async submitComment() {
+      if (this.loggedUserId === "") {
+        alert("You must be logged in to comment.");
+        return;
+      }
       if (!this.newComment.trim()) return;
 
       const commentData = {
         content: this.newComment.trim(),
-        author: this.currentUserId, // TODO: Replace with dynamic author ID
+        author: this.loggedUserId,
       };
 
       try {
@@ -81,7 +95,7 @@ export default {
         const newComment = {
           _id: response.data._id,
           content: response.data.content,
-          author: response.data.author,
+          author: this.loggedUserId,
           createdAt: response.data.createdAt,
           responseTo: response.data.responseTo,
           replies: []
@@ -117,7 +131,7 @@ export default {
         });
       };
       this.comments = removeRecursive(this.comments);
-    }
+    },
   }
 };
 </script>
