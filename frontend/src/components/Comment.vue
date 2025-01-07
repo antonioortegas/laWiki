@@ -41,6 +41,9 @@
 <script>
   import axios from 'axios';
   
+  const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+  const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+
   export default {
     name: "Comment",
     props: {
@@ -76,7 +79,7 @@
       async fetchAuthorName() {
         try {
           console.log("Buscando autor: ", this.content.author);
-          const response = await axios.get(`/api/users/${this.content.author}`);
+          const response = await axios.get(`${VITE_USERS_API_HOST}/${this.content.author}`);
           this.authorName = response.data.name || "Anonymous User";
         } catch (error) {
           console.error("Error fetching author name:", error.response?.data || error.message);
@@ -98,7 +101,7 @@
         };
 
         try {
-          const response = await axios.put(`/api/entries/${this.entryId}/addComment`, reply);
+          const response = await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/addComment`, reply);
           const newReply = { ...response.data, replies: [] };
           this.$emit("reply", { parentId: this.content._id, reply: newReply });
           this.replyText = "";
@@ -113,7 +116,7 @@
             console.log("Eliminando comentario: ", this.content._id);
             console.log("De la entrada: ", this.entryId);
 
-            await axios.put(`/api/entries/${this.entryId}/deleteComment/${this.content._id}`);
+            await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/deleteComment/${this.content._id}`);
             
             // Emitir el evento para que el componente padre elimine el comentario de la lista
             this.$emit("delete", this.content._id);

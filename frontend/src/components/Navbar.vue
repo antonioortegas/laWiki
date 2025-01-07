@@ -54,7 +54,7 @@ const exampleUserId = "SprenBonded";
 <!-- Notification script -->
 <script>
 import NotificationBell from "./Notification.vue";
-
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
 
 const exampleNotification = 
   {
@@ -98,7 +98,7 @@ export default {
   async mounted() {
     try {
       const path = `api/users/${this.userId}/notifications`;
-      const response = await axios.get(`/api/users/${this.userId}/notifications`);
+      const response = await axios.get(`${VITE_USERS_API_HOST}/${this.userId}/notifications`);
       console.log("Path:", path);
       console.log("Response:", response);
       if(Array.isArray(response.data)) {

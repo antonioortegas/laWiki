@@ -9,6 +9,11 @@ import router from '../router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
 import { v4 as uuidv4 } from 'uuid';
+
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+const VITE_VERSIONS_API_HOST = import.meta.env.VITE_VERSIONS_API_HOST;
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+
 // Obtener parámetros de la ruta
 const route = useRoute();
 const entryId = ref(route.params.entryId);
@@ -42,7 +47,7 @@ const toggleEditMode = () => {
 // Cargar el contenido de la entrada desde el microservicio
 const loadEntry = async () => {
   try {
-    const response = await axios.get(`/api/entries/${entryId.value}`);
+    const response = await axios.get(`${VITE_ENTRIES_API_HOST}/${entryId.value}`);
     const data = response.data[0];
 
     // Asignar datos obtenidos
@@ -79,7 +84,7 @@ const saveEntry = async () => {
       tags: tags.value.split(',').map(tag => tag.trim())
     };
 
-    const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    const entry = await axios.put(`${VITE_ENTRIES_API_HOST}/${entryId.value}`, updatedData);
 
     const versionData =
     {
@@ -93,7 +98,7 @@ const saveEntry = async () => {
     };
     console.log(entry);
     
-    await axios.post(`/api/versions/`, versionData);
+    await axios.post(`${VITE_VERSIONS_API_HOST}/`, versionData);
     
     // Notificar al creador de la entrada
     sendNotification(entryCreator.value, title.value, "updated");
@@ -109,14 +114,14 @@ async function deleteEntry() {
   if (confirm('Are you sure you want to delete this entry?')) {
     try {
       // Obtener los datos de la entrada
-      const response = await axios.get(`/api/entries/${route.params.entryId}`);
+      const response = await axios.get(`${VITE_ENTRIES_API_HOST}/${route.params.entryId}`);
       const entry = response.data[0]; // Asumiendo que `entry` está en el primer índice del array
       const title = response.data[3];
       const createdBy = response.data[7];
       const wikiUrl = entry.wiki || '/'; // Redirigir a '/' si no existe el atributo 'wiki'
 
       // Proceder a eliminar la entrada
-      await axios.delete(`/api/entries/${route.params.entryId}`);
+      await axios.delete(`${VITE_ENTRIES_API_HOST}/${route.params.entryId}`);
       console.log('Entry deleted successfully');
 
       // Notificar al creador de la entrada
@@ -211,7 +216,7 @@ const translateEntryTo = async () => {
 async function sendNotification(entryCreator, title, editType) {
   try {
     // Enviar la notificación al creador de la entrada
-    await axios.post(`/api/users/${entryCreator}/newNotification`, {
+    await axios.post(`${VITE_USERS_API_HOST}/${entryCreator}/newNotification`, {
       message: "Your entry " + entryId.value + " has been " + editType,
     });
     console.log('Notification sent successfully');

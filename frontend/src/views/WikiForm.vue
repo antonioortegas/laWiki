@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'; // To access route params
 import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
+const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
 
 // Form data
 const formData = ref({
@@ -66,7 +67,7 @@ function triggerFileInput() {
 
 // Fetch wiki data (simulate API call)
 async function fetchWikiData(id) {
-  const wiki = await axios.get(`/api/wikis/${id}`).then((res) => res.data[0]);
+  const wiki = await axios.get(`${VITE_WIKIS_API_HOST}/${id}`).then((res) => res.data[0]);
   console.log("Fetched wiki data:", wiki);
 
   // Populate form with fetched data
@@ -81,7 +82,7 @@ function submitForm() {
   if (isEditing.value) {
     console.log("Updating wiki:", formData.value);
     // Add API call for updating the wiki (e.g., PUT request)
-    axios.put(`/api/wikis/${route.params.wikiId}`, formData.value)
+    axios.put(`${VITE_WIKIS_API_HOST}/${route.params.wikiId}`, formData.value)
       .then(response => {
         console.log("Wiki updated successfully", response);
         // Handle success (e.g., redirect or show success message)
@@ -96,7 +97,7 @@ function submitForm() {
     formData.value.createdBy = "63e8e9d8f86d4e25c9a1b116";
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
-    axios.post("/api/wikis", formData.value)
+    axios.post(`${VITE_WIKIS_API_HOST}`, formData.value)
       .then(response => {
         console.log("Wiki created successfully", response);
         // Handle success (e.g., redirect or show success message)
@@ -114,7 +115,7 @@ function submitForm() {
 // Delete handler
 function deleteWiki() {
   if (confirm("Are you sure you want to delete this wiki?")) {
-    axios.delete(`/api/wikis/${route.params.wikiId}`)
+    axios.delete(`${VITE_WIKIS_API_HOST}/${route.params.wikiId}`)
       .then(response => {
         console.log("Wiki deleted successfully", response);
         // Redirect to home or other appropriate page after deletion

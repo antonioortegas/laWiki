@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'; // To access route params
 import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 
 // Form data
 const formData = ref({
@@ -36,7 +37,7 @@ const entryUUID = ref(uuidv4());
 onMounted(() => {
     const w = route.params.wikiId;
 console.log("Creating empty entry with ID:");
-    axios.post('/api/entries', {
+    axios.post(`${VITE_ENTRIES_API_HOST}/`, {
         wiki: w,
         title: "Entrada de "+w,
         createdBy: "63e8e9d8f86d4e25c9a1b112",
