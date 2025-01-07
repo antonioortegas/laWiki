@@ -36,7 +36,7 @@ export const useAuthStore = defineStore("auth", {
          */
         async login(googleToken) {
             try {
-                const response = await axios.post(`${VITE_USERS_API_HOST}/login",`{ token: googleToken });
+                const response = await axios.post(`${VITE_USERS_API_HOST}/login`,{ token: googleToken });
 
                 // Guardar usuario y token en el estado
                 this.token = response.data.customToken;
