@@ -1,4 +1,5 @@
 import axios from 'axios';
+const VITE_PICTURES_API_HOST = import.meta.env.VITE_PICTURES_API_HOST;
 
 /**
  * Uploads a file to the Cloudinary microservice and returns the uploaded image URL.
@@ -16,7 +17,7 @@ export async function uploadFileToCloudinary(file) {
   formData.append('foto', file);
 
   try {
-    const response = await axios.post('/api/cloudinary/subirFoto', formData, {
+    const response = await axios.post(`${VITE_PICTURES_API_HOST}/subirFoto`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

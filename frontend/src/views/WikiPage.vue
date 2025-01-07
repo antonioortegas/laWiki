@@ -5,6 +5,9 @@ import axios from 'axios';
 import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
+
 // Reactive data
 const wikiInfo = ref({});
 const entryData = ref([]);
@@ -123,7 +126,7 @@ function filter(searchQuery) {
 // Fetch entry data from the backend
 const fetchEntryData = async (entryId) => {
   try {
-    const response = await axios.get(`/api/entries/${entryId}`);
+    const response = await axios.get(`${VITE_ENTRIES_API_HOST}/${entryId}`);
     const entry = response.data[0];
     entry.path = `/entry/${entry.entryId}`;
     entry.src = entry.imageSrc;
@@ -136,7 +139,7 @@ const fetchEntryData = async (entryId) => {
 // Fetch the wiki info from the backend
 const fetchWikiInfo = async () => {
   try {
-    const response = await axios.get(`/api/wikis/${$route.params.wikiId}`);
+    const response = await axios.get(`${VITE_WIKIS_API_HOST}/${$route.params.wikiId}`);
     wikiInfo.value = response.data[0];
     console.log('Wiki Info:', wikiInfo.value);
 
