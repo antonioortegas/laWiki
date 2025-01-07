@@ -97,7 +97,7 @@ function submitForm() {
     formData.value.createdBy = "63e8e9d8f86d4e25c9a1b116";
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
-    axios.post("${VITE_WIKIS_API_HOST}", formData.value)
+    axios.post(`${VITE_WIKIS_API_HOST}`, formData.value)
       .then(response => {
         console.log("Wiki created successfully", response);
         // Handle success (e.g., redirect or show success message)
