@@ -55,7 +55,6 @@ export default {
       return useAuthStore();
     },
     user() {
-      console.log("User en navbar:", this.authStore.user);
       return this.authStore.getLoggedUser;
     },
     token() {
