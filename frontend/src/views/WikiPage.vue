@@ -6,6 +6,8 @@ import axios from 'axios';
 import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
+import { watch } from 'vue';
+
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
 
@@ -34,6 +36,19 @@ const warningEntryMessage = ref('');
 const warningWikiMessage = ref('');
 const showEntryAlert = ref(false);
 const showWikiAlert = ref(false);
+
+// Observamos el cambio de `user` desde el authStore
+watch(() => authStore.user, (newUser, oldUser) => {
+  if (newUser !== oldUser) {
+    console.log("El usuario cambió de:", oldUser, "a:", newUser);
+  }
+  if (newUser) {
+    console.log("Nuevo usuario autenticado:", newUser);
+    // Realiza acciones cuando el usuario cambia
+  } else {
+    console.log("Usuario desconectado");
+  }
+});
 
 if (!canEditEntries.value) {
   console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
