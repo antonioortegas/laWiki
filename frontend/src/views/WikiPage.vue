@@ -36,6 +36,8 @@ const showWikiAlert = ref(false);
 
 if (!canEditEntries.value) {
   console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
+  console.log('User:', authStore.user);
+  console.log('User Role:', userRole.value);
   warningEntryMessage.value = "You must be a writer or an editor to create an entry.";
 }
 
