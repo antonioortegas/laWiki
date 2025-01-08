@@ -26,6 +26,7 @@ const filters = ref({
 
 const $route = useRoute();
 const authStore = ref(useAuthStore());
+const user = ref(authStore.value.user);
 const userRole = ref(authStore.user?.role);
 const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
@@ -37,7 +38,7 @@ const showWikiAlert = ref(false);
 if (!canEditEntries.value) {
   console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
   console.log('authStore:', authStore);
-  console.log('User:', authStore.user);
+  console.log('User:', user.value);
   console.log('User Role:', userRole.value);
   warningEntryMessage.value = "You must be a writer or an editor to create an entry.";
 }
