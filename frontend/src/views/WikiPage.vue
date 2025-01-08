@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import axios from 'axios';
 import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
@@ -27,7 +27,7 @@ const filters = ref({
 });
 
 const $route = useRoute();
-const authStore = computed(() => useAuthStore());
+const authStore = useAuthStore();
 const user = computed(() => authStore.getLoggedUser);  // Computada
 const userRole = ref(authStore.user?.role);
 const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
