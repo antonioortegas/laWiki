@@ -41,6 +41,7 @@ const showWikiAlert = ref(false);
 watch(() => authStore.user, (newUser, oldUser) => {
   if (newUser !== oldUser) {
     console.log("El usuario cambió de:", oldUser, "a:", newUser);
+    console.log("Puede editar:", canEditEntries.value);
   }
   if (newUser) {
     console.log("Nuevo usuario autenticado:", newUser);
