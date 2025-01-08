@@ -334,6 +334,46 @@ const advancedFilter = (searchQuery) => {
   <CardGrid v-else :data="entries" />
 </template>
 
+<script>
+export default {
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
+    token() {
+      return this.authStore.getLoggedUserToken;
+    },
+  },
+
+  watch: {
+    // Observar el cambio de la variable 'user' en el authStore
+    user(newUser, oldUser) {
+      if (newUser) {
+        // El usuario ha cambiado (o ha sido restaurado)
+        console.log("Nuevo usuario autenticado:", newUser);
+        // Realiza acciones adicionales si es necesario
+      } else {
+        // El usuario ha sido desconectado
+        console.log("Usuario desconectado");
+      }
+    },
+
+    // Observar el cambio del 'token' en el authStore
+    token(newToken, oldToken) {
+      if (newToken) {
+        console.log("Nuevo token:", newToken);
+        // Realiza cualquier acción adicional cuando el token cambie
+      } else {
+        console.log("Token no válido o expirado.");
+      }
+    },
+  },
+};
+</script>
+
 
 <style scoped>
 .advanced-search {
