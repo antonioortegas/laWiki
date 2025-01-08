@@ -336,7 +336,7 @@ const advancedFilter = (searchQuery) => {
   <CardGrid v-else :data="entries" />
 </template>
 
-<script>
+<!--script>
 export default {
   computed: {
     authStore() {
@@ -374,7 +374,7 @@ export default {
     },
   },
 };
-</script>
+</script-->
 
 
 <style scoped>
