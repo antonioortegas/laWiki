@@ -25,7 +25,7 @@ const filters = ref({
 });
 
 const $route = useRoute();
-const authStore = useAuthStore();
+const authStore = ref(useAuthStore());
 const userRole = ref(authStore.user?.role);
 const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
