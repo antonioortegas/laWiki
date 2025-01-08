@@ -27,7 +27,7 @@ const filters = ref({
 });
 
 const $route = useRoute();
-const authStore = ref(useAuthStore());
+const authStore = computed(() => useAuthStore());
 const user = computed(() => authStore.getLoggedUser);  // Computada
 const userRole = ref(authStore.user?.role);
 const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
