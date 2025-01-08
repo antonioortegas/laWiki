@@ -110,7 +110,7 @@ export const useAuthStore = defineStore("auth", {
         setAuthTokenCookie(token) {
             const expirationTime = new Date();
             expirationTime.setTime(expirationTime.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 días
-            document.cookie = `authToken=${token}; expires=${expirationTime.toUTCString()}; path=/`;
+            document.cookie = `authToken=${token}; SameSite=None; Secure; expires=${expirationTime.toUTCString()}; path=/`;
         },
 
         /**
