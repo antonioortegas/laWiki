@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from "../stores/auth";
 import { computed } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
