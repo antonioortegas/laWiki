@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useAuthStore } from "../stores/auth";
-import { computed } from 'vue';
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
 import MapComponent from '../components/Map.vue';

@@ -135,6 +135,8 @@ export default {
     },
     checkAuthor() {
       if(!this.user) return false;
+      else
+        console.log("Usuario con sesion en comentarios: ", this.user._id);
       return this.user._id === this.content.author;
     }
   }
