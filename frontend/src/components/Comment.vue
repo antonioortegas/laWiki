@@ -26,7 +26,7 @@
     <!-- Replies -->
     <div v-if="content.replies.length" class="replies">
       <Comment v-for="reply in content.replies" :key="reply._id" :content="reply" :depth="depth + 1" :entryId="entryId"
-        :currentUserId="this.user._id" @reply="forwardReply" @delete="forwardDelete" />
+        :currentUserId="this.authStore.user._id" @reply="forwardReply" @delete="forwardDelete" />
     </div>
   </div>
 </template>
@@ -90,7 +90,6 @@ export default {
     // Submits a reply
     async submitReply() {
       if (!this.replyText.trim()) return;
-
       const reply = {
         content: this.replyText.trim(),
         author: this.user._id,
