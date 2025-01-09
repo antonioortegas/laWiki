@@ -129,7 +129,8 @@ export default {
       return date.toLocaleString();
     },
     checkAuthor() {
-      console.log("Checking author:", this.currentUserId, this.content.author);
+      console.log("Comentario:", this.content.content);
+      console.log("Revisando mismo autor:", this.currentUserId, this.content.author);
       return this.currentUserId === this.content.author;
     }
   }
