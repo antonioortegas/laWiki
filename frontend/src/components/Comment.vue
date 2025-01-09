@@ -14,7 +14,7 @@
     <div class="comment-actions">
       <button @click="toggleReplyForm" class="reply-btn">Reply</button>
       <!-- Show only if current user is the author of the comment -->
-      <button v-if="currentUserId === content.author" @click="deleteComment" class="delete-btn">Delete</button>
+      <button v-if="checkAuthor()" @click="deleteComment" class="delete-btn">Delete</button>
     </div>
 
     <!-- Reply form -->
@@ -127,6 +127,10 @@ export default {
     formatTime(timestamp) {
       const date = new Date(timestamp);
       return date.toLocaleString();
+    },
+    checkAuthor() {
+      console.log("Checking author:", this.currentUserId, this.content.author);
+      return this.currentUserId === this.content.author;
     }
   }
 };
