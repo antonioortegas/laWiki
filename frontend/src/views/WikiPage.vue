@@ -30,7 +30,7 @@ const $route = useRoute();
 const authStore = useAuthStore();
 const user = computed(() => authStore.getLoggedUser);  // Computada
 const userRole = computed(() =>authStore.user?.role);
-const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
 const warningEntryMessage = ref('');
 const warningWikiMessage = ref('');
