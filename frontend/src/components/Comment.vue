@@ -26,12 +26,13 @@
     <!-- Replies -->
     <div v-if="content.replies.length" class="replies">
       <Comment v-for="reply in content.replies" :key="reply._id" :content="reply" :depth="depth + 1" :entryId="entryId"
-        :currentUserId="currentUserId" @reply="forwardReply" @delete="forwardDelete" />
+        :currentUserId="this.user._id" @reply="forwardReply" @delete="forwardDelete" />
     </div>
   </div>
 </template>
 
 <script>
+import { useAuthStore } from "@/stores/auth";
 import axios from 'axios';
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
@@ -51,10 +52,14 @@ export default {
       type: String,
       required: true
     },
-    currentUserId: {
-      type: String,
-      required: true
-    }
+  },
+  computed: {
+    authStore() {
+      return useAuthStore();
+    },
+    user() {
+      return this.authStore.getLoggedUser;
+    },
   },
   data() {
     return {
@@ -87,7 +92,7 @@ export default {
 
       const reply = {
         content: this.replyText.trim(),
-        author: this.currentUserId,
+        author: this.user._id,
         responseTo: this.content._id, // Enlazamos al comentario padre
       };
 
@@ -130,8 +135,8 @@ export default {
     },
     checkAuthor() {
       console.log("Comentario:", this.content.content);
-      console.log("Revisando mismo autor:", this.currentUserId, this.content.author);
-      return this.currentUserId === this.content.author;
+      console.log("Revisando mismo autor:", this.user._id, this.content.author);
+      return this.user._id === this.content.author;
     }
   }
 };

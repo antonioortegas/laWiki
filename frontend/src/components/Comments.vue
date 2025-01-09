@@ -9,7 +9,7 @@
     <!-- Comments List -->
     <div v-if="comments.length" class="comments-list">
       <Comment v-for="comment in comments" :key="comment._id" :content="comment" :depth="0" :entryId="entryId"
-        :currentUserId="this.loggedUserId" @reply="addReply" @delete="removeComment" />
+        @reply="addReply" @delete="removeComment" />
     </div>
     <div v-else class="no-comments">No comments yet. Be the first!</div>
   </div>
