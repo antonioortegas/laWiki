@@ -69,6 +69,7 @@ export default {
     };
   },
   async mounted() {
+    console.log("Montado comentario: ", this.content);
     await this.fetchAuthor();
   },
   methods: {
