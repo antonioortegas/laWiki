@@ -134,6 +134,7 @@ export default {
       return date.toLocaleString();
     },
     checkAuthor() {
+      if(!this.user) return false;
       return this.user._id === this.content.author;
     }
   }
