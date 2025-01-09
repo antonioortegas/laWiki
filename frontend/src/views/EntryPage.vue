@@ -38,9 +38,9 @@ const zoom = ref('');
 
 // Gestion usuario actual y permisos
 const authStore = useAuthStore();
-const userRole = ref(authStore.user?.role);
-const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
-const canDeleteEntries = ref(userRole.value === 'admin' || userRole.value === 'editor');
+const userRole = computed(() => authStore.user?.role);
+const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canDeleteEntries = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {

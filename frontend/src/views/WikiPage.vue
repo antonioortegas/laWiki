@@ -28,7 +28,6 @@ const filters = ref({
 
 const $route = useRoute();
 const authStore = useAuthStore();
-const user = computed(() => authStore.getLoggedUser);  // Computada
 const userRole = computed(() =>authStore.user?.role);
 const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
@@ -37,27 +36,8 @@ const warningWikiMessage = ref('');
 const showEntryAlert = ref(false);
 const showWikiAlert = ref(false);
 
-// Observamos el cambio de `user` desde el authStore
-watch(() => authStore.user, (newUser, oldUser) => {
-  if (newUser !== oldUser) {
-    console.log("El usuario cambió de:", oldUser, "a:", newUser);
-    console.log("Usuario:", user.value);
-    console.log("Rol del usuario:", userRole.value);
-    console.log("Puede editar:", canEditEntries.value);
-  }
-  if (newUser) {
-    console.log("Nuevo usuario autenticado:", newUser);
-    // Realiza acciones cuando el usuario cambia
-  } else {
-    console.log("Usuario desconectado");
-  }
-});
-
 if (!canEditEntries.value) {
   console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
-  console.log('authStore:', authStore);
-  console.log('User:', user.value);
-  console.log('User Role:', userRole.value);
   warningEntryMessage.value = "You must be a writer or an editor to create an entry.";
 }
 
@@ -336,47 +316,6 @@ const advancedFilter = (searchQuery) => {
   <div v-if="loading" class="loading">Loading...</div>
   <CardGrid v-else :data="entries" />
 </template>
-
-<!--script>
-export default {
-  computed: {
-    authStore() {
-      return useAuthStore();
-    },
-    user() {
-      return this.authStore.getLoggedUser;
-    },
-    token() {
-      return this.authStore.getLoggedUserToken;
-    },
-  },
-
-  watch: {
-    // Observar el cambio de la variable 'user' en el authStore
-    user(newUser, oldUser) {
-      if (newUser) {
-        // El usuario ha cambiado (o ha sido restaurado)
-        console.log("Nuevo usuario autenticado:", newUser);
-        // Realiza acciones adicionales si es necesario
-      } else {
-        // El usuario ha sido desconectado
-        console.log("Usuario desconectado");
-      }
-    },
-
-    // Observar el cambio del 'token' en el authStore
-    token(newToken, oldToken) {
-      if (newToken) {
-        console.log("Nuevo token:", newToken);
-        // Realiza cualquier acción adicional cuando el token cambie
-      } else {
-        console.log("Token no válido o expirado.");
-      }
-    },
-  },
-};
-</script-->
-
 
 <style scoped>
 .advanced-search {

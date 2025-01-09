@@ -44,8 +44,8 @@ function filter(searchQuery) {
 
 // Manage permission to create wikis
 const authStore = useAuthStore();
-const userRole = ref(authStore.user?.role);
-const canCreateWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
+const userRole = computed(() => authStore.user?.role);
+const canCreateWiki = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 const warningWikiMessage = ref('');
 const showWikiAlert = ref(false);
 
