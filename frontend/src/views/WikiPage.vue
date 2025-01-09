@@ -31,7 +31,7 @@ const authStore = useAuthStore();
 const user = computed(() => authStore.getLoggedUser);  // Computada
 const userRole = computed(() =>authStore.user?.role);
 const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
-const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
+const canEditWiki = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 const warningEntryMessage = ref('');
 const warningWikiMessage = ref('');
 const showEntryAlert = ref(false);
