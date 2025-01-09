@@ -29,7 +29,7 @@ const filters = ref({
 const $route = useRoute();
 const authStore = useAuthStore();
 const user = computed(() => authStore.getLoggedUser);  // Computada
-const userRole = ref(authStore.user?.role);
+const userRole = computed(() =>authStore.user?.role);
 const canEditEntries = ref(userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = ref(userRole.value === 'admin' || userRole.value === 'editor');
 const warningEntryMessage = ref('');
@@ -42,6 +42,7 @@ watch(() => authStore.user, (newUser, oldUser) => {
   if (newUser !== oldUser) {
     console.log("El usuario cambió de:", oldUser, "a:", newUser);
     console.log("Usuario:", user.value);
+    console.log("Rol del usuario:", userRole.value);
     console.log("Puede editar:", canEditEntries.value);
   }
   if (newUser) {

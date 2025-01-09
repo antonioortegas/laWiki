@@ -1,7 +1,6 @@
 <template>
     <div v-if="isDataReady">
         <div v-if="user">
-
             <div class="">
                 <div class="shadow-lg bg-accent h-[72.5vh] my-16 mx-8 sm:mx-32 rounded-3xl">
                     <div class="h-1/6 relative">
