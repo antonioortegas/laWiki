@@ -26,7 +26,7 @@
     <!-- Replies -->
     <div v-if="content.replies.length" class="replies">
       <Comment v-for="reply in content.replies" :key="reply._id" :content="reply" :depth="depth + 1" :entryId="entryId"
-        :currentUserId="this.authStore.user._id" @reply="forwardReply" @delete="forwardDelete" />
+        @reply="forwardReply" @delete="forwardDelete" />
     </div>
   </div>
 </template>
@@ -69,7 +69,7 @@ export default {
     };
   },
   async mounted() {
-    console.log("Montado comentario: ", this.content);
+    console.log("Testeando cambio: ", this.content);
     await this.fetchAuthor();
   },
   methods: {
