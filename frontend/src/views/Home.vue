@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from "../stores/auth";
+import { computed } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 import axios from 'axios';

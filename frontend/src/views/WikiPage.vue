@@ -6,7 +6,7 @@ import axios from 'axios';
 import EntrySearchBar from '@/components/EntrySearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
