@@ -29,15 +29,15 @@ const filters = ref({
 const $route = useRoute();
 const authStore = useAuthStore();
 const userRole = computed(() =>authStore.user?.role);
-const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canCreateEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
 const canEditWiki = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 const warningEntryMessage = ref('');
 const warningWikiMessage = ref('');
 const showEntryAlert = ref(false);
 const showWikiAlert = ref(false);
 
-if (!canEditEntries.value) {
-  console.log('User does not have the necessary permissions to create an entry.', canEditEntries.value);
+if (!canCreateEntries.value) {
+  console.log('User does not have the necessary permissions to create an entry.', canCreateEntries.value);
   warningEntryMessage.value = "You must be a writer or an editor to create an entry.";
 }
 
@@ -274,7 +274,7 @@ const advancedFilter = (searchQuery) => {
       <p class="text-white text-lg font-heading mb-4">
         Don't see what you're looking for? Add it!
       </p>
-      <router-link v-if="canEditEntries" :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
+      <router-link v-if="canCreateEntries" :to="{ name: 'CreateEntry', params: { wikiId: $route.params.wikiId } }">
         <button
           class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
           + Create an Entry

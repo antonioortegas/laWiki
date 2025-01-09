@@ -134,8 +134,6 @@ export default {
       return date.toLocaleString();
     },
     checkAuthor() {
-      console.log("Comentario:", this.content.content);
-      console.log("Revisando mismo autor:", this.user._id, this.content.author);
       return this.user._id === this.content.author;
     }
   }

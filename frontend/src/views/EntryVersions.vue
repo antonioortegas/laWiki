@@ -1,6 +1,7 @@
 <script setup>
 // import SearchBar from '@/components/SearchBar.vue';
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import router from '../router';
@@ -10,6 +11,27 @@ const VITE_VERSIONS_API_HOST = import.meta.env.VITE_VERSIONS_API_HOST;
 
 const route = useRoute();
 const sampleData = ref([]);
+
+// Gestion usuario actual y permisos
+const authStore = useAuthStore();
+const userRole = computed(() => authStore.user?.role);
+const canRestoreEntries = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
+const showEntryAlert = ref(false);
+
+if (!canRestoreEntries.value) {
+    console.log('User does not have the necessary permissions to restore the version.', canRestoreEntries.value);
+    warningVersionMessage.value = "You must be an editor to restore the version.";
+}
+
+const showEntryWarning = () => {
+    showEntryAlert.value = true;
+    setTimeout(() => {
+        showEntryAlert.value = false;
+    }, 3000);
+};
+
+
+
 onMounted(() => {
     axios.get(`${VITE_VERSIONS_API_HOST}/entry/${route.params.entryId}`)
         .then((response) => {
@@ -18,7 +40,7 @@ onMounted(() => {
                 const date = new Date(item.createdAt);
                 item.createdAt = date.toLocaleString();
                 return item;
-                });
+            });
             console.log(response.data);
         })
         .catch((error) => {
@@ -28,31 +50,31 @@ onMounted(() => {
 });
 /*Hay que crear el endpoint en entry-service se le pasa el contenido de la versión 
 por body y el id de la entrada para que lo busque y lo modifica desde ahí*/
-function restoreVersion(entryId,version) {
-  if (confirm("Are you sure you want to restore to an earlier version?")) {
-    console.log("Restoring to an earlier version...");
-    
-    axios.put(`${VITE_ENTRIES_API_HOST}/restore/${entryId}`, {
-        content: version.content,
-        imageSrc: version.imageSrc,
-        latitude: version.latitude,
-        longitude: version.longitude,
-        map: version.map,
-        zoom: version.zoom,
-    })
-    .then((response) => {
-        console.log("Version restored successfully:", response.data);
-        router.push({ name: 'EntryPage', params: { entryId: entryId } }).catch(err => {
-            if (err.name !== 'NavigationDuplicated') {
-                throw err;
-            }
-        });
-        // Optionally, you can refresh the data or navigate to another page
-    })
-    .catch((error) => {
-        console.error("Error restoring version:", error);
-    });
-  }
+function restoreVersion(entryId, version) {
+    if (confirm("Are you sure you want to restore to an earlier version?")) {
+        console.log("Restoring to an earlier version...");
+
+        axios.put(`${VITE_ENTRIES_API_HOST}/restore/${entryId}`, {
+            content: version.content,
+            imageSrc: version.imageSrc,
+            latitude: version.latitude,
+            longitude: version.longitude,
+            map: version.map,
+            zoom: version.zoom,
+        })
+            .then((response) => {
+                console.log("Version restored successfully:", response.data);
+                router.push({ name: 'EntryPage', params: { entryId: entryId } }).catch(err => {
+                    if (err.name !== 'NavigationDuplicated') {
+                        throw err;
+                    }
+                });
+                // Optionally, you can refresh the data or navigate to another page
+            })
+            .catch((error) => {
+                console.error("Error restoring version:", error);
+            });
+    }
 }
 
 </script>
@@ -85,12 +107,19 @@ function restoreVersion(entryId,version) {
             <div class="col-span-1 text-text">{{ item.createdAt }}</div>
             <div class="col-span-1 text-text">{{ item.createdBy }}</div>
             <div class="col-span-1 text-center">
-                <button type="button" @click="() => restoreVersion(item.entry, item)" 
+                <button v-if="canRestoreEntries()" type="button" @click="() => restoreVersion(item.entry, item)"
                     class="px-4 py-2 text-sm font-semibold text-white bg-gray-500 rounded-md hover:bg-red-700 hover:scale-110">
-                    
-                        Revert
-                    
+                    Revert
                 </button>
+                <button v-else @click="showEntryWarning"
+                    class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md"
+                    style="background-color: gray!important; cursor: not-allowed;">
+                    + Create an Entry
+                </button>
+                <!-- Show warning if the user cannot create an entry -->
+                <div v-if="showEntryAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">
+                    {{ warningVersionMessage }}
+                </div>
             </div>
         </div>
     </div>
