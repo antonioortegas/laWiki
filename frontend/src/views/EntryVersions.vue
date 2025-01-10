@@ -108,19 +108,18 @@ function restoreVersion(entryId, version) {
             <div class="col-span-1 text-text">{{ item.createdAt }}</div>
             <div class="col-span-1 text-text">{{ item.createdBy }}</div>
             <div class="col-span-1 text-center">
-                <button v-if="canRestoreEntries()" type="button" @click="() => restoreVersion(item.entry, item)"
+                <!--button v-if="canRestoreEntries()" type="button" @click="() => restoreVersion(item.entry, item)"
                     class="px-4 py-2 text-sm font-semibold text-white bg-gray-500 rounded-md hover:bg-red-700 hover:scale-110">
                     Revert
                 </button>
                 <button v-else @click="showEntryWarning"
                     class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md"
                     style="background-color: gray!important; cursor: not-allowed;">
-                    + Create an Entry
+                    Revert
                 </button>
-                <!-- Show warning if the user cannot create an entry -->
                 <div v-if="showEntryAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">
                     {{ warningVersionMessage }}
-                </div>
+                </div-->
             </div>
         </div>
     </div>
