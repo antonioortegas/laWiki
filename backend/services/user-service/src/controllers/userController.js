@@ -405,13 +405,12 @@ const login = async (req, res) => {
         const { token } = req.body;
         const decodedToken = jwt.decode(token);
 
-        let user = await User.findOne({ oauthId: decodedToken.sub });
+        let user = await User.findOne({ email: decodedToken.email });
         if (!user) {
-            console.log("User not found with oauthId: " + decodedToken.sub);
+            console.log("User not found with email: " + decodedToken.email);
 
             // Crear un nuevo usuario
             user = new User({
-                oauthId: decodedToken.sub,
                 name: decodedToken.name,
                 email: decodedToken.email,
                 profilePicture: decodedToken.picture,
