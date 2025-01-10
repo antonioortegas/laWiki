@@ -69,7 +69,6 @@ export default {
     };
   },
   async mounted() {
-    console.log("Testeando cambio: ", this.content);
     await this.fetchAuthor();
   },
   methods: {
@@ -108,12 +107,10 @@ export default {
     },
     // Deletes the comment with a PUT request
     async deleteComment() {
-      console.log("Deleting comment:", this.content._id);
       try {
         await axios.put(`${VITE_ENTRIES_API_HOST}/${this.entryId}/deleteComment/`, {
           commentId: this.content._id
         });
-      console.log("Borrado de entry");
         // Emitir el evento para que el componente padre elimine el comentario de la lista
         this.$emit("delete", this.content._id);
       } catch (error) {
@@ -135,8 +132,6 @@ export default {
     },
     checkAuthor() {
       if(!this.user) return false;
-      else
-        console.log("Usuario con sesion en comentarios: ", this.user._id);
       return this.user._id === this.content.author;
     }
   }
