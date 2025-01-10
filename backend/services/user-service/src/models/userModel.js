@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 
 // ratings stores an array of ratings, which are a ratedBy + score
 const userSchema = new mongoose.Schema({
-    oauthId: {
-        type: String,
-        unique: true
-    },
     name: {
         type: String,
         required: true
