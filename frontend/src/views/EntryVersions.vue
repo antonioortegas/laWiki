@@ -17,6 +17,7 @@ const authStore = useAuthStore();
 const userRole = computed(() => authStore.user?.role);
 const canRestoreEntries = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 const showEntryAlert = ref(false);
+const warningVersionMessage = ref('');
 
 if (!canRestoreEntries.value) {
     console.log('User does not have the necessary permissions to restore the version.', canRestoreEntries.value);
