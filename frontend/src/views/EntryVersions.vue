@@ -18,16 +18,19 @@ const userRole = computed(() => authStore.user?.role);
 const canRestoreEntries = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
 const showEntryAlert = ref(false);
 const warningVersionMessage = ref('');
+const caller = ref('');
 
 if (!canRestoreEntries.value) {
     console.log('User does not have the necessary permissions to restore the version.', canRestoreEntries.value);
     warningVersionMessage.value = "You must be an editor to restore the version.";
 }
 
-const showEntryWarning = () => {
+const showEntryWarning = (item) => {
     showEntryAlert.value = true;
+    caller.value = item;
     setTimeout(() => {
         showEntryAlert.value = false;
+        caller.value = '';
     }, 3000);
 };
 
@@ -112,12 +115,12 @@ function restoreVersion(entryId, version) {
                     class="px-4 py-2 text-sm font-semibold text-white bg-gray-500 rounded-md hover:bg-red-700 hover:scale-110">
                     Revert
                 </button>
-                <button v-else @click="showEntryWarning"
+                <button v-else @click="showEntryWarning(item)"
                     class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md"
                     style="background-color: gray!important; cursor: not-allowed;">
                     Revert
                 </button>
-                <div v-if="showEntryAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">
+                <div v-if="showEntryAlert && item === caller" class="bg-red-500 text-white p-4 rounded-lg my-4">
                     {{ warningVersionMessage }}
                 </div>
             </div>
