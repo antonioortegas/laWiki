@@ -172,10 +172,10 @@ const translateEntryTo = async () => {
     console.log(`Translating entry to ${language.value}`);
     console.log(target);
     if(language.value != target){
-    const response = await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: title.value, fromLanguage: language.value, targetLanguage: target });
+    const response = await axios.post(`${VITE_TRANSLATE_API_HOST}/`, { text: title.value, fromLanguage: language.value, targetLanguage: target });
     const translatedTitle = response.data[0].translations[0].text;
   
-    const textResponse= await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: markdownContent.value, fromLanguage: language.value, targetLanguage: target });
+    const textResponse= await axios.post(`${VITE_TRANSLATE_API_HOST}/`, { text: markdownContent.value, fromLanguage: language.value, targetLanguage: target });
     const translatedText = textResponse.data[0].translations[0].text;
 
     
