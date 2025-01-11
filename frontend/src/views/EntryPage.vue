@@ -9,10 +9,12 @@ import { useRoute } from 'vue-router';
 import router from '../router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
+import { v4 as uuidv4 } from 'uuid';
 
 const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 const VITE_VERSIONS_API_HOST = import.meta.env.VITE_VERSIONS_API_HOST;
 const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+const VITE_TRANSLATE_API_HOST = import.meta.env.VITE_TRANSLATE_API_HOST;
 
 // Obtener parámetros de la ruta
 const route = useRoute();
@@ -57,6 +59,7 @@ const loadEntry = async () => {
     const data = response.data[0];
 
     // Asignar datos obtenidos
+   
     title.value = data.title || '';
     imageSrc.value = data.imageSrc || '';
     markdownContent.value = data.content || '';
@@ -67,6 +70,8 @@ const loadEntry = async () => {
     language.value = data.language || '';
     tags.value = data.tags ? data.tags.join(', ') : '';
     entryCreator.value = data.createdBy || '';
+    //Delete later
+    console.log(title.value);
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -130,6 +135,7 @@ async function deleteEntry() {
       // Notificar al creador de la entrada
       sendNotification(entryCreator.value, title, "deleted");
 
+
       // Redirigir a la URL de la wiki
       router.push("/wiki/" + wikiUrl);
     } catch (error) {
@@ -158,7 +164,62 @@ const handleFileUpload = async (event) => {
     }
   }
 };
+// Función para traducir la entrada
+const translateEntryTo = async () => {
+  const target = prompt('Enter the language code to translate to (e.g., "en" for English, "es" for Spanish):');
+  if (target) {
+    // Lógica para traducir la entrada
+    console.log(`Translating entry to ${language.value}`);
+    console.log(target);
+    if(language.value != target){
+    const response = await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: title.value, fromLanguage: language.value, targetLanguage: target });
+    const translatedTitle = response.data[0].translations[0].text;
+  
+    const textResponse= await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: markdownContent.value, fromLanguage: language.value, targetLanguage: target });
+    const translatedText = textResponse.data[0].translations[0].text;
 
+    
+
+    const entryUUID = ref(uuidv4());
+    try {
+      const newEntryData = {
+      title: translatedTitle,
+      entryId: entryUUID.value,
+      imageSrc: imageSrc.value,
+      content: translatedText,
+      latitude: latitude.value,
+      longitude: longitude.value,
+      zoom: zoom.value,
+      language: target,
+      tags: tags.value.split(',').map(tag => tag.trim()),
+      wiki: wikiId.value,
+      createdBy: entryCreator.value
+      };
+
+      const response = await axios.post(`${VITE_ENTRIES_API_HOST}`, newEntryData);
+      console.log('Translated entry created successfully:', response.data);
+      console.log('Redirecting to new entry page...');
+      console.log({ name: 'EntryPage', params: { entryId: entryUUID.value }, query: { edit: false } });
+      router.push({ name: 'EntryPage', params: { entryId: entryUUID.value } }).then(() => {
+        location.reload();
+      }).catch(err => {
+        if (err.name !== 'NavigationDuplicated') {
+          throw err;
+        }
+      });
+   
+      // Optionally, navigate to the new entry page
+      
+    } catch (error) {
+      console.error('Error creating translated entry:', error.response || error.message);
+    }
+    
+  }else{
+    alert('The language is the same as the original');
+  }
+    // Aquí puedes agregar la lógica para traducir la entrada
+  }
+};
 // Enviar la notificación al creador de la entrada
 async function sendNotification(entryCreator, title, editType) {
   try {
@@ -191,13 +252,20 @@ onMounted(() => {
         class="flex items-center px-4 py-2 border-2 border-accent text-sm text-accent hover:bg-accent hover:text-background rounded-lg shadow-md transition-all space-x-2">
         <span>See version history</span>
       </router-link>
-
       <div v-if="canEditEntries">
         <button v-if="!isEditing" @click="toggleEditMode"
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
           Edit
         </button>
       </div>
+      <button @click="translateEntryTo"
+        class="px-6 py-2 bg-green-500 text-background font-semibold rounded-lg shadow-md hover:bg-green-600 transform transition-transform hover:scale-105">
+        Translate
+      </button>
+      <button v-if="!isEditing" @click="toggleEditMode"
+        class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
+        Edit
+      </button>
     </div>
 
     <!-- Vista de solo lectura -->
@@ -330,7 +398,7 @@ onMounted(() => {
           <MarkdownPreview :content="markdownContent" class="mt-4" />
         </div>
       </div>
-
+      
       <div class="flex justify-center gap-8">
         <button @click="toggleEditMode"
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
