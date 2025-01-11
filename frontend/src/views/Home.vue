@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from 'vue';
+import { useAuthStore } from "../stores/auth";
+import { computed } from 'vue';
 import SearchBar from '@/components/SearchBar.vue';
 import CardGrid from '@/components/CardGrid.vue';
 import axios from 'axios';
+
+const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
 
 // Reactive original and filtered data
 const originalWikiData = ref([]);
@@ -11,7 +15,7 @@ const filteredWikiData = ref([]);
 // Fetch function
 async function fetchWikiData() {
     try {
-        const response = await axios.get('/api/wikis');
+        const response = await axios.get(`${VITE_WIKIS_API_HOST}/`);
         originalWikiData.value = response.data.map((wiki) => {
             const { title } = wiki;
             wiki.path = `/wiki/${title}`;
@@ -38,6 +42,26 @@ function filter(searchQuery) {
         wiki.title.toLowerCase().includes(text)
     );
 }
+
+// Manage permission to create wikis
+const authStore = useAuthStore();
+const userRole = computed(() => authStore.user?.role);
+const canCreateWiki = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
+const warningWikiMessage = ref('');
+const showWikiAlert = ref(false);
+
+if (!canCreateWiki.value) {
+  console.log('User does not have the necessary permissions to edit the wiki.', canCreateWiki.value);
+  warningWikiMessage.value = "You must be an editor to create a wiki.";
+}
+
+const showWikiWarning = () => {
+  showWikiAlert.value = true;
+  setTimeout(() => {
+    showWikiAlert.value = false;
+  }, 3000);
+};
+
 </script>
 
 <template>
@@ -49,12 +73,19 @@ function filter(searchQuery) {
                 <p class="text-white text-lg font-heading mb-4">
                     Want to share something? Build your own!
                 </p>
-                <router-link :to="{ name: 'CreateWiki' }">
+                <router-link v-if="canCreateWiki" :to="{ name: 'CreateWiki' }">
                     <button
                         class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-accent hover:bg-opacity-70 border-2 hover:scale-105 hover:border-text transform transition-transform">
                         + Create a Wiki
                     </button>
                 </router-link>
+                <div v-else>
+                    <button @click="showWikiWarning"
+                        class="px-6 py-3 bg-background border-background text-text font-bold rounded-lg shadow-md" style="background-color: gray!important; cursor: not-allowed; color: white;">
+                        + Create a Wiki
+                    </button>
+                    <div v-if="showWikiAlert" class="bg-red-500 text-white p-4 rounded-lg my-4">{{ warningWikiMessage }}</div>
+                </div>
             </div>
         </div>
     </div>

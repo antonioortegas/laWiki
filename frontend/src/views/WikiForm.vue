@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'; // To access route params
+import { useAuthStore } from "../stores/auth";
 import axios from 'axios'; // For API calls
 import router from '../router';
 import { uploadFileToCloudinary } from '@/services/uploadService'; // Utility function for file upload
+const VITE_WIKIS_API_HOST = import.meta.env.VITE_WIKIS_API_HOST;
 
 // Form data
 const formData = ref({
@@ -13,6 +15,7 @@ const formData = ref({
   src: "",
   tags: "",
   language: "en",
+  createdBy: "123456789012345678901235",
 });
 const fileInput = ref(null);
 
@@ -24,12 +27,14 @@ const sampleWikiData = {
   content: "This wiki explores the characters, magic systems, and major events in the Mistborn series.",
   tags: ["Fantasy", "Brandon Sanderson", "Cosmere"],
   language: "en",
+  createdBy: "123456789012345678901235",
 };
 
 // Access route parameters
 const route = useRoute();
 
 const isEditing = ref(false); // Determines if editing an existing wiki
+const authStore = useAuthStore();
 
 onMounted(() => {
   if (route.params.wikiId) {
@@ -37,6 +42,10 @@ onMounted(() => {
     console.log("Editing wiki with ID:", route.params.wikiId);
     // Simulate fetching wiki data by ID
     fetchWikiData(route.params.wikiId);
+  }
+
+  if(authStore.user){
+    formData.value.createdBy = authStore.user._id;
   }
 });
 
@@ -66,7 +75,7 @@ function triggerFileInput() {
 
 // Fetch wiki data (simulate API call)
 async function fetchWikiData(id) {
-  const wiki = await axios.get(`/api/wikis/${id}`).then((res) => res.data[0]);
+  const wiki = await axios.get(`${VITE_WIKIS_API_HOST}/${id}`).then((res) => res.data[0]);
   console.log("Fetched wiki data:", wiki);
 
   // Populate form with fetched data
@@ -77,11 +86,11 @@ async function fetchWikiData(id) {
 }
 
 // Submit handler
-function submitForm() {
+async function submitForm() {
   if (isEditing.value) {
     console.log("Updating wiki:", formData.value);
     // Add API call for updating the wiki (e.g., PUT request)
-    axios.put(`/api/wikis/${route.params.wikiId}`, formData.value)
+    axios.put(`${VITE_WIKIS_API_HOST}/${route.params.wikiId}`, formData.value)
       .then(response => {
         console.log("Wiki updated successfully", response);
         // Handle success (e.g., redirect or show success message)
@@ -91,12 +100,9 @@ function submitForm() {
         // Handle error (e.g., show error message)
       });
   } else {
-    // createdBy is required for creating a new wiki
-    // simulate it for now, since user authentication is not implemented
-    formData.value.createdBy = "63e8e9d8f86d4e25c9a1b116";
     console.log("Creating new wiki:", formData.value);
     // Add API call for creating a new wiki (e.g., POST request)
-    axios.post("/api/wikis", formData.value)
+    axios.post(`${VITE_WIKIS_API_HOST}`, formData.value)
       .then(response => {
         console.log("Wiki created successfully", response);
         // Handle success (e.g., redirect or show success message)
@@ -114,7 +120,7 @@ function submitForm() {
 // Delete handler
 function deleteWiki() {
   if (confirm("Are you sure you want to delete this wiki?")) {
-    axios.delete(`/api/wikis/${route.params.wikiId}`)
+    axios.delete(`${VITE_WIKIS_API_HOST}/${route.params.wikiId}`)
       .then(response => {
         console.log("Wiki deleted successfully", response);
         // Redirect to home or other appropriate page after deletion
@@ -197,7 +203,7 @@ function deleteWiki() {
             class="w-full border-2 border-gray-300 rounded-lg p-3 text-sm resize-none" rows="6"></textarea>
         </div>
 
-        
+
 
         <div class="flex justify-center gap-8">
 

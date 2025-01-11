@@ -4,6 +4,7 @@ const { get } = require('mongoose');
 require('dotenv').config();
 const { Resend } = require('resend')
 const resend = new Resend(process.env.RESEND_API_KEY);
+const jwt = require("jsonwebtoken");
 
 const entriesAPI = process.env.ENTRIES_API_HOST || 'http://localhost:3003/entries';
 
@@ -185,7 +186,6 @@ const getUserEntries = async (req, res) => {
 const getAverageRating = async (req, res) => {
     try {
         const user = await User.findById(req.params.idUser);
-        console.log(req.params.idUser);
 
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -251,10 +251,7 @@ const addNotification = async (req, res) => {
 };
 
 const sendEmail = async (email, message) => {
-    // Send email
-    console.log('Sending email to:', email);
     const emailMessage = await formatEmailMessage(message);
-    console.log('Email message:', emailMessage);
     const { data, error } = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
@@ -383,12 +380,12 @@ const addRating = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
+        
         const existingRating = user.ratings.find(rating => rating.ratedBy === ratedBy);
         if (existingRating) {
             return res.status(400).json({ message: 'Already rated by this user' });
         }
-
+        
         user.ratings.push({ ratedBy, score });
         user.averageRating = calcAverageRating(user.ratings);
         await user.save();
@@ -400,6 +397,240 @@ const addRating = async (req, res) => {
         res.status(500).json({ message: 'Error when adding rating for user:', error: error.message });
     }
 };
+
+// Login a user with oAuthId
+const login = async (req, res) => {
+    console.log("Logging in user...");
+    try {
+        const { token } = req.body;
+        const decodedToken = jwt.decode(token);
+
+        let user = await User.findOne({ email: decodedToken.email });
+        if (!user) {
+            console.log("User not found with email: " + decodedToken.email);
+
+            // Crear un nuevo usuario
+            user = new User({
+                name: decodedToken.name,
+                email: decodedToken.email,
+                profilePicture: decodedToken.picture,
+                notifications: [{ message: "Welcome to La Wiki!" }]
+            });
+
+            // Guardar el nuevo usuario en la base de datos
+            await user.save();
+            console.log("Created user: ", user);
+        }
+
+        // Crear el payload para el token JWT
+        const payload = {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            profilePicture: user.profilePicture
+        };
+
+        // Generar el token JWT con caducidad de 7 dias
+        const tokenJwt = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        console.log("User logged in successfully: ", user);
+        // Enviar el usuario y el token como respuesta
+        res.status(200).json({ user, customToken: tokenJwt });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Validate a token
+const validateToken = async (req, res) => {
+    console.log("Validating token...");
+    const { token } = req.body;
+
+    try {
+        // Decodificar y verificar el token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Verifica si el usuario existe en la base de datos
+        const user = await User.findById(decoded.id);
+
+        if (!user) {
+            return res.status(401).json({ valid: false, message: "Usuario no encontrado." });
+        }
+
+        // Token válido, devuelve datos del usuario
+        res.status(200).json({ valid: true, user });
+
+    } catch (err) {
+        // Token inválido o expirado
+        console.log("Token inválido o caducado: " + err);
+        res.status(401).json({ valid: false, message: "Token inválido o caducado." });
+    }
+};
+
+// Renew a token
+const renewToken = async (req, res) => {
+    console.log("Renewing token...");
+    const { token } = req.body;
+
+    try {
+        // Verificar y decodificar el token original
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Crear un nuevo token con los mismos datos pero con nueva expiración
+        const payload = {
+            id: decoded.id,
+            email: decoded.email,
+            name: decoded.name,
+            picture: decoded.picture,
+        };
+
+        // Generar un nuevo token con caducidad de 7 días
+        const newToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+        // Enviar el nuevo token al cliente
+        res.status(200).json({ newToken });
+    } catch (error) {
+        console.error("Error al renovar el token:", error);
+        res.status(401).json({ message: "Token inválido o caducado." });
+    }
+};
+
+// Add a comment to the list of comments of a user
+const addUserComment = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId, commentId, content, responseTo } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        newComment = { entryId, commentId, content, responseTo };
+        console.log('New comment:', newComment);
+        user.comments.push(newComment);
+        await user.save();
+
+        res.status(201).json({ message: 'Comment added to user' });
+    }
+    catch (error) {
+        console.error('Error when adding comment to user:', error.message);
+        res.status(500).json({ message: 'Error when adding comment to user:', error: error.message });
+    }
+};
+
+// Delete a comment from the list of comments of a user
+const deleteUserComment = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId, commentId } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const comment = user.comments.find(c => c.entryId == entryId && c.commentId == commentId);
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        user.comments.pull(comment);
+        await user.save();
+
+        res.status(200).json({ message: 'Comment deleted from user' });
+    }
+    catch (error) {
+        console.error('Error when deleting comment from user:', error.message);
+        res.status(500).json({ message: 'Error when deleting comment from user:', error: error.message });
+    }
+};
+
+// Get count of comments for a user
+const countUserComments = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const count = user.comments.length;
+        res.status(200).json({ count });
+    }
+    catch (error) {
+        console.error('Error when getting comments for user:', error.message);
+        res.status(500).json({ message: 'Error when getting comments for user:', error: error.message });
+    }
+};
+
+// Add an entry to the list of entries of a user
+const addUserEntry = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId, title } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        user.entries.push({
+            entryId: entryId,
+            title: title
+        });
+        await user.save();
+
+        res.status(201).json({ message: 'Entry added to user' });
+    }
+    catch (error) {
+        console.error('Error when adding entry to user:', error.message);
+        res.status(500).json({ message: 'Error when adding entry to user:', error: error.message });
+    }
+};
+
+// Delete an entry from the list of entries of a user
+const deleteUserEntry = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+        const { entryId } = req.body;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.entries.pull({ entryId: entryId });
+        await user.save();
+
+        res.status(200).json({ message: 'Entry deleted from user' });
+    }
+    catch (error) {
+        console.error('Error when deleting entry from user:', error.message);
+        res.status(500).json({ message: 'Error when deleting entry from user:', error: error.message });
+    }
+};
+
+// Get count of entries for a user
+const countUserEntries = async (req, res) => {
+    try {
+        const { idUser } = req.params;
+
+        const user = await User.findById(idUser);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const count = user.entries.length;
+        res.status(200).json({ count });
+    }
+    catch (error) {
+        console.error('Error when getting entries for user:', error.message);
+        res.status(500).json({ message: 'Error when getting entries for user:', error: error.message });
+    }
+};
+
 
 module.exports = {
     createUser,
@@ -415,6 +646,15 @@ module.exports = {
     addNotification,
     deleteNotification,
     markAsRead,
+    addUserComment,
+    deleteUserComment,
+    countUserComments,
+    addUserEntry,
+    deleteUserEntry,
+    countUserEntries,
     addRating,
+    login,
+    validateToken,
+    renewToken,
 };
 

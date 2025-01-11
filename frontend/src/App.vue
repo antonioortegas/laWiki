@@ -7,7 +7,7 @@ import Footer from './components/Footer.vue';
 
 <template>
   <header class="sticky top-0 z-50">
-    <Navbar :username="username" :userPfp="userPfp" />
+    <Navbar />
   </header>
 
   <main>
@@ -18,8 +18,3 @@ import Footer from './components/Footer.vue';
     <Footer />
   </footer>
 </template>
-
-<script>
-const username = "SprenBonded";
-const userPfp = "https://avatars.githubusercontent.com/u/100814779?v=4";
-</script>

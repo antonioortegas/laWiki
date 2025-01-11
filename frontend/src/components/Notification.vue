@@ -29,6 +29,8 @@
 
 <script>
 import axios from "axios";
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
 
 export default {
   name: "NotificationBell",
@@ -64,7 +66,7 @@ export default {
 
       try {
         await axios.delete(
-          `/api/users/${this.userId}/deleteNotification/${notification._id}`
+          `${VITE_USERS_API_HOST}/${this.userId}/deleteNotification/${notification._id}`
         );
         console.log("Notificación eliminada:", notification._id);
         this.$emit("notificationDeleted", notification._id);
@@ -80,7 +82,7 @@ export default {
       // Send read call to the server
       try {
         const response = await axios.put(
-          `/api/users/${this.userId}/read/`,
+          `${VITE_USERS_API_HOST}/${this.userId}/read/`,
           { idNotification: notification._id }
         );
       } catch (error) {
@@ -91,13 +93,12 @@ export default {
     // This method formats the notification message with a clickable link
     async getFormattedMessage(notification) {
       // Assuming the message follows a format like: "You received a reply|comment on http://localhost:3003/entries/entryId: [content]"
-      const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-zA-Z0-9]+): (.+)/;
+      const regexComment = /You received a (reply|comment) on (http?:\/\/[^\s]+)\/entries\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}): (.+)/;
       const regexEdit = /Your entry ([a-zA-Z0-9]{24}) has been (deleted|updated)/;
       
       const match = notification.message.match(regexComment);
       const match2 = notification.message.match(regexEdit);
 
-      console.log('Mensaje de notificación:', notification.message);
       if (match) {
         const type = match[1]; // Reply or comment
         const entryId = match[3]; // Entry ID
@@ -106,7 +107,7 @@ export default {
         if(entryId){
           try {
             console.log('Obteniendo el nombre de la entrada con ID:', entryId);
-            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            const entryResponse = await axios.get(`${VITE_ENTRIES_API_HOST}/${entryId}`);
             var entryTitle = entryResponse.data[0].title;
             console.log('response:', entryResponse);
             console.log('Título de la entrada:', entryTitle);
@@ -117,7 +118,7 @@ export default {
         }
 
         // Create the formatted message with a clickable link
-        return `You received a ${type} on <a href="/entry/${entryId}" target="_blank" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
+        return `You received a ${type} on <a href="/entry/${entryId}" style="color: blue; text-decoration: underline;">${entryTitle}</a>: ${content}`;
       } else if (match2) {
         const entryId = match2[1]; // Entry ID
         const action = match2[2]; // Deleted or updated
@@ -125,7 +126,7 @@ export default {
         if(entryId){
           try {
             console.log('Obteniendo el nombre de la entrada con ID:', entryId);
-            const entryResponse = await axios.get(`/api/entries/${entryId}`);
+            const entryResponse = await axios.get(`${VITE_ENTRIES_API_HOST}/${entryId}`);
             var entryTitle = entryResponse.data[0].title;
             console.log('response:', entryResponse);
             console.log('Título de la entrada:', entryTitle);

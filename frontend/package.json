@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=16.x"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,6 +24,7 @@
     "http-proxy-middleware": "^3.0.3",
     "leaflet": "^1.9.4",
     "marked": "^15.0.2",
+    "pinia": "^2.3.0",
     "uuid": "^11.0.3",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5"

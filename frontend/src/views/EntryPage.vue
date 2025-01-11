@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useAuthStore } from "../stores/auth";
 import MarkdownEditor from '../components/MarkdownEditor.vue';
 import MarkdownPreview from '../components/MarkdownPreview.vue';
 import MapComponent from '../components/Map.vue';
@@ -8,6 +9,12 @@ import { useRoute } from 'vue-router';
 import router from '../router';
 import axios from 'axios';
 import { uploadFileToCloudinary } from '@/services/uploadService';
+import { v4 as uuidv4 } from 'uuid';
+
+const VITE_ENTRIES_API_HOST = import.meta.env.VITE_ENTRIES_API_HOST;
+const VITE_VERSIONS_API_HOST = import.meta.env.VITE_VERSIONS_API_HOST;
+const VITE_USERS_API_HOST = import.meta.env.VITE_USERS_API_HOST;
+const VITE_TRANSLATE_API_HOST = import.meta.env.VITE_TRANSLATE_API_HOST;
 
 // Obtener parámetros de la ruta
 const route = useRoute();
@@ -31,6 +38,12 @@ const latitude = ref('');
 const longitude = ref('');
 const zoom = ref('');
 
+// Gestion usuario actual y permisos
+const authStore = useAuthStore();
+const userRole = computed(() => authStore.user?.role);
+const canEditEntries = computed(() => userRole.value === 'admin' || userRole.value === 'writer' || userRole.value === 'editor');
+const canDeleteEntries = computed(() => userRole.value === 'admin' || userRole.value === 'editor');
+
 // Alternar entre modo de edición y vista
 const toggleEditMode = () => {
   if (isEditing.value) {
@@ -42,10 +55,11 @@ const toggleEditMode = () => {
 // Cargar el contenido de la entrada desde el microservicio
 const loadEntry = async () => {
   try {
-    const response = await axios.get(`/api/entries/${entryId.value}`);
+    const response = await axios.get(`${VITE_ENTRIES_API_HOST}/${entryId.value}`);
     const data = response.data[0];
 
     // Asignar datos obtenidos
+   
     title.value = data.title || '';
     imageSrc.value = data.imageSrc || '';
     markdownContent.value = data.content || '';
@@ -56,6 +70,8 @@ const loadEntry = async () => {
     language.value = data.language || '';
     tags.value = data.tags ? data.tags.join(', ') : '';
     entryCreator.value = data.createdBy || '';
+    //Delete later
+    console.log(title.value);
   } catch (error) {
     console.error('Error al cargar la entrada:', error.response || error.message);
   }
@@ -76,7 +92,7 @@ const saveEntry = async () => {
       tags: tags.value.split(',').map(tag => tag.trim())
     };
 
-    const entry = await axios.put(`/api/entries/${entryId.value}`, updatedData);
+    const entry = await axios.put(`${VITE_ENTRIES_API_HOST}/${entryId.value}`, updatedData);
 
     const versionData =
     {
@@ -86,11 +102,11 @@ const saveEntry = async () => {
       latitude: latitude.value,
       longitude: longitude.value,
       zoom: zoom.value,
-      createdBy: "60d0fe4f5311236168a109ca"
+      createdBy: authStore.user._id,
     };
     console.log(entry);
     
-    await axios.post(`/api/versions/`, versionData);
+    await axios.post(`${VITE_VERSIONS_API_HOST}/`, versionData);
     
     // Notificar al creador de la entrada
     sendNotification(entryCreator.value, title.value, "updated");
@@ -106,18 +122,19 @@ async function deleteEntry() {
   if (confirm('Are you sure you want to delete this entry?')) {
     try {
       // Obtener los datos de la entrada
-      const response = await axios.get(`/api/entries/${route.params.entryId}`);
+      const response = await axios.get(`${VITE_ENTRIES_API_HOST}/${route.params.entryId}`);
       const entry = response.data[0]; // Asumiendo que `entry` está en el primer índice del array
       const title = response.data[3];
       const createdBy = response.data[7];
       const wikiUrl = entry.wiki || '/'; // Redirigir a '/' si no existe el atributo 'wiki'
 
       // Proceder a eliminar la entrada
-      await axios.delete(`/api/entries/${route.params.entryId}`);
+      await axios.delete(`${VITE_ENTRIES_API_HOST}/${route.params.entryId}`);
       console.log('Entry deleted successfully');
 
       // Notificar al creador de la entrada
       sendNotification(entryCreator.value, title, "deleted");
+
 
       // Redirigir a la URL de la wiki
       router.push("/wiki/" + wikiUrl);
@@ -147,12 +164,67 @@ const handleFileUpload = async (event) => {
     }
   }
 };
+// Función para traducir la entrada
+const translateEntryTo = async () => {
+  const target = prompt('Enter the language code to translate to (e.g., "en" for English, "es" for Spanish):');
+  if (target) {
+    // Lógica para traducir la entrada
+    console.log(`Translating entry to ${language.value}`);
+    console.log(target);
+    if(language.value != target){
+    const response = await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: title.value, fromLanguage: language.value, targetLanguage: target });
+    const translatedTitle = response.data[0].translations[0].text;
+  
+    const textResponse= await axios.post(`${VITE_TRANSLATE_API_HOST}/translate`, { text: markdownContent.value, fromLanguage: language.value, targetLanguage: target });
+    const translatedText = textResponse.data[0].translations[0].text;
 
+    
+
+    const entryUUID = ref(uuidv4());
+    try {
+      const newEntryData = {
+      title: translatedTitle,
+      entryId: entryUUID.value,
+      imageSrc: imageSrc.value,
+      content: translatedText,
+      latitude: latitude.value,
+      longitude: longitude.value,
+      zoom: zoom.value,
+      language: target,
+      tags: tags.value.split(',').map(tag => tag.trim()),
+      wiki: wikiId.value,
+      createdBy: entryCreator.value
+      };
+
+      const response = await axios.post(`${VITE_ENTRIES_API_HOST}`, newEntryData);
+      console.log('Translated entry created successfully:', response.data);
+      console.log('Redirecting to new entry page...');
+      console.log({ name: 'EntryPage', params: { entryId: entryUUID.value }, query: { edit: false } });
+      router.push({ name: 'EntryPage', params: { entryId: entryUUID.value } }).then(() => {
+        location.reload();
+      }).catch(err => {
+        if (err.name !== 'NavigationDuplicated') {
+          throw err;
+        }
+      });
+   
+      // Optionally, navigate to the new entry page
+      
+    } catch (error) {
+      console.error('Error creating translated entry:', error.response || error.message);
+    }
+    
+  }else{
+    alert('The language is the same as the original');
+  }
+    // Aquí puedes agregar la lógica para traducir la entrada
+  }
+};
 // Enviar la notificación al creador de la entrada
 async function sendNotification(entryCreator, title, editType) {
   try {
     // Enviar la notificación al creador de la entrada
-    await axios.post(`/api/users/${entryCreator}/newNotification`, {
+    await axios.post(`${VITE_USERS_API_HOST}/${entryCreator}/newNotification`, {
       message: "Your entry " + entryId.value + " has been " + editType,
     });
     console.log('Notification sent successfully');
@@ -180,7 +252,16 @@ onMounted(() => {
         class="flex items-center px-4 py-2 border-2 border-accent text-sm text-accent hover:bg-accent hover:text-background rounded-lg shadow-md transition-all space-x-2">
         <span>See version history</span>
       </router-link>
-
+      <div v-if="canEditEntries">
+        <button v-if="!isEditing" @click="toggleEditMode"
+          class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
+          Edit
+        </button>
+      </div>
+      <button @click="translateEntryTo"
+        class="px-6 py-2 bg-green-500 text-background font-semibold rounded-lg shadow-md hover:bg-green-600 transform transition-transform hover:scale-105">
+        Translate
+      </button>
       <button v-if="!isEditing" @click="toggleEditMode"
         class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
         Edit
@@ -317,13 +398,13 @@ onMounted(() => {
           <MarkdownPreview :content="markdownContent" class="mt-4" />
         </div>
       </div>
-
+      
       <div class="flex justify-center gap-8">
         <button @click="toggleEditMode"
           class="px-6 py-2 bg-primary text-background font-semibold rounded-lg shadow-md hover:bg-accent transform transition-transform hover:scale-105">
           Save Changes
         </button>
-        <button type="button" @click="deleteEntry"
+        <button v-if="canDeleteEntries" type="button" @click="deleteEntry"
           class="px-6 py-3 bg-red-500 text-background font-bold rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transform transition-transform hover:scale-105">
           Delete Entry
         </button>

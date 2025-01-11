@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    profilePicture: {
+        type: String,
+    },
     getNotificationsByEmail: {
         type: Boolean,
         default: false
@@ -18,7 +21,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true,
-        enum: ['reader', 'writer', 'admin'],
+        enum: ['reader', 'writer', 'editor', 'admin'],
         default: 'reader'
     },
     averageRating: {
@@ -50,7 +53,41 @@ const userSchema = new mongoose.Schema({
             }
         }],
         default: []
-    }},
+    },
+    comments: {
+        type: [{
+            entryId: {
+                type: String,
+                required: true
+            },
+            commentId: {
+                type: mongoose.Schema.Types.ObjectId,
+                required: true
+            },
+            content: {
+                type: String,
+                required: true
+            },
+            responseTo: {
+                type: mongoose.Schema.Types.ObjectId,
+                default: null
+            }
+        }],
+    },
+    entries: {
+        type: [{
+            entryId: {
+                type: String,
+                required: true
+            },
+            title: {
+                type: String,
+                required: true
+            },
+        }],
+        default: []
+    }
+},
     {
         timestamps: true
     }
