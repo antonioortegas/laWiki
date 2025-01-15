@@ -42,6 +42,7 @@ services:
       - ENTRIES_API_HOST=${ENTRIES_API_HOST}
       - VERSIONS_API_HOST=${VERSIONS_API_HOST}
       - RESEND_API_KEY=${RESEND_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
 
   wiki-service:
     build:
@@ -113,23 +114,6 @@ services:
     environment:
       - KEYAZURE=${KEYAZURE}
       - REGION=${REGION}
- 
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_USERS_API_HOST=${VITE_USERS_API_HOST}
-      - VITE_WIKIS_API_HOST=${VITE_WIKIS_API_HOST}
-      - VITE_ENTRIES_API_HOST=${VITE_ENTRIES_API_HOST}
-      - VITE_VERSIONS_API_HOST=${VITE_VERSIONS_API_HOST}
-      - VITE_PICTURES_API_HOST=${VITE_PICTURES_API_HOST}
-      - VITE_TRANSLATION_API_HOST=${VITE_TRANSLATION_API_HOST}
-      - VITE_NODE_ENV=${VITE_NODE_ENV}
 
 volumes:
   mongo-data:
