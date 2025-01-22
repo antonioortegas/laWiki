@@ -3,11 +3,7 @@ const streamifier = require('streamifier')
 const dotenv = require('dotenv');
 dotenv.config();
 
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
+
 
 let streamUpload = (req) => {
     return new Promise((resolve, reject) => {
@@ -27,6 +23,12 @@ let streamUpload = (req) => {
   
 const upload = async (req, res) => {
     try {
+        cloudinary.config({
+            cloud_name: process.env.CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            api_secret: process.env.CLOUDINARY_API_SECRET
+        });
+        
         let result = await streamUpload(req);
         res.status(200).json({ message: 'Imagen subida correctamente', imageUrl: result.url});
         console.log('Imagen subida correctamente: ', result.url);
